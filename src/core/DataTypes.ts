@@ -1,8 +1,9 @@
-export interface BranchNameFormType {
+export interface BranchFormType {
   ticketId: string;
   developName: string;
 }
 
-export interface BranchNameType extends BranchNameFormType {
-  branchName: string;
+export interface BranchType extends BranchFormType {
+  id: number;
+  branchName?: string;
 }

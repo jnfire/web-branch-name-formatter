@@ -1,10 +1,24 @@
 <script setup lang="ts">
 import BranchNameForm from '@/components/BranchNameForm.vue'
-import type { BranchNameFormType } from '@/core/DataTypes'
+import type { BranchFormType } from '@/core/DataTypes'
+import CreatedBranchList from '@/components/CreatedBranchList.vue'
+import { Branch } from '@/core/Branch'
+import { ref } from 'vue'
 
-const handleFormSubmit = (data: BranchNameFormType) => {
-  console.log('Form data:', data);
-  // Aquí puedes manejar los datos como desees
+const branches = ref<Branch[]>([]);
+
+const handleFormSubmit = (FormData: BranchFormType) => {
+  console.log('Form data:', FormData);
+  const newBranch = new Branch(
+    {
+      id: branches.length + 1,
+      ticketId: FormData.ticketId,
+      developName: FormData.developName,
+    }
+  );
+
+  branches.value.push(newBranch);
+  console.log('Branches:', branches);
 };
 </script>
 
@@ -19,7 +33,7 @@ const handleFormSubmit = (data: BranchNameFormType) => {
   </header>
 
   <main>
-
+    <CreatedBranchList :branches="branches" />
   </main>
 </template>
 
