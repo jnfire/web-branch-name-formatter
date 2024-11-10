@@ -1,10 +1,22 @@
 <script setup lang="ts">
+import BranchNameForm from '@/components/BranchNameForm.vue'
+import type { BranchNameFormType } from '@/core/DataTypes'
 
-import Header from '@/components/header/Header.vue'
+const handleFormSubmit = (data: BranchNameFormType) => {
+  console.log('Form data:', data);
+  // Aquí puedes manejar los datos como desees
+};
 </script>
 
 <template>
-  <Header />
+  <header>
+    <div>
+      <h1>V01-branch-name-generator</h1>
+    </div>
+    <div>
+      <BranchNameForm @submitForm="handleFormSubmit" />
+    </div>
+  </header>
 
   <main>
 
