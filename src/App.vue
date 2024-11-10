@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+
+import Header from '@/components/header/Header.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+  <Header />
 
   <main>
-    <TheWelcome />
+
   </main>
 </template>
 
@@ -29,7 +23,9 @@ header {
 
 @media (min-width: 1024px) {
   header {
+    background-color: red;
     display: flex;
+    flex-direction: column;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
   }
