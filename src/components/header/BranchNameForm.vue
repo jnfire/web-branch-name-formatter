@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { BranchNameFormType } from '@/core/types'
+import type { BranchNameFormType } from '@/core/DataTypes';
 
 const ticketId = ref('');
 const developName = ref('');
