@@ -1,6 +1,6 @@
 export interface BranchFormType {
   ticketId: string;
-  developName: string;
+  featureName: string;
 }
 
 export interface BranchType extends BranchFormType {

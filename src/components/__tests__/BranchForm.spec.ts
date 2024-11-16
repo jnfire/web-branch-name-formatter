@@ -11,29 +11,29 @@ describe('BranchForm', () => {
     expect(wrapper.find('button[type="submit"]').exists()).toBe(true)
   })
 
-  it('updates the ticketId and developName when input changes', async () => {
+  it('updates the ticketId and featureName when input changes', async () => {
     const wrapper = mount(BranchForm)
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
-    const developNameInput = wrapper.find('input[name="develop-name"]')
+    const featureNameInput = wrapper.find('input[name="develop-name"]')
 
     await ticketIdInput.setValue('12345')
-    await developNameInput.setValue('feature-branch')
+    await featureNameInput.setValue('feature-branch')
 
     expect(wrapper.vm.ticketId).toBe('12345')
-    expect(wrapper.vm.developName).toBe('feature-branch')
+    expect(wrapper.vm.featureName).toBe('feature-branch')
   })
 
   it('emits submitForm event with correct payload when form is submitted', async () => {
     const wrapper = mount(BranchForm)
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
-    const developNameInput = wrapper.find('input[name="develop-name"]')
+    const featureNameInput = wrapper.find('input[name="develop-name"]')
 
     await ticketIdInput.setValue('12345')
-    await developNameInput.setValue('feature-branch')
+    await featureNameInput.setValue('feature-branch')
 
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(wrapper.emitted().submitForm).toBeTruthy()
-    expect(wrapper.emitted().submitForm[0]).toEqual([{ ticketId: '12345', developName: 'feature-branch' }])
+    expect(wrapper.emitted().submitForm[0]).toEqual([{ ticketId: '12345', featureName: 'feature-branch' }])
   })
 })

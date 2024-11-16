@@ -11,7 +11,7 @@ const handleFormSubmit = (FormData: BranchFormType) => {
   const newBranch = new Branch({
     id: branches.value.length + 1,
     ticketId: FormData.ticketId,
-    developName: FormData.developName,
+    featureName: FormData.featureName,
   });
   branches.value.push(newBranch);
 };
