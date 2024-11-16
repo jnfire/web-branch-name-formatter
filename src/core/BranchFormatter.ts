@@ -5,7 +5,7 @@ export class BranchFormatter {
   static format(branch: BranchType): string {
     const ticketId: string = this.cleanTicketId(branch.ticketId);
     const featureName: string = this.cleanFeatureName(branch.featureName);
-    return `${ticketId}-${featureName}`;
+    return `${ticketId}--${featureName}`;
   }
 
   private static cleanTicketId(ticketId: string): string {
