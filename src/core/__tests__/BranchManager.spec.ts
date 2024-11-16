@@ -13,7 +13,7 @@ describe('BranchManager', () => {
     const manager = new BranchManager();
     const formData: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' };
 
-    manager.addBranch(formData);
+    manager.createBranch(formData);
 
     const branches = manager.getBranches();
     expect(branches).toHaveLength(1);
@@ -26,10 +26,10 @@ describe('BranchManager', () => {
     const manager = new BranchManager();
     const formData: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' };
 
-    manager.addBranch(formData);
+    manager.createBranch(formData);
     const branchToDelete = manager.getBranches()[0];
 
-    manager.removeBranchById(branchToDelete.id);
+    manager.deleteBranch(branchToDelete.id);
 
     expect(manager.getBranches()).toHaveLength(0);
   });
@@ -38,10 +38,10 @@ describe('BranchManager', () => {
     const manager = new BranchManager();
     const formData: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' };
 
-    manager.addBranch(formData);
+    manager.createBranch(formData);
     const nonExistentBranch = new Branch({ id: 999, ticketId: 'TICKET-999', featureName: 'Non-existent' });
 
-    manager.removeBranchById(nonExistentBranch.id);
+    manager.deleteBranch(nonExistentBranch.id);
 
     expect(manager.getBranches()).toHaveLength(1);
   });

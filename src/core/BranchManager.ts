@@ -9,7 +9,7 @@ export class BranchManager {
     return this.branches;
   }
 
-  public addBranch(formData: BranchFormType): void {
+  public createBranch(formData: BranchFormType): void {
     const newBranch = new Branch({
       id: this.branches.length + 1,
       ticketId: formData.ticketId,
@@ -18,7 +18,10 @@ export class BranchManager {
     this.branches.push(newBranch);
   }
 
-  public removeBranchById(BranchId: number): void {
-    this.branches = this.branches.filter(branch => branch.id !== BranchId);
+  public deleteBranch(branchId: number): void {
+    const index = this.branches.findIndex(branch => branch.id === branchId);
+    if (index !== -1) {
+      this.branches.splice(index, 1);
+    }
   }
 }

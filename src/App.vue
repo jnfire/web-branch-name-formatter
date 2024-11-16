@@ -1,23 +1,30 @@
+<!-- src/App.vue -->
 <script setup lang="ts">
-import BranchForm from '@/components/BranchForm.vue';
-import type { BranchFormType } from '@/core/BranchTypes';
-import BranchList from '@/components/BranchList.vue';
-import { Branch } from '@/core/Branch';
 import { ref } from 'vue';
+import BranchForm from '@/components/BranchForm.vue';
+import BranchList from '@/components/BranchList.vue';
+import { BranchManager } from '@/core/BranchManager';
+import type { BranchFormType } from '@/core/BranchTypes';
+import type { Branch } from '@/core/Branch';
 
-const branches = ref<Branch[]>([]);
+// Instancia única de BranchManager
+const branchManager = new BranchManager();
 
-const handleFormSubmit = (FormData: BranchFormType) => {
-  const newBranch = new Branch({
-    id: branches.value.length + 1,
-    ticketId: FormData.ticketId,
-    featureName: FormData.featureName,
-  });
-  branches.value.push(newBranch);
+// Referencia reactiva para las ramas
+const branches = ref<Branch[]>(branchManager.getBranches());
+
+const updateBranches = () => {
+  branches.value = branches.value = [...branchManager.getBranches()];
+};
+
+const handleFormSubmit = (formData: BranchFormType) => {
+  branchManager.createBranch(formData);
+  updateBranches();
 };
 
 const handleDeleteBranch = (branchId: number) => {
-  branches.value = branches.value.filter(branch => branch.id !== branchId);
+  branchManager.deleteBranch(branchId);
+  updateBranches();
 };
 </script>
 
@@ -36,6 +43,6 @@ const handleDeleteBranch = (branchId: number) => {
   </main>
 </template>
 
-<style scoped lang="sass">
+<style scoped>
 
 </style>
