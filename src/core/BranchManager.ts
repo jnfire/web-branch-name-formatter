@@ -18,7 +18,7 @@ export class BranchManager {
     this.branches.push(newBranch);
   }
 
-  public removeBranch(BranchToDelete: Branch): void {
-    this.branches = this.branches.filter(branch => branch.id !== BranchToDelete.id);
+  public removeBranchById(BranchId: number): void {
+    this.branches = this.branches.filter(branch => branch.id !== BranchId);
   }
 }
