@@ -1,18 +1,8 @@
 # branch-name-formatter
 
-This template should help get you started developing with Vue 3 in Vite.
+Branch-name-formatter is a website developed with Vue.js and TypeScript that allows users to create and manage branch names with the appropriate format. It features a form to create the branch name and a list to view and delete the created names.
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+This project uses Vue components for the user interface and a BranchManager to handle the business logic. Additionally, it follows best development practices (SOLID, DRY, KISS, etc.) and includes unit tests for the components and the BranchManager.
 
 ## Project Setup
 
