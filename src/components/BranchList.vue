@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreatedBranchItem from '@/components/CreatedBranchItem.vue';
+import BranchItem from '@/components/BranchItem.vue';
 import type { Branch } from '@/core/Branch';
 
 const props = defineProps<{
@@ -15,7 +15,7 @@ const handleDeleteBranch = (branchId: number) => {
 
 <template>
   <section>
-    <CreatedBranchItem
+    <BranchItem
       v-for="branch in props.branches"
       :key="branch.id"
       :branch-name="branch.branchName"

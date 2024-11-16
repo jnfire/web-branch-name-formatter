@@ -1,4 +1,4 @@
-import type { BranchType } from '@/core/DataTypes'
+import type { BranchType } from '@/core/BranchTypes'
 
 export class Branch implements BranchType {
   id: number;

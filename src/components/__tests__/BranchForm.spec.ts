@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import BranchNameForm from '../BranchNameForm.vue'
+import BranchForm from '../BranchForm.vue'
 
-describe('BranchNameForm', () => {
+describe('BranchForm', () => {
   it('renders the form correctly', () => {
-    const wrapper = mount(BranchNameForm)
+    const wrapper = mount(BranchForm)
     expect(wrapper.find('form[aria-label="Create branch name form"]').exists()).toBe(true)
     expect(wrapper.find('input[name="ticket-id"]').exists()).toBe(true)
     expect(wrapper.find('input[name="develop-name"]').exists()).toBe(true)
@@ -12,7 +12,7 @@ describe('BranchNameForm', () => {
   })
 
   it('updates the ticketId and developName when input changes', async () => {
-    const wrapper = mount(BranchNameForm)
+    const wrapper = mount(BranchForm)
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
     const developNameInput = wrapper.find('input[name="develop-name"]')
 
@@ -24,7 +24,7 @@ describe('BranchNameForm', () => {
   })
 
   it('emits submitForm event with correct payload when form is submitted', async () => {
-    const wrapper = mount(BranchNameForm)
+    const wrapper = mount(BranchForm)
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
     const developNameInput = wrapper.find('input[name="develop-name"]')
 

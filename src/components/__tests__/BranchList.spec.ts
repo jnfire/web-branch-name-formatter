@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import CreatedBranchList from '@/components/CreatedBranchList.vue';
-import CreatedBranchItem from '@/components/CreatedBranchItem.vue';
+import BranchList from '@/components/BranchList.vue';
+import BranchItem from '@/components/BranchItem.vue';
 import { Branch } from '@/core/Branch';
 
-describe('CreatedBranchList.vue', () => {
+describe('BranchList.vue', () => {
   it('renders a list of branch items', () => {
     const branches: Branch[] = [
       new Branch({ id: 1, ticketId: 'T1', developName: 'Feature1', branchName: 'T1-Feature1' }),
@@ -12,11 +12,11 @@ describe('CreatedBranchList.vue', () => {
       new Branch({ id: 3, ticketId: 'T3', developName: 'Feature3', branchName: 'T3-Feature3' })
     ];
 
-    const wrapper = mount(CreatedBranchList, {
+    const wrapper = mount(BranchList, {
       props: { branches }
     });
 
-    const items = wrapper.findAllComponents(CreatedBranchItem);
+    const items = wrapper.findAllComponents(BranchItem);
     expect(items).toHaveLength(branches.length);
 
     items.forEach((item, index) => {
@@ -30,11 +30,11 @@ describe('CreatedBranchList.vue', () => {
       new Branch({ id: 2, ticketId: 'T2', developName: 'Feature2', branchName: 'T2-Feature2' })
     ];
 
-    const wrapper = mount(CreatedBranchList, {
+    const wrapper = mount(BranchList, {
       props: { branches }
     });
 
-    let items = wrapper.findAllComponents(CreatedBranchItem);
+    let items = wrapper.findAllComponents(BranchItem);
     expect(items).toHaveLength(branches.length);
 
     const newBranches: Branch[] = [
@@ -45,7 +45,7 @@ describe('CreatedBranchList.vue', () => {
 
     await wrapper.setProps({ branches: newBranches });
 
-    items = wrapper.findAllComponents(CreatedBranchItem);
+    items = wrapper.findAllComponents(BranchItem);
     expect(items).toHaveLength(newBranches.length);
 
     items.forEach((item, index) => {

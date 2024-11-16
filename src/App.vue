@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import BranchNameForm from '@/components/BranchNameForm.vue';
-import type { BranchFormType } from '@/core/DataTypes';
-import CreatedBranchList from '@/components/CreatedBranchList.vue';
+import BranchForm from '@/components/BranchForm.vue';
+import type { BranchFormType } from '@/core/BranchTypes';
+import BranchList from '@/components/BranchList.vue';
 import { Branch } from '@/core/Branch';
 import { ref } from 'vue';
 
@@ -27,15 +27,15 @@ const handleDeleteBranch = (branchId: number) => {
       <h1>V01-branch-name-generator</h1>
     </div>
     <div>
-      <BranchNameForm @submitForm="handleFormSubmit" />
+      <BranchForm @submitForm="handleFormSubmit" />
     </div>
   </header>
 
   <main>
-    <CreatedBranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
+    <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
   </main>
 </template>
 
-<style scoped>
+<style scoped lang="sass">
 
 </style>
