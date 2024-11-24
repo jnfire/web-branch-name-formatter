@@ -9,7 +9,7 @@ export class BranchFormatter {
   }
 
   private static cleanTicketId(ticketId: string): string {
-    return this.replaceSpaces(
+    return this.basicClean(
       this.toUpperCase(ticketId)
     );
   }
