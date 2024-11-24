@@ -29,16 +29,16 @@ const handleDeleteBranch = (branchId: number) => {
 </script>
 
 <template>
-  <header>
-    <div>
-      <h1>V01-branch-name-generator</h1>
+  <header class="header">
+    <div class="header__name">
+      <h1 class="header__name__text">V01-branch-name-generator</h1>
     </div>
-    <div>
+    <div class="header__form">
       <BranchForm @submitForm="handleFormSubmit" />
     </div>
   </header>
 
-  <main>
+  <main class="main">
     <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
   </main>
 </template>

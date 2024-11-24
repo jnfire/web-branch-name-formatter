@@ -14,7 +14,7 @@ const handleDeleteBranch = (branchId: number) => {
 </script>
 
 <template>
-  <section>
+  <section class="branch_list">
     <BranchItem
       v-for="branch in props.branches"
       :key="branch.id"
