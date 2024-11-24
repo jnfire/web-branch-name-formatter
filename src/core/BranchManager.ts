@@ -24,4 +24,10 @@ export class BranchManager {
       this.branches.splice(index, 1);
     }
   }
+
+  constructor() {
+    // compruebo si existe la instancia
+    // Si existe la entrego de vuelta
+    // Si no existe crea una nueva instancia
+  }
 }
