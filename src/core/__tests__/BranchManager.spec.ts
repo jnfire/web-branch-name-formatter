@@ -5,12 +5,12 @@ import type { BranchFormType } from '@/core/BranchTypes';
 
 describe('BranchManager', () => {
   it('should initialize with an empty list of branches', () => {
-    const manager = new BranchManager();
+    const manager = BranchManager.getInstance();
     expect(manager.getBranches()).toEqual([]);
   });
 
   it('should add a new branch', () => {
-    const manager = new BranchManager();
+    const manager = BranchManager.getInstance();
     const formData: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' };
 
     manager.createBranch(formData);
@@ -23,7 +23,7 @@ describe('BranchManager', () => {
   });
 
   it('should remove a branch', () => {
-    const manager = new BranchManager();
+    const manager = BranchManager.getInstance();
     const formData: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' };
 
     manager.createBranch(formData);
@@ -35,7 +35,7 @@ describe('BranchManager', () => {
   });
 
   it('should not remove a branch if it does not exist', () => {
-    const manager = new BranchManager();
+    const manager = BranchManager.getInstance();
     const formData: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' };
 
     manager.createBranch(formData);

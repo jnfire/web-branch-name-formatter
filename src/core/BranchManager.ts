@@ -3,7 +3,18 @@ import type { BranchFormType } from '@/core/BranchTypes'
 
 
 export class BranchManager {
+  private static instance: BranchManager;
   private branches: Branch[] = [];
+
+  private constructor() {}
+
+  public static getInstance(): BranchManager {
+    if (!BranchManager.instance) {
+      BranchManager.instance = new BranchManager();
+    }
+    return BranchManager.instance;
+  }
+
 
   public getBranches(): Branch[] {
     return this.branches;
@@ -23,11 +34,5 @@ export class BranchManager {
     if (index !== -1) {
       this.branches.splice(index, 1);
     }
-  }
-
-  constructor() {
-    // compruebo si existe la instancia
-    // Si existe la entrego de vuelta
-    // Si no existe crea una nueva instancia
   }
 }

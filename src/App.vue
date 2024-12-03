@@ -8,7 +8,7 @@ import type { BranchFormType } from '@/core/BranchTypes';
 import type { Branch } from '@/core/Branch';
 
 // Instancia única de BranchManager
-const branchManager = new BranchManager();
+const branchManager = BranchManager.getInstance();
 
 // Referencia reactiva para las ramas
 const branches = ref<Branch[]>(branchManager.getBranches());
