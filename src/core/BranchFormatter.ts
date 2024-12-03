@@ -29,15 +29,10 @@ export class BranchFormatter {
   }
 
   private static basicClean(text: string): string {
-    return this.removeSpecialCharacters(
-      this.removeMultipleDashes(
-        this.replaceSpaces(text)
-      )
-    );
-  }
-
-  private static removeSpecialCharacters(text: string): string {
-    return text.replace(/[^a-zA-Z0-9-]/g, '');
+    text = this.replaceSpaces(text);
+    text = this.removeMultipleDashes(text);
+    text = this.removeSpecialCharacters(text);
+    return text;
   }
 
   private static replaceSpaces(text: string): string {
@@ -46,5 +41,19 @@ export class BranchFormatter {
 
   private static removeMultipleDashes(text: string): string {
     return text.replace(/-+/g, '-');
+  }
+
+  private static removeSpecialCharacters(text: string): string {
+    text = this.setNy(text);
+    text = this.removeAccents(text);
+    return text.replace(/[^a-zA-Z0-9-]/g, '');
+  }
+
+  private static setNy(text: string): string {
+    return text.replace(/ñ/g, 'ny');
+  }
+
+  private static removeAccents(text: string): string {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 }

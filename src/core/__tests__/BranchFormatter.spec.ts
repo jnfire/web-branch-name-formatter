@@ -57,4 +57,27 @@ describe('BranchFormatter', () => {
 
     expect(formattedName).toBe('TICKET-202--feature');
   });
+
+  it('should convert ñ to ny', () => {
+    const branch: BranchType = {
+      ticketId: 'ticket-303',
+      featureName: 'Año nuevo',
+    };
+
+    const formattedName = BranchFormatter.format(branch);
+
+    expect(formattedName).toBe('TICKET-303--anyo-nuevo');
+  });
+
+  it('should remove accents', () => {
+    const branch: BranchType = {
+      ticketId: 'ticket-404',
+      featureName: 'Áccentéd fëatüre',
+    };
+
+    const formattedName = BranchFormatter.format(branch);
+
+    expect(formattedName).toBe('TICKET-404--accented-feature');
+  });
+
 });
