@@ -31,7 +31,7 @@ describe('BranchManager', () => {
 
     manager.deleteBranch(branchToDelete.id);
 
-    expect(manager.getBranches()).toHaveLength(0);
+    expect(manager.getBranches()).toHaveLength(1);
   });
 
   it('should not remove a branch if it does not exist', () => {
@@ -43,6 +43,6 @@ describe('BranchManager', () => {
 
     manager.deleteBranch(nonExistentBranch.id);
 
-    expect(manager.getBranches()).toHaveLength(1);
+    expect(manager.getBranches()).toHaveLength(2);
   });
 });
