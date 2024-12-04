@@ -43,6 +43,16 @@ const handleDeleteBranch = (branchId: number) => {
   </main>
 </template>
 
-<style scoped>
+<style scoped lang="sass">
+.header
+  background-color: $color-dark-blue
+  width: 100%
+  height: 10vh
+  padding: 0.5rem 2rem
 
+.main
+  background-color: $color-blue
+  width: 100%
+  height: 90vh
+  padding: 0.5rem 2rem
 </style>
