@@ -1,5 +1,6 @@
 import { Branch } from '@/core/Branch'
 import type { BranchFormType } from '@/core/BranchTypes'
+import { LocalStorageManager } from './LocalStorageManager'
 
 
 export class BranchManager {
@@ -15,9 +16,19 @@ export class BranchManager {
     return BranchManager.instance;
   }
 
-
   public getBranches(): Branch[] {
+    if (!this.branches.length) {
+      this.loadBranches();
+    }
     return this.branches;
+  }
+
+  private loadBranches(): void {
+    const localStorage = LocalStorageManager.getInstance();
+    const branches = localStorage.get('branches');
+    if (branches) {
+      this.branches = JSON.parse(branches).map((branch: Branch) => new Branch(branch));
+    }
   }
 
   public createBranch(formData: BranchFormType): void {
@@ -27,6 +38,7 @@ export class BranchManager {
       featureName: formData.featureName,
     });
     this.branches.push(newBranch);
+    this.saveBranches();
   }
 
   public deleteBranch(branchId: number): void {
@@ -34,5 +46,11 @@ export class BranchManager {
     if (index !== -1) {
       this.branches.splice(index, 1);
     }
+    this.saveBranches();
+  }
+
+  private saveBranches(): void {
+    const localStorage = LocalStorageManager.getInstance();
+    localStorage.save('branches', JSON.stringify(this.branches));
   }
 }
