@@ -31,7 +31,9 @@ const handleDeleteBranch = (branchId: number) => {
 <template>
   <header class="header">
     <div class="header__name">
-      <h1 class="header__name__text">V01-branch-name-generator</h1>
+      <a href="#">
+        <h1 class="header__name__text">V01-branch-name-generator</h1>
+      </a>
     </div>
     <div class="header__form">
       <BranchForm @submitForm="handleFormSubmit" />
@@ -48,7 +50,25 @@ const handleDeleteBranch = (branchId: number) => {
   background-color: $color-dark-blue
   width: 100%
   height: 10vh
-  padding: 0.5rem 2rem
+  padding: 0.5rem 3.5rem
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+  &__name
+    flex: 1
+
+    &__text
+      color: $color-beige
+      font-size: 16px
+      font-weight: bold
+      overflow: hidden
+      text-overflow: ellipsis
+      white-space: nowrap
+
+  &__form
+    display: flex
+    align-items: center
 
 .main
   background-color: $color-blue

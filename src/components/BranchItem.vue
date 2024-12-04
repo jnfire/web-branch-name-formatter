@@ -64,6 +64,7 @@ const deleteBranch = () => {
 
     &__copy
       border-radius: 5px 0 0 5px
+      margin-right: 2px
       background-color: $color-beige
       color: $color-dark-blue
 
