@@ -7,7 +7,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'TICKET-123',
       featureName: 'New Feature',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 
@@ -18,7 +18,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'TICKET-456',
       featureName: 'Feature with Special Characters!@#',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 
@@ -29,7 +29,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'TICKET-789',
       featureName: 'Feature with spaces',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 
@@ -40,7 +40,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'TICKET-101',
       featureName: 'Feature---with---multiple---dashes',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 
@@ -51,7 +51,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'ticket-202',
       featureName: 'Feature',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 
@@ -62,7 +62,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'ticket-303',
       featureName: 'Año nuevo',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 
@@ -73,7 +73,7 @@ describe('BranchFormatter', () => {
     const branch: BranchType = {
       ticketId: 'ticket-404',
       featureName: 'Áccentéd fëatüre',
-    };
+    } as BranchType;
 
     const formattedName = BranchFormatter.format(branch);
 

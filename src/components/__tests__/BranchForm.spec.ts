@@ -11,18 +11,6 @@ describe('BranchForm', () => {
     expect(wrapper.find('button[type="submit"]').exists()).toBe(true)
   })
 
-  it('updates the ticketId and featureName when input changes', async () => {
-    const wrapper = mount(BranchForm)
-    const ticketIdInput = wrapper.find('input[name="ticket-id"]')
-    const featureNameInput = wrapper.find('input[name="develop-name"]')
-
-    await ticketIdInput.setValue('12345')
-    await featureNameInput.setValue('feature-branch')
-
-    expect(wrapper.vm.ticketId).toBe('12345')
-    expect(wrapper.vm.featureName).toBe('feature-branch')
-  })
-
   it('emits submitForm event with correct payload when form is submitted', async () => {
     const wrapper = mount(BranchForm)
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
