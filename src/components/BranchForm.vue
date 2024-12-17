@@ -92,8 +92,8 @@ function cleanInput() {
     transition: background-color 0.3s ease
 
     &:hover
-      box-shadow: darken($color-beige, 60%) inset 0 1px 2px 2px
+      background-color: saturate($color-beige, 100%)
 
     &:active
-      background-color: saturate($color-beige, 90%)
+      box-shadow: darken($color-beige, 60%) inset 0 1px 2px 2px
 </style>

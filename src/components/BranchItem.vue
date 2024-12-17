@@ -71,10 +71,10 @@ const deleteBranch = () => {
       color: $color-dark-blue
 
       &:hover
-        box-shadow: darken($color-beige, 60%) inset 0 1px 2px 2px
+        background-color: saturate($color-beige, 100%)
 
       &:active
-        background-color: saturate($color-beige, 90%)
+        box-shadow: darken($color-beige, 60%) inset 0 1px 2px 2px
 
     &__delete
       border-radius: 0 5px 5px 0
@@ -82,8 +82,8 @@ const deleteBranch = () => {
       color: $color-dark-blue
 
       &:hover
-        box-shadow: darken($color-red, 40%) inset 0 1px 2px 2px
+        background-color: saturate($color-red, 20%)
 
       &:active
-        background-color: saturate($color-red, 20%)
+        box-shadow: darken($color-red, 40%) inset 0 1px 2px 2px
 </style>
