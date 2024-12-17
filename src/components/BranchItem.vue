@@ -78,6 +78,7 @@ const deleteBranch = () => {
 
     &__delete
       border-radius: 0 5px 5px 0
+      margin-left: 1px
       background-color: $color-red
       color: $color-dark-blue
 

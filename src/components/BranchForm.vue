@@ -82,6 +82,7 @@ function cleanInput() {
 
   &__button__generate
     padding: 8px 15px
+    margin-left: 1px
     font-size: 14px
     font-weight: bold
     border: none
