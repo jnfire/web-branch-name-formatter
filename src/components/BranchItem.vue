@@ -43,12 +43,14 @@ const deleteBranch = () => {
 
   &__name
     flex: 1
+    min-width: 0
 
     &__text
       font-weight: bold
       overflow: hidden
       text-overflow: ellipsis
       white-space: nowrap
+      max-width: 90%
 
   &__buttons
     display: flex
