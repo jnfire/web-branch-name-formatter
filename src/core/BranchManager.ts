@@ -16,11 +16,21 @@ export class BranchManager {
     return BranchManager.instance;
   }
 
-  public getBranches(): Branch[] {
+  public getBranches(isDescending: boolean = true): Branch[] {
     if (!this.branches.length) {
       this.loadBranches();
     }
-    return this.branches;
+    return this.branches.sort((a, b) => {
+      return isDescending ? this.descending(b, a) : this.ascending(a, b);
+    });
+  }
+
+  private ascending(a: Branch, b: Branch) {
+    return a.id - b.id
+  }
+
+  private descending(b: Branch, a: Branch) {
+    return b.id - a.id
   }
 
   private loadBranches(): void {
