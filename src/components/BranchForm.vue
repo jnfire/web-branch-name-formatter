@@ -1,57 +1,54 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { BranchFormType } from '@/core/BranchTypes';
+import { ref } from 'vue'
+import type { BranchFormType } from '@/core/BranchTypes'
 
-const ticketId = ref('');
-const featureName = ref('');
+const ticketId = ref('')
+const featureName = ref('')
 
-const emit = defineEmits(['submitForm']);
-
+const emit = defineEmits(['submitForm'])
 
 const handleSubmit = (event: Event) => {
-  event.preventDefault();
+  event.preventDefault()
 
-  if (!validateInput()) return;
+  if (!validateInput()) return
 
   emit('submitForm', {
     ticketId: ticketId.value,
     featureName: featureName.value
-  } as BranchFormType);
+  } as BranchFormType)
 
-  cleanInput();
-};
+  cleanInput()
+}
 
 function validateInput() {
-  return ticketId.value && featureName.value;
+  return ticketId.value && featureName.value
 }
 
 function cleanInput() {
-  ticketId.value = '';
-  featureName.value = '';
+  ticketId.value = ''
+  featureName.value = ''
 }
 </script>
 
 <template>
   <form class="form" aria-label="Create branch name form" @submit="handleSubmit">
     <input
-        class="form__input form__input__ticket_id"
-        type="text"
-        name="ticket-id"
-        aria-label="Ticket name"
-        v-model="ticketId"
-        placeholder="Ticket ID"
-    >
+      class="form__input form__input__ticket_id"
+      type="text"
+      name="ticket-id"
+      aria-label="Ticket name"
+      v-model="ticketId"
+      placeholder="Ticket ID"
+    />
     <input
-        class="form__input form__input__feature_name"
-        type="text" name="develop-name"
-        aria-label="Develop name"
-        v-model="featureName"
-        placeholder="Develop name"
-    >
-    <button
-        class="form__button__generate"
-        type="submit"
-    >Generate</button>
+      class="form__input form__input__feature_name"
+      type="text"
+      name="develop-name"
+      aria-label="Develop name"
+      v-model="featureName"
+      placeholder="Develop name"
+    />
+    <button class="form__button__generate" type="submit">Generate</button>
   </form>
 </template>
 
@@ -60,6 +57,11 @@ function cleanInput() {
   display: flex
   gap: 1px
   align-items: center
+
+  @media (max-width: 768px)
+    flex-direction: column
+    gap: 8px
+    width: 100%
 
   &__input
     padding: 8px 10px
@@ -70,15 +72,27 @@ function cleanInput() {
     outline: none
     transition: border-color 0.2s ease
 
+    @media (max-width: 768px)
+      padding: 12px
+      font-size: 16px // Mejor para inputs móviles
+      width: 100%
+
     &:focus
       border-color: #3498db
 
   &__input__ticket_id
     border-radius: 5px 0 0 5px
-    width: 25%
+
+    @media (max-width: 768px)
+      border-radius: 5px
+      width: 100%
 
   &__input__feature_name
     width: 75%
+
+    @media (max-width: 768px)
+      width: 100%
+      border-radius: 5px
 
   &__button__generate
     padding: 8px 15px
@@ -91,6 +105,13 @@ function cleanInput() {
     background-color: $color-beige
     color: $color-dark-blue
     transition: background-color 0.3s ease
+
+    @media (max-width: 768px)
+      width: 100%
+      padding: 8px 15px
+      margin-left: 0
+      border-radius: 5px
+      font-size: 16px
 
     &:hover
       background-color: saturate($color-beige, 100%)
