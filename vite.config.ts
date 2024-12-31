@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  base: '/branch-name-formatter/',
+  base: '/web-branch-name-formatter/',
   plugins: [vue()],
   resolve: {
     alias: {
