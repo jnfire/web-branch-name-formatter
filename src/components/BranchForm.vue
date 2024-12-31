@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { BranchFormType } from '@/core/BranchTypes'
+import type { BranchFormType } from '@/core/BranchTypes.ts'
 
 const ticketId = ref('')
 const featureName = ref('')
