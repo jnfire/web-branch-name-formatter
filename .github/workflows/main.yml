@@ -19,7 +19,15 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: '18.x'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Instalar dependencias
         run: npm ci
@@ -30,8 +38,15 @@ jobs:
       - name: Construir aplicación
         run: npm run build
 
+      - name: Crear archivo .nojekyll
+        run: touch dist/.nojekyll
+
       - name: Desplegar en GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          #cname: ${{ secrets.CNAME }} # Uncomment this line if you have a custom domain
+          enable_jekyll: false
+          force_orphan: true
