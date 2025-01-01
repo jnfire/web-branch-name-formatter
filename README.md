@@ -33,3 +33,9 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+
+### Check the release version locally
+
+```sh
+npm run build && npm run preview
+```
