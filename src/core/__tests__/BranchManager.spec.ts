@@ -49,4 +49,51 @@ describe('BranchManager', () => {
 
     expect(manager.getBranches()).toHaveLength(2)
   })
+
+  it('shoulf sort branches in ascending order', () => {
+    const manager = BranchManager.getInstance()
+    manager.clearBranches()
+
+    const formData1: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' }
+    const formData2: BranchFormType = { ticketId: 'TICKET-456', featureName: 'Another Feature' }
+
+    manager.createBranch(formData2)
+    manager.createBranch(formData1)
+
+    const branches = manager.getBranches(false)
+    expect(branches[0].ticketId).toBe('TICKET-456')
+    expect(branches[1].ticketId).toBe('TICKET-123')
+  })
+
+  it('should sort branches in descending order', () => {
+    const manager = BranchManager.getInstance()
+    manager.clearBranches()
+
+    const formData1: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' }
+    const formData2: BranchFormType = { ticketId: 'TICKET-456', featureName: 'Another Feature' }
+
+    manager.createBranch(formData2)
+    manager.createBranch(formData1)
+
+    const branches = manager.getBranches()
+    expect(branches[0].ticketId).toBe('TICKET-123')
+    expect(branches[1].ticketId).toBe('TICKET-456')
+  })
+
+  it('should not repeat branch ids', () => {
+    const manager = BranchManager.getInstance()
+    manager.clearBranches()
+
+    const formData1: BranchFormType = { ticketId: 'TICKET-123', featureName: 'New Feature' }
+    const formData2: BranchFormType = { ticketId: 'TICKET-456', featureName: 'Another Feature' }
+    const formData3: BranchFormType = { ticketId: 'TICKET-789', featureName: 'Yet Another Feature' }
+
+    manager.createBranch(formData1)
+    manager.createBranch(formData2)
+    manager.deleteBranch(1)
+    manager.createBranch(formData3)
+
+    const branches = manager.getBranches()
+    expect(branches[0].id).not.toBe(branches[1].id)
+  })
 })

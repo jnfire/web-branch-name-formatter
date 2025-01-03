@@ -5,6 +5,7 @@ import { LocalStorageManager } from '@/core/LocalStorageManager'
 export class BranchManager {
   private static instance: BranchManager
   private branches: Branch[] = []
+  private lastId: number = 0
 
   private constructor() {}
 
@@ -38,16 +39,28 @@ export class BranchManager {
     if (branches) {
       this.branches = JSON.parse(branches).map((branch: Branch) => new Branch(branch))
     }
+    this.setLastId()
+  }
+
+  private setLastId(): void {
+    this.lastId = this.branches.reduce((maxId, branch) => {
+      return branch.id > maxId ? branch.id : maxId
+    }, 0)
   }
 
   public createBranch(formData: BranchFormType): void {
+    this.setNewId()
     const newBranch = new Branch({
-      id: this.branches.length + 1,
+      id: this.lastId,
       ticketId: formData.ticketId,
       featureName: formData.featureName
     })
     this.branches.push(newBranch)
     this.saveBranches()
+  }
+
+  private setNewId() {
+    this.lastId = this.lastId + 1
   }
 
   public deleteBranch(branchId: number): void {
@@ -61,5 +74,11 @@ export class BranchManager {
   private saveBranches(): void {
     const localStorage = LocalStorageManager.getInstance()
     localStorage.save('branches', JSON.stringify(this.branches))
+  }
+
+  public clearBranches(): void {
+    this.lastId = 0
+    this.branches = []
+    this.saveBranches()
   }
 }
