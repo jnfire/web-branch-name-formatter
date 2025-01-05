@@ -41,6 +41,9 @@ jobs:
       - name: Crear archivo .nojekyll
         run: touch dist/.nojekyll
 
+      - name: Crear archivo CNAME
+        run: echo 'branches.jnfire.dev' > dist/CNAME
+
       - name: Desplegar en GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
