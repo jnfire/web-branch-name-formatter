@@ -3,7 +3,7 @@
 import { ref } from 'vue'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
-import FooterComponent from './components/FooterComponent.vue'
+import FooterComponent from './components/Footer.vue'
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
