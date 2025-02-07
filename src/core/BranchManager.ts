@@ -1,6 +1,6 @@
 import { Branch } from '@/core/Branch'
 import type { BranchFormType } from '@/core/BranchTypes'
-import { LocalStorageManager } from '@/core/LocalStorageManager'
+import { LocalStorageManager } from '@/utils/LocalStorageManager'
 
 export class BranchManager {
   private static instance: BranchManager
