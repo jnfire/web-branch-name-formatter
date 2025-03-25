@@ -16,11 +16,15 @@ export class BranchFormatter {
   }
 
   private static cleanFeatureName(featureName: string): string {
-    return this.basicClean(this.toLowerCase(featureName))
+    return this.basicClean(this.replaceSlash(this.toLowerCase(featureName)))
   }
 
   private static toLowerCase(text: string): string {
     return text.toLowerCase()
+  }
+
+  private static replaceSlash(text: string): string {
+    return text.replace(/\//g, '-o-')
   }
 
   private static basicClean(text: string): string {

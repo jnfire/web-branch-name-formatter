@@ -79,4 +79,15 @@ describe('BranchFormatter', () => {
 
     expect(formattedName).toBe('TICKET-404--accented-feature')
   })
+
+  it('should replace slashes with -o-', () => {
+    const branch: BranchType = {
+      ticketId: 'ticket-505',
+      featureName: 'Feature/slashes'
+    } as BranchType
+
+    const formattedName = BranchFormatter.format(branch)
+
+    expect(formattedName).toBe('TICKET-505--feature-o-slashes')
+  })
 })
