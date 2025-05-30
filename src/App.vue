@@ -50,6 +50,10 @@ const handleDeleteBranch = (branchId: number) => {
 
 <style scoped lang="sass">
 .header
+  position: fixed
+  top: 0
+  left: 0
+  z-index: 1000
   background-color: $color-dark-blue
   width: 100%
   height: 10vh
@@ -57,6 +61,7 @@ const handleDeleteBranch = (branchId: number) => {
   display: flex
   justify-content: space-between
   align-items: center
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) /* Elimina la barra negra */
 
   @media (max-width: 768px)
     padding: 0.5rem 1rem
@@ -94,8 +99,10 @@ const handleDeleteBranch = (branchId: number) => {
 .main
   background-color: $color-blue
   width: 100%
-  min-height: 79vh
+  min-height: calc(100vh - 10vh) /* Ajusta la altura para evitar scroll innecesario */
   padding: 0.5rem 2rem
+  margin-top: 10vh
+  overflow-y: auto
 
   @media (max-width: 768px)
     min-height: calc(60vh - 130px)
