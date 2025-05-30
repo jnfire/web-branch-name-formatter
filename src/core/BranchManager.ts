@@ -53,7 +53,8 @@ export class BranchManager {
     const newBranch = new Branch({
       id: this.lastId,
       ticketId: formData.ticketId,
-      featureName: formData.featureName
+      featureName: formData.featureName,
+      projectId: formData.projectId,
     })
     this.branches.push(newBranch)
     this.saveBranches()
