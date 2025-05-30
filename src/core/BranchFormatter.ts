@@ -2,9 +2,14 @@ import type { BranchType } from '@/core/BranchTypes'
 
 export class BranchFormatter {
   static format(branch: BranchType): string {
+    const projectId: string = this.cleanProjectId(branch.projectId)
     const ticketId: string = this.cleanTicketId(branch.ticketId)
     const featureName: string = this.cleanFeatureName(branch.featureName)
-    return `${ticketId}--${featureName}`
+    return `${projectId}-${ticketId}--${featureName}`
+  }
+
+  private static cleanProjectId(projectId: string): string {
+    return this.basicClean(this.toUpperCase(projectId))
   }
 
   private static cleanTicketId(ticketId: string): string {

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import type { BranchFormType } from '@/core/BranchTypes.ts'
 
+const projectId = ref('')
 const ticketId = ref('')
 const featureName = ref('')
 
@@ -13,6 +14,7 @@ const handleSubmit = (event: Event) => {
   if (!validateInput()) return
 
   emit('submitForm', {
+    projectId: projectId.value,
     ticketId: ticketId.value,
     featureName: featureName.value
   } as BranchFormType)
@@ -21,10 +23,11 @@ const handleSubmit = (event: Event) => {
 }
 
 function validateInput() {
-  return ticketId.value && featureName.value
+  return projectId.value && ticketId.value && featureName.value
 }
 
 function cleanInput() {
+  projectId.value = ''
   ticketId.value = ''
   featureName.value = ''
 }
@@ -32,6 +35,14 @@ function cleanInput() {
 
 <template>
   <form class="form" aria-label="Create branch name form" @submit="handleSubmit">
+    <input
+      class="form__input form__input__project_id"
+      type="text"
+      name="project-id"
+      aria-label="Project ID"
+      v-model="projectId"
+      placeholder="Project ID"
+    />
     <input
       class="form__input form__input__ticket_id"
       type="text"
@@ -80,8 +91,15 @@ function cleanInput() {
     &:focus
       border-color: #3498db
 
-  &__input__ticket_id
+  &__input__project_id
     border-radius: 5px 0 0 5px
+
+    @media (max-width: 768px)
+      border-radius: 5px
+      width: 100%
+
+  &__input__ticket_id
+    border-radius: 0 5px 0 0
 
     @media (max-width: 768px)
       border-radius: 5px
