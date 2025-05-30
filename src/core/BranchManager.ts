@@ -37,24 +37,22 @@ export class BranchManager {
     const localStorage = LocalStorageManager.getInstance()
     const branches = localStorage.get('branches')
     if (branches) {
-      this.branches = JSON.parse(branches).map((branch: Branch) => new Branch(branch))
-      this.correctExistingBranches() // Método temporal para corregir registros existentes
+      this.branches = JSON.parse(branches).map((branch: Branch) => this.loadBranch(branch))
     }
     this.setLastId()
   }
 
-  /**
-   * Método temporal para corregir registros existentes en el local storage.
-   * Este método debe eliminarse después de un tiempo cuando todos los datos estén corregidos.
-   */
-  private correctExistingBranches(): void {
-    this.branches = this.branches.map((branch) => {
-      if (!branch.projectId) {
-        const [projectId, ticketId] = branch.ticketId.split('-')
-        branch.projectId = projectId || ''
-        branch.ticketId = ticketId || branch.ticketId
-      }
-      return branch
+  private loadBranch(branch: Branch): Branch {
+    const id = branch.id || 0
+    const projectId = branch.projectId || ''
+    const ticketId = branch.ticketId || ''
+    const featureName = branch.featureName || ''
+
+    return new Branch({
+      id: id,
+      projectId: projectId.trim(),
+      ticketId: ticketId.trim(),
+      featureName: featureName.trim(),
     })
   }
 
