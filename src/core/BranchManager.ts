@@ -43,17 +43,32 @@ export class BranchManager {
   }
 
   private loadBranch(branch: Branch): Branch {
+    let projectId = branch.projectId || ''
+    let ticketId = branch.ticketId || ''
+
+    if (ticketId.includes('-')) {
+      const splitIds = this.splitProjectAndTicketId(ticketId)
+      projectId = splitIds.projectId
+      ticketId = splitIds.ticketId
+    }
+
     const id = branch.id || 0
-    const projectId = branch.projectId || ''
-    const ticketId = branch.ticketId || ''
     const featureName = branch.featureName || ''
 
     return new Branch({
       id: id,
       projectId: projectId.trim(),
       ticketId: ticketId.trim(),
-      featureName: featureName.trim(),
+      featureName: featureName.trim()
     })
+  }
+
+  private splitProjectAndTicketId(combinedId: string): { projectId: string; ticketId: string } {
+    const [projectId, ticketId] = combinedId.split('-')
+    return {
+      projectId: projectId || '',
+      ticketId: ticketId || ''
+    }
   }
 
   private setLastId(): void {
@@ -68,7 +83,7 @@ export class BranchManager {
       id: this.lastId,
       ticketId: formData.ticketId,
       featureName: formData.featureName,
-      projectId: formData.projectId,
+      projectId: formData.projectId
     })
     this.branches.push(newBranch)
     this.saveBranches()
