@@ -48,64 +48,76 @@ const handleDeleteBranch = (branchId: number) => {
   <FooterComponent />
 </template>
 
-<style scoped lang="sass">
-.header
-  position: fixed
-  top: 0
-  left: 0
-  z-index: 1000
-  background-color: $color-dark-blue
-  width: 100%
-  height: 10vh
-  padding: 0.5rem 3.5rem
-  display: flex
-  justify-content: space-between
-  align-items: center
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) /* Elimina la barra negra */
+<style scoped lang="scss">
+@import '@/assets/variables.scss';
 
-  @media (max-width: 768px)
-    padding: 0.5rem 1rem
-    flex-direction: column
-    height: auto
-    gap: 10px
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: var(--color-dark-blue);
+  width: 100%;
+  height: 10vh;
+  padding: 0.5rem 3.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  &__name
-    flex: 1
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+  }
 
-    @media (max-width: 768px)
-      width: 100%
-      margin-bottom: 0.5rem
+  &__name {
+    flex: 1;
 
-    &__text
-      color: $color-beige
-      font-size: 16px
-      font-weight: bold
-      overflow: hidden
-      text-overflow: ellipsis
-      white-space: nowrap
+    @media (max-width: 768px) {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
 
-      @media (max-width: 768px)
-        font-size: 14px
-        text-align: center
+    &__text {
+      color: var(--color-beige);
+      font-size: 16px;
+      font-weight: bold;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
-  &__form
-    display: flex
-    align-items: center
+      @media (max-width: 768px) {
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+  }
 
-    @media (max-width: 768px)
-      width: 100%
-      justify-content: center
+  &__form {
+    display: flex;
+    align-items: center;
 
-.main
-  background-color: $color-blue
-  width: 100%
-  min-height: calc(100vh - 10vh) /* Ajusta la altura para evitar scroll innecesario */
-  padding: 0.5rem 2rem
-  margin-top: 10vh
-  overflow-y: auto
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
 
-  @media (max-width: 768px)
-    min-height: calc(60vh - 130px)
-    padding: 0.5rem 1rem
-    overflow-y: auto
+.main {
+  background-color: var(--color-blue);
+  width: 100%;
+  min-height: calc(100vh - 10vh); /* Ajusta la altura para evitar scroll innecesario */
+  padding: 0.5rem 2rem;
+  margin-top: 10vh;
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    min-height: calc(60vh - 130px);
+    padding: 0.5rem 1rem;
+    overflow-y: auto;
+  }
+}
 </style>

@@ -63,77 +63,92 @@ function cleanInput() {
   </form>
 </template>
 
-<style scoped lang="sass">
-.form
-  display: flex
-  gap: 1px
-  align-items: center
+<style scoped lang="scss">
+.form {
+  display: flex;
+  gap: 1px;
+  align-items: center;
 
-  @media (max-width: 768px)
-    flex-direction: column
-    gap: 8px
-    width: 100%
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
 
-  &__input
-    padding: 8px 10px
-    border: 1px solid $color-dark-blue
-    font-size: 14px
-    background-color: $color-white
-    color: $color-dark-blue
-    outline: none
-    transition: border-color 0.2s ease
+  &__input {
+    padding: 8px 10px;
+    border: 1px solid var(--color-dark-blue);
+    font-size: 14px;
+    background-color: var(--color-white);
+    color: var(--color-dark-blue);
+    outline: none;
+    transition: border-color 0.2s ease;
 
-    @media (max-width: 768px)
-      padding: 12px
-      font-size: 16px // Mejor para inputs móviles
-      width: 100%
+    @media (max-width: 768px) {
+      padding: 12px;
+      font-size: 16px;
+      width: 100%;
+    }
 
-    &:focus
-      border-color: #3498db
+    &:focus {
+      border-color: #3498db;
+    }
+  }
 
-  &__input__project_id
-    border-radius: 5px 0 0 5px
+  &__input__project_id {
+    border-radius: 5px 0 0 5px;
 
-    @media (max-width: 768px)
-      border-radius: 5px
-      width: 100%
+    @media (max-width: 768px) {
+      border-radius: 5px;
+      width: 100%;
+    }
+  }
 
-  &__input__ticket_id
-    border-radius: 0 5px 0 0
+  &__input__ticket_id {
+    border-radius: 0 5px 0 0;
 
-    @media (max-width: 768px)
-      border-radius: 5px
-      width: 100%
+    @media (max-width: 768px) {
+      border-radius: 5px;
+      width: 100%;
+    }
+  }
 
-  &__input__feature_name
-    width: 75%
+  &__input__feature_name {
+    width: 75%;
 
-    @media (max-width: 768px)
-      width: 100%
-      border-radius: 5px
+    @media (max-width: 768px) {
+      width: 100%;
+      border-radius: 5px;
+    }
+  }
 
-  &__button__generate
-    padding: 8px 15px
-    margin-left: 1px
-    font-size: 14px
-    font-weight: bold
-    border: none
-    border-radius: 0 5px 5px 0
-    cursor: pointer
-    background-color: $color-beige
-    color: $color-dark-blue
-    transition: background-color 0.3s ease
+  &__button__generate {
+    padding: 8px 15px;
+    margin-left: 1px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    background-color: var(--color-beige);
+    color: var(--color-dark-blue);
+    transition: background-color 0.3s ease;
 
-    @media (max-width: 768px)
-      width: 100%
-      padding: 8px 15px
-      margin-left: 0
-      border-radius: 5px
-      font-size: 16px
+    @media (max-width: 768px) {
+      width: 100%;
+      padding: 8px 15px;
+      margin-left: 0;
+      border-radius: 5px;
+      font-size: 16px;
+    }
 
-    &:hover
-      background-color: saturate($color-beige, 100%)
+    &:hover {
+      background-color: var(--color-beige);
+    }
 
-    &:active
-      box-shadow: darken($color-beige, 60%) inset 0 1px 2px 2px
+    &:active {
+      box-shadow: inset 0 1px 2px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
 </style>

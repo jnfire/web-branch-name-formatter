@@ -27,32 +27,40 @@
   </footer>
 </template>
 
-<style scoped lang="sass">
-.footer
-  background-color: $color-dark-blue
-  width: 100%
-  padding: 1rem 3.5rem
-  margin-top: auto
+<style scoped lang="scss">
+.footer {
+  background-color: var(--color-dark-blue);
+  width: 100%;
+  padding: 1rem 3.5rem;
+  margin-top: auto;
 
-  &__content
-    text-align: center
+  &__content {
+    text-align: center;
+  }
 
-  &__text, &__license
-    color: $color-beige
-    font-size: 14px
-    margin: 0.5rem 0
+  &__text,
+  &__license {
+    color: var(--color-beige);
+    font-size: 14px;
+    margin: 0.5rem 0;
+  }
 
-  &__license
-    font-size: 11px
+  &__license {
+    font-size: 11px;
+  }
 
-  &__link
-    color: $color-beige
-    text-decoration: underline
-    transition: opacity 0.2s ease
+  &__link {
+    color: var(--color-beige);
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
 
-    &:hover
-      opacity: 0.8
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 
-  @media (max-width: 768px)
-    padding: 1rem
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
 </style>
