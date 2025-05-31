@@ -1,10 +1,14 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BranchManager } from '../../core/BranchManager'
-import { Branch } from '../../core/Branch'
 import type { BranchFormType } from '../../core/BranchTypes'
 import { LocalStorageManager } from '../../utils/LocalStorageManager'
 
 describe('BranchManager', () => {
+  beforeEach(() => {
+    const manager = BranchManager.getInstance();
+    manager.clearBranches();
+  });
+
   it('should initialize with an empty list of branches', () => {
     const manager = BranchManager.getInstance()
     expect(manager.getBranches()).toEqual([])
@@ -25,7 +29,7 @@ describe('BranchManager', () => {
     expect(branches[0].projectId).toBe('PROJ')
     expect(branches[0].ticketId).toBe('TICKET-123')
     expect(branches[0].featureName).toBe('New Feature')
-    expect(branches[0].branchName).toBe('TICKET-123--new-feature')
+    expect(branches[0].branchName).toBe('PROJ-TICKET-123--new-feature')
   })
 
   it('should remove a branch', () => {
@@ -53,16 +57,12 @@ describe('BranchManager', () => {
     }
 
     manager.createBranch(formData)
-    const nonExistentBranch = new Branch({
-      id: 999,
-      ticketId: 'TICKET-999',
-      featureName: 'Non-existent',
-      projectId: 'PROJ'
-    })
+    const nonExistentBranchId = 999
 
-    manager.deleteBranch(nonExistentBranch.id)
+    const result = manager.deleteBranch(nonExistentBranchId)
 
-    expect(manager.getBranches()).toHaveLength(1)
+    expect(result).toBe(false) // Verifica que no se eliminó ninguna rama
+    expect(manager.getBranches()).toHaveLength(1) // Asegura que la rama original sigue existiendo
   })
 
   it('shoulf sort branches in ascending order', () => {

@@ -93,12 +93,14 @@ export class BranchManager {
     this.lastId = this.lastId + 1
   }
 
-  public deleteBranch(branchId: number): void {
+  public deleteBranch(branchId: number): boolean {
     const index = this.branches.findIndex((branch) => branch.id === branchId)
     if (index !== -1) {
       this.branches.splice(index, 1)
+      this.saveBranches()
+      return true // Indica que la rama fue eliminada
     }
-    this.saveBranches()
+    return false // Indica que la rama no existía
   }
 
   private saveBranches(): void {
