@@ -46,7 +46,7 @@ export class BranchManager {
     let projectId = branch.projectId || ''
     let ticketId = branch.ticketId || ''
 
-    if (ticketId.includes('-')) {
+    if (ticketId.includes('-') && !projectId) {
       const splitIds = this.splitProjectAndTicketId(ticketId)
       projectId = splitIds.projectId
       ticketId = splitIds.ticketId

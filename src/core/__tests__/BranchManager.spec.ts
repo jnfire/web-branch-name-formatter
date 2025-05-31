@@ -172,4 +172,37 @@ describe('BranchManager', () => {
     expect(branches[0].ticketId).toBe('123')
     expect(branches[0].featureName).toBe('Feature Name')
   })
+
+  it('should correctly handle a branch with a hyphen in the ticketId and a valid projectId', () => {
+    const manager = BranchManager.getInstance();
+    manager.clearBranches();
+
+    // Simulate local storage with a branch having a hyphen in ticketId and a valid projectId
+    const localStorageMock = {
+      get: (key: string) => {
+        if (key === 'branches') {
+          return JSON.stringify([
+            {
+              id: 1,
+              ticketId: 'TICKET-123-456',
+              featureName: 'Feature Name',
+              projectId: 'PROJ'
+            }
+          ]);
+        }
+        return null;
+      },
+      save: () => {}
+    };
+
+    vi.spyOn(LocalStorageManager, 'getInstance').mockReturnValue(localStorageMock as any);
+
+    manager['loadBranches']();
+
+    const branches = manager.getBranches();
+    expect(branches).toHaveLength(1);
+    expect(branches[0].projectId).toBe('PROJ'); // Ensure projectId is not overwritten
+    expect(branches[0].ticketId).toBe('TICKET-123-456'); // Ensure ticketId remains intact
+    expect(branches[0].featureName).toBe('Feature Name');
+  });
 })
