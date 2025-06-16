@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import BranchForm from '../BranchForm.vue'
+import type { BranchFormType } from '@/core/BranchTypes'
 
 describe('BranchForm', () => {
   it('renders the form correctly', () => {
@@ -15,6 +16,9 @@ describe('BranchForm', () => {
     const wrapper = mount(BranchForm)
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
     const featureNameInput = wrapper.find('input[name="develop-name"]')
+    const projectIdInput = wrapper.find('input[name="project-id"]')
+
+    await projectIdInput.setValue('PROJ')
 
     await ticketIdInput.setValue('12345')
     await featureNameInput.setValue('feature-branch')
@@ -22,6 +26,10 @@ describe('BranchForm', () => {
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(wrapper.emitted().submitForm).toBeTruthy()
-    expect(wrapper.emitted().submitForm[0]).toEqual([{ ticketId: '12345', featureName: 'feature-branch' }])
+    expect(wrapper.emitted().submitForm[0][0] as BranchFormType).toEqual({
+      projectId: 'PROJ',
+      ticketId: '12345',
+      featureName: 'feature-branch'
+    })
   })
 })

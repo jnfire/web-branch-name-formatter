@@ -11,6 +11,8 @@ import type { Branch } from '@/core/Branch'
 // Instancia única de BranchManager
 const branchManager = BranchManager.getInstance()
 
+console.log('BranchManager filter:', branchManager.filterBranches({ projectId: 'a' }))
+
 // Referencia reactiva para las ramas
 const branches = ref<Branch[]>(branchManager.getBranches())
 

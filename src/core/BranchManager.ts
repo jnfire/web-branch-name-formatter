@@ -113,4 +113,40 @@ export class BranchManager {
     this.branches = []
     this.saveBranches()
   }
+
+  public filterBranches(filter: Partial<BranchFormType>): Branch[] {
+    let filteredBranches = this.getBranches()
+
+    const filterProjectId = this.getCleanValue(filter.projectId)
+    if (filterProjectId) {
+      filteredBranches = filteredBranches.filter((branch) =>
+        this.matchesFilter(branch.projectId, filterProjectId)
+      )
+    }
+
+    const filterTicketId = this.getCleanValue(filter.ticketId)
+    if (filterTicketId) {
+      filteredBranches = filteredBranches.filter((branch) =>
+        this.matchesFilter(branch.ticketId, filterTicketId)
+      )
+    }
+
+    const filterFeatureName = this.getCleanValue(filter.featureName)
+    if (filterFeatureName) {
+      filteredBranches = filteredBranches.filter((branch) =>
+        this.matchesFilter(branch.featureName, filterFeatureName)
+      )
+    }
+
+    return filteredBranches
+  }
+
+  private matchesFilter(branchValue: string | undefined, filterValue: string): boolean {
+    const cleanBranchValue = this.getCleanValue(branchValue)
+    return cleanBranchValue.includes(filterValue)
+  }
+
+  private getCleanValue(value: string | undefined): string {
+    return value ? value.trim().toLowerCase() : ''
+  }
 }
