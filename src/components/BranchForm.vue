@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { BranchFormType } from '@/core/BranchTypes.ts'
 
 const projectId = ref('')
 const ticketId = ref('')
 const featureName = ref('')
 
-const emit = defineEmits(['submitForm'])
+const isFiltering = ref(false) // Estado del botón de filtro
+
+const emit = defineEmits(['submitForm', 'filterChange'])
 
 const handleSubmit = (event: Event) => {
   event.preventDefault()
@@ -31,6 +33,27 @@ function cleanInput() {
   ticketId.value = ''
   featureName.value = ''
 }
+
+const toggleFilter = () => {
+  isFiltering.value = !isFiltering.value
+  emit('filterChange', {
+    projectId: projectId.value,
+    ticketId: ticketId.value,
+    featureName: featureName.value,
+    isFiltering: isFiltering.value
+  })
+}
+
+watch([projectId, ticketId, featureName], () => {
+  if (isFiltering.value) {
+    emit('filterChange', {
+      projectId: projectId.value,
+      ticketId: ticketId.value,
+      featureName: featureName.value,
+      isFiltering: isFiltering.value
+    })
+  }
+})
 </script>
 
 <template>
@@ -60,6 +83,14 @@ function cleanInput() {
       placeholder="Develop name"
     />
     <button class="form__button__generate" type="submit">Generate</button>
+    <button
+      class="form__button__filter"
+      :style="{ backgroundColor: isFiltering ? '#3498db' : '#ccc' }"
+      @click="toggleFilter"
+      aria-label="Toggle filter"
+    >
+      🔍
+    </button>
   </form>
 </template>
 
@@ -155,6 +186,29 @@ function cleanInput() {
 
     &:hover {
       background-color: var(--color-beige);
+    }
+
+    &:active {
+      box-shadow: inset 0 1px 2px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__button__filter {
+    padding: 8px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      padding: 8px 15px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      background-color: #2980b9;
     }
 
     &:active {

@@ -29,6 +29,23 @@ const handleDeleteBranch = (branchId: number) => {
   branchManager.deleteBranch(branchId)
   updateBranches()
 }
+
+const handleFilterChange = (filterData: {
+  projectId: string
+  ticketId: string
+  featureName: string
+  isFiltering: boolean
+}) => {
+  if (filterData.isFiltering) {
+    branches.value = branchManager.filterBranches({
+      projectId: filterData.projectId,
+      ticketId: filterData.ticketId,
+      featureName: filterData.featureName
+    })
+  } else {
+    branches.value = branchManager.getBranches()
+  }
+}
 </script>
 
 <template>
@@ -39,7 +56,7 @@ const handleDeleteBranch = (branchId: number) => {
       </a>
     </div>
     <div class="header__form">
-      <BranchForm @submitForm="handleFormSubmit" />
+      <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
     </div>
   </header>
 
