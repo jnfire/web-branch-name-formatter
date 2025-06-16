@@ -8,16 +8,12 @@ import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
 
-// Instancia única de BranchManager
 const branchManager = BranchManager.getInstance()
 
-console.log('BranchManager filter:', branchManager.filterBranches({ projectId: 'a' }))
-
-// Referencia reactiva para las ramas
 const branches = ref<Branch[]>(branchManager.getBranches())
 
 const updateBranches = () => {
-  branches.value = branches.value = [...branchManager.getBranches()]
+  branches.value = [...branchManager.getBranches()]
 }
 
 const handleFormSubmit = (formData: BranchFormType) => {
@@ -34,17 +30,12 @@ const handleFilterChange = (filterData: {
   projectId: string
   ticketId: string
   featureName: string
-  isFiltering: boolean
 }) => {
-  if (filterData.isFiltering) {
-    branches.value = branchManager.filterBranches({
-      projectId: filterData.projectId,
-      ticketId: filterData.ticketId,
-      featureName: filterData.featureName
-    })
-  } else {
-    branches.value = branchManager.getBranches()
-  }
+  branches.value = branchManager.filterBranches({
+    projectId: filterData.projectId,
+    ticketId: filterData.ticketId,
+    featureName: filterData.featureName
+  })
 }
 </script>
 
