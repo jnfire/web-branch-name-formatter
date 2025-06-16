@@ -68,6 +68,7 @@ function cleanInput() {
   display: flex;
   gap: 1px;
   align-items: center;
+  flex-wrap: wrap;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -76,6 +77,8 @@ function cleanInput() {
   }
 
   &__input {
+    flex: 1;
+    min-width: 0;
     padding: 8px 10px;
     border: 1px solid var(--color-dark-blue);
     font-size: 14px;
@@ -85,9 +88,10 @@ function cleanInput() {
     transition: border-color 0.2s ease;
 
     @media (max-width: 768px) {
+      flex: 1;
+      width: 100%;
       padding: 12px;
       font-size: 16px;
-      width: 100%;
     }
 
     &:focus {

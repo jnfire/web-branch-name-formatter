@@ -3,7 +3,7 @@
 import { ref } from 'vue'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
-import AppFooter from '@/components/AppFooter.vue'
+import Footer from '@/components/Footer.vue'
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
@@ -45,7 +45,7 @@ const handleDeleteBranch = (branchId: number) => {
     <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
   </main>
 
-  <AppFooter />
+  <Footer />
 </template>
 
 <style scoped lang="scss">
@@ -72,6 +72,7 @@ const handleDeleteBranch = (branchId: number) => {
 
   &__name {
     flex: 1;
+    margin-right: 1rem;
 
     @media (max-width: 768px) {
       width: 100%;

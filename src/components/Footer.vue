@@ -27,13 +27,6 @@
   </footer>
 </template>
 
-<script>
-// @ts-nocheck
-export default {
-  name: 'AppFooter'
-}
-</script>
-
 <style scoped lang="scss">
 .footer {
   background-color: var(--color-dark-blue);
