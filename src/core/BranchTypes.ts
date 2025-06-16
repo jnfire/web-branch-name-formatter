@@ -1,4 +1,5 @@
 export interface BranchFormType {
+  projectId: string;
   ticketId: string;
   featureName: string;
 }
