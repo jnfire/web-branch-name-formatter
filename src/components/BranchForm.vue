@@ -96,28 +96,35 @@ function cleanInput() {
   }
 
   &__input__project_id {
+    flex: 2;
+    max-width: 15%;
     border-radius: 5px 0 0 5px;
 
     @media (max-width: 768px) {
+      flex: 1;
+      max-width: 100%;
       border-radius: 5px;
-      width: 100%;
     }
   }
 
   &__input__ticket_id {
-    border-radius: 0 5px 0 0;
+    flex: 3;
+    max-width: 25%;
 
     @media (max-width: 768px) {
+      flex: 1;
+      max-width: 100%;
       border-radius: 5px;
-      width: 100%;
     }
   }
 
   &__input__feature_name {
-    width: 75%;
+    flex: 5;
+    max-width: 60%;
 
     @media (max-width: 768px) {
-      width: 100%;
+      flex: 1;
+      max-width: 100%;
       border-radius: 5px;
     }
   }
