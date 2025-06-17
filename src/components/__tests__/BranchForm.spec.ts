@@ -9,6 +9,7 @@ describe('BranchForm', () => {
     expect(wrapper.find('form[aria-label="Create branch name form"]').exists()).toBe(true)
     expect(wrapper.find('input[name="ticket-id"]').exists()).toBe(true)
     expect(wrapper.find('input[name="develop-name"]').exists()).toBe(true)
+    expect(wrapper.find('input[name="project-id"]').exists()).toBe(true)
     expect(wrapper.find('button[type="submit"]').exists()).toBe(true)
   })
 
