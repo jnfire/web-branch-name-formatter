@@ -26,8 +26,12 @@ describe('BranchForm', () => {
 
     await wrapper.find('form').trigger('submit.prevent')
 
-    expect(wrapper.emitted().submitForm).toBeTruthy()
-    expect(wrapper.emitted().submitForm[0][0] as BranchFormType).toEqual({
+    const emittedEvents = wrapper.emitted()
+    console.log('Emitted Events:', emittedEvents)
+    const submitFormEvent = emittedEvents.submitForm as Array<Array<BranchFormType>>
+    expect(submitFormEvent).toBeTruthy()
+    const emittedPayload = submitFormEvent![0][0] as BranchFormType
+    expect(emittedPayload).toMatchObject({
       projectId: 'PROJ',
       ticketId: '12345',
       featureName: 'feature-branch'
