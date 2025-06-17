@@ -37,9 +37,38 @@ export class BranchManager {
     const localStorage = LocalStorageManager.getInstance()
     const branches = localStorage.get('branches')
     if (branches) {
-      this.branches = JSON.parse(branches).map((branch: Branch) => new Branch(branch))
+      this.branches = JSON.parse(branches).map((branch: Branch) => this.loadBranch(branch))
     }
     this.setLastId()
+  }
+
+  private loadBranch(branch: Branch): Branch {
+    let projectId = branch.projectId || ''
+    let ticketId = branch.ticketId || ''
+
+    if (ticketId.includes('-') && !projectId) {
+      const splitIds = this.splitProjectAndTicketId(ticketId)
+      projectId = splitIds.projectId
+      ticketId = splitIds.ticketId
+    }
+
+    const id = branch.id || 0
+    const featureName = branch.featureName || ''
+
+    return new Branch({
+      id: id,
+      projectId: projectId.trim(),
+      ticketId: ticketId.trim(),
+      featureName: featureName.trim()
+    })
+  }
+
+  private splitProjectAndTicketId(combinedId: string): { projectId: string; ticketId: string } {
+    const [projectId, ticketId] = combinedId.split('-')
+    return {
+      projectId: projectId || '',
+      ticketId: ticketId || ''
+    }
   }
 
   private setLastId(): void {
@@ -53,7 +82,8 @@ export class BranchManager {
     const newBranch = new Branch({
       id: this.lastId,
       ticketId: formData.ticketId,
-      featureName: formData.featureName
+      featureName: formData.featureName,
+      projectId: formData.projectId
     })
     this.branches.push(newBranch)
     this.saveBranches()
@@ -63,12 +93,14 @@ export class BranchManager {
     this.lastId = this.lastId + 1
   }
 
-  public deleteBranch(branchId: number): void {
+  public deleteBranch(branchId: number): boolean {
     const index = this.branches.findIndex((branch) => branch.id === branchId)
     if (index !== -1) {
       this.branches.splice(index, 1)
+      this.saveBranches()
+      return true // Indica que la rama fue eliminada
     }
-    this.saveBranches()
+    return false // Indica que la rama no existía
   }
 
   private saveBranches(): void {
@@ -80,5 +112,41 @@ export class BranchManager {
     this.lastId = 0
     this.branches = []
     this.saveBranches()
+  }
+
+  public filterBranches(filter: Partial<BranchFormType>): Branch[] {
+    let filteredBranches = this.getBranches()
+
+    const filterProjectId = this.getCleanValue(filter.projectId)
+    if (filterProjectId) {
+      filteredBranches = filteredBranches.filter((branch) =>
+        this.matchesFilter(branch.projectId, filterProjectId)
+      )
+    }
+
+    const filterTicketId = this.getCleanValue(filter.ticketId)
+    if (filterTicketId) {
+      filteredBranches = filteredBranches.filter((branch) =>
+        this.matchesFilter(branch.ticketId, filterTicketId)
+      )
+    }
+
+    const filterFeatureName = this.getCleanValue(filter.featureName)
+    if (filterFeatureName) {
+      filteredBranches = filteredBranches.filter((branch) =>
+        this.matchesFilter(branch.featureName, filterFeatureName)
+      )
+    }
+
+    return filteredBranches
+  }
+
+  private matchesFilter(branchValue: string | undefined, filterValue: string): boolean {
+    const cleanBranchValue = this.getCleanValue(branchValue)
+    return cleanBranchValue.includes(filterValue)
+  }
+
+  private getCleanValue(value: string | undefined): string {
+    return value ? value.trim().toLowerCase() : ''
   }
 }

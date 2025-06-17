@@ -5,24 +5,26 @@ import type { BranchType } from '../../core/BranchTypes'
 describe('BranchFormatter', () => {
   it('should format branch name correctly', () => {
     const branch: BranchType = {
+      projectId: 'PROJ',
       ticketId: 'TICKET-123',
       featureName: 'New Feature'
     } as BranchType
 
     const formattedName = BranchFormatter.format(branch)
 
-    expect(formattedName).toBe('TICKET-123--new-feature')
+    expect(formattedName).toBe('PROJ-TICKET-123--new-feature')
   })
 
   it('should handle special characters in featureName', () => {
     const branch: BranchType = {
+      projectId: 'PROJ',
       ticketId: 'TICKET-456',
       featureName: 'Feature with Special Characters!@#'
     } as BranchType
 
     const formattedName = BranchFormatter.format(branch)
 
-    expect(formattedName).toBe('TICKET-456--feature-with-special-characters')
+    expect(formattedName).toBe('PROJ-TICKET-456--feature-with-special-characters')
   })
 
   it('should handle spaces in featureName', () => {

@@ -19,6 +19,12 @@
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+
+  --color-white: #eee5e9;
+  --color-beige: #f3d5b5;
+  --color-red: #e24c4b;
+  --color-dark-blue: #0e2a3a;
+  --color-blue: #08415c;
 }
 
 /* semantic color variables for this project */
@@ -86,6 +92,6 @@ body {
 }
 
 a {
-    color: var(--color-text);
-    text-decoration: none;
+  color: var(--color-text);
+  text-decoration: none;
 }
