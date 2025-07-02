@@ -124,7 +124,7 @@ const handleFilterChange = (filterData: {
   overflow-y: auto;
 
   @media (max-width: 768px) {
-    min-height: calc(60vh - 130px);
+    margin-top: 248px;
     padding: 0.5rem 1rem;
     overflow-y: auto;
   }
