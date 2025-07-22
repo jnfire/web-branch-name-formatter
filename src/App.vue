@@ -42,6 +42,15 @@ const handleFilterChange = (filterData: {
         featureName: filterData.featureName
       })
     : []
+
+  branches.value = hasFilterInputs.value
+    ? branchManager
+        .getBranches()
+        .filter(
+          (branch) =>
+            !filteredBranches.value.some((filteredBranch) => filteredBranch.id === branch.id)
+        )
+    : branchManager.getBranches()
 }
 </script>
 
