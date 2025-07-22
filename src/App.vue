@@ -11,6 +11,8 @@ import type { Branch } from '@/core/Branch'
 const branchManager = BranchManager.getInstance()
 
 const branches = ref<Branch[]>(branchManager.getBranches())
+const filteredBranches = ref<Branch[]>([])
+const hasFilterInputs = ref(false)
 
 const updateBranches = () => {
   branches.value = [...branchManager.getBranches()]
@@ -31,11 +33,15 @@ const handleFilterChange = (filterData: {
   ticketId: string
   featureName: string
 }) => {
-  branches.value = branchManager.filterBranches({
-    projectId: filterData.projectId,
-    ticketId: filterData.ticketId,
-    featureName: filterData.featureName
-  })
+  hasFilterInputs.value =
+    !!filterData.projectId || !!filterData.ticketId || !!filterData.featureName
+  filteredBranches.value = hasFilterInputs.value
+    ? branchManager.filterBranches({
+        projectId: filterData.projectId,
+        ticketId: filterData.ticketId,
+        featureName: filterData.featureName
+      })
+    : []
 }
 </script>
 
@@ -52,6 +58,12 @@ const handleFilterChange = (filterData: {
   </header>
 
   <main class="main">
+    <BranchList
+      v-if="hasFilterInputs && filteredBranches.length"
+      :branches="filteredBranches"
+      @deleteBranch="handleDeleteBranch"
+    />
+    <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
     <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
   </main>
 
@@ -128,5 +140,11 @@ const handleFilterChange = (filterData: {
     padding: 0.5rem 1rem;
     overflow-y: auto;
   }
+}
+
+.separator {
+  margin: 1rem 0;
+  border: none;
+  border-top: 1px solid var(--color-light-gray);
 }
 </style>
