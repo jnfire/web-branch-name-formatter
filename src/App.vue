@@ -1,12 +1,32 @@
 <!-- src/App.vue -->
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
+
+onMounted(() => {
+  const gtagId = import.meta.env.VITE_GTAG
+  if (gtagId) {
+    const script1 = document.createElement('script')
+    script1.async = true
+    script1.src = `https://www.googletagmanager.com/gtag/js?id=${gtagId}`
+    document.head.appendChild(script1)
+
+    const script2 = document.createElement('script')
+    script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${gtagId}');
+    `
+    document.head.appendChild(script2)
+  }
+})
+
 
 const branchManager = BranchManager.getInstance()
 
