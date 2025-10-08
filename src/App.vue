@@ -1,7 +1,7 @@
 <!-- src/App.vue -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useGtag } from 'vue-gtag-next'
+
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
@@ -11,12 +11,11 @@ import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
 
 // --- Cookie Consent Logic ---
-const { gtag } = useGtag()
 const showCookieBanner = ref(false)
 
 // This function is called when user accepts
 const allowCookies = () => {
-  gtag('consent', 'update', {
+  window.gtag('consent', 'update', {
     analytics_storage: 'granted'
   })
   console.log('Cookies accepted. Consent updated.')

@@ -11,20 +11,16 @@ const app = createApp(App)
 app.use(VueGtag, {
   property: {
     id: import.meta.env.VITE_GTAG
-  },
-  // Habilitamos el Modo de Consentimiento
-  consent: {
-    isEnabled: true,
-    // Estado por defecto: DENEGADO para todos los tipos de almacenamiento
-    // Esto asegura que no se usen cookies ANTES del consentimiento.
-    default: {
-      analytics_storage: 'denied',
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied',
-    }
   }
 })
+
+// Set default consent to 'denied' before mounting the app
+window.gtag('consent', 'default', {
+  analytics_storage: 'denied',
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied'
+});
 
 
 
