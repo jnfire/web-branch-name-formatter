@@ -1,33 +1,51 @@
 <!-- src/App.vue -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useGtag } from 'vue-gtag-next'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
+import CookieBanner from '@/components/CookieBanner.vue' // Import new component
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
 
-onMounted(() => {
-  const gtagId = import.meta.env.VITE_GTAG
-  if (gtagId) {
-    const script1 = document.createElement('script')
-    script1.async = true
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${gtagId}`
-    document.head.appendChild(script1)
+// --- Cookie Consent Logic ---
+const { gtag } = useGtag()
+const showCookieBanner = ref(false)
 
-    const script2 = document.createElement('script')
-    script2.innerHTML = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${gtagId}');
-    `
-    document.head.appendChild(script2)
+// This function is called when user accepts
+const allowCookies = () => {
+  gtag('consent', 'update', {
+    analytics_storage: 'granted'
+  })
+  console.log('Cookies accepted. Consent updated.')
+}
+
+// Handlers for banner events
+const handleAccept = () => {
+  localStorage.setItem('cookie_consent_status', 'accepted')
+  showCookieBanner.value = false
+  allowCookies()
+}
+
+const handleDecline = () => {
+  localStorage.setItem('cookie_consent_status', 'declined')
+  showCookieBanner.value = false
+}
+
+onMounted(() => {
+  const consentStatus = localStorage.getItem('cookie_consent_status')
+  if (!consentStatus) {
+    // If no consent is stored, show the banner
+    showCookieBanner.value = true
+  } else if (consentStatus === 'accepted') {
+    // If consent was already given, grant it again on page load
+    allowCookies()
   }
 })
 
-
+// --- Original Application Logic ---
 const branchManager = BranchManager.getInstance()
 
 const branches = ref<Branch[]>(branchManager.getBranches())
@@ -75,6 +93,8 @@ const handleFilterChange = (filterData: {
 </script>
 
 <template>
+  <CookieBanner v-if="showCookieBanner" @accept="handleAccept" @decline="handleDecline" />
+
   <header class="header">
     <div class="header__name">
       <a href="#">
@@ -100,6 +120,8 @@ const handleFilterChange = (filterData: {
 </template>
 
 <style scoped lang="scss">
+/* .button styles removed as they are now in CookieBanner.vue */
+
 .header {
   position: fixed;
   top: 0;

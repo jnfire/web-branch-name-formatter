@@ -16,7 +16,8 @@
   "dependencies": {
     "sass": "^1.89.1",
     "sass-loader": "^16.0.3",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "vue-gtag-next": "^1.14.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
