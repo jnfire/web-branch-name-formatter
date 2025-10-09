@@ -2,12 +2,12 @@
   <div class="cookie-banner">
     <div class="banner-content">
       <p class="message">
-        🍪 Usamos cookies para mejorar la experiencia de usuario. Al aceptarlas, nos ayudas a
-        entender cómo se usa el sitio.
+        🍪 We use cookies to improve the user experience. By accepting them, you help us understand
+        how the site is used.
       </p>
       <div class="buttons">
-        <button class="btn decline" @click="$emit('decline')">Rechazar</button>
-        <button class="btn accept" @click="$emit('accept')">Aceptar</button>
+        <button class="btn decline" @click="$emit('decline')">Decline</button>
+        <button class="btn accept" @click="$emit('accept')">Accept</button>
       </div>
     </div>
   </div>
