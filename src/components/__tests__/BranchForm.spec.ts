@@ -5,7 +5,13 @@ import type { BranchFormType } from '@/core/BranchTypes'
 
 describe('BranchForm', () => {
   it('renders the form correctly', () => {
-    const wrapper = mount(BranchForm)
+    const wrapper = mount(BranchForm, {
+      global: {
+        mocks: {
+          $t: (msg: string) => msg
+        }
+      }
+    })
     expect(wrapper.find('form[aria-label="Create branch name form"]').exists()).toBe(true)
     expect(wrapper.find('input[name="ticket-id"]').exists()).toBe(true)
     expect(wrapper.find('input[name="develop-name"]').exists()).toBe(true)
@@ -14,7 +20,13 @@ describe('BranchForm', () => {
   })
 
   it('emits submitForm event with correct payload when form is submitted', async () => {
-    const wrapper = mount(BranchForm)
+    const wrapper = mount(BranchForm, {
+      global: {
+        mocks: {
+          $t: (msg: string) => msg
+        }
+      }
+    })
     const ticketIdInput = wrapper.find('input[name="ticket-id"]')
     const featureNameInput = wrapper.find('input[name="develop-name"]')
     const projectIdInput = wrapper.find('input[name="project-id"]')

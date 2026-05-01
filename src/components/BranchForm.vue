@@ -6,7 +6,7 @@ const projectId = ref('')
 const ticketId = ref('')
 const featureName = ref('')
 
-const emit = defineEmits(['submitForm', 'filterChange'])
+const emit = defineEmits(['submitForm'])
 
 const handleSubmit = (event: Event) => {
   event.preventDefault()
@@ -31,14 +31,6 @@ function cleanInput() {
   ticketId.value = ''
   featureName.value = ''
 }
-
-watch([projectId, ticketId, featureName], () => {
-  emit('filterChange', {
-    projectId: projectId.value,
-    ticketId: ticketId.value,
-    featureName: featureName.value
-  })
-})
 </script>
 
 <template>

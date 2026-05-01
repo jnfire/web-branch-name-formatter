@@ -13,8 +13,6 @@ import type { Branch } from '@/core/Branch'
 const branchManager = BranchManager.getInstance()
 
 const branches = ref<Branch[]>(branchManager.getBranches())
-const filteredBranches = ref<Branch[]>([])
-const hasFilterInputs = ref(false)
 const showHistory = ref(false)
 const latestBranch = ref<Branch | null>(null)
 const copied = ref(false)
@@ -41,31 +39,6 @@ const handleDeleteBranch = (branchId: number) => {
   branchManager.deleteBranch(branchId)
   updateBranches()
 }
-
-const handleFilterChange = (filterData: {
-  projectId: string
-  ticketId: string
-  featureName: string
-}) => {
-  hasFilterInputs.value =
-    !!filterData.projectId || !!filterData.ticketId || !!filterData.featureName
-  filteredBranches.value = hasFilterInputs.value
-    ? branchManager.filterBranches({
-        projectId: filterData.projectId,
-        ticketId: filterData.ticketId,
-        featureName: filterData.featureName
-      })
-    : []
-
-  branches.value = hasFilterInputs.value
-    ? branchManager
-        .getBranches()
-        .filter(
-          (branch) =>
-            !filteredBranches.value.some((filteredBranch) => filteredBranch.id === branch.id)
-        )
-    : branchManager.getBranches()
-}
 </script>
 
 <template>
@@ -89,7 +62,7 @@ const handleFilterChange = (filterData: {
 
     <main class="main-content">
       <div class="converter-box">
-        <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
+        <BranchForm @submitForm="handleFormSubmit" />
       </div>
 
       <div v-if="latestBranch" class="result-section">
@@ -110,12 +83,6 @@ const handleFilterChange = (filterData: {
         </div>
 
         <div v-if="showHistory" class="history-pane">
-          <BranchList
-            v-if="hasFilterInputs && filteredBranches.length"
-            :branches="filteredBranches"
-            @deleteBranch="handleDeleteBranch"
-          />
-          <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
           <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
         </div>
       </div>
