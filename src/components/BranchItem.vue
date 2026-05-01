@@ -32,21 +32,22 @@ const deleteBranch = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--color-dark-blue);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 20px;
-  margin: 0.5rem;
-  color: var(--color-beige);
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
+  transition: all 0.2s;
 
   @media (max-width: 768px) {
-    padding: 8px 12px;
-    margin: 0.3rem;
-    font-size: 14px;
+    padding: 10px 15px;
     flex-direction: column;
     gap: 10px;
+  }
+
+  &:hover {
+    background-color: var(--bg-surface-hover);
   }
 
   &__name {
@@ -59,77 +60,46 @@ const deleteBranch = () => {
     }
 
     &__text {
-      font-weight: bold;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 90%;
-
-      @media (max-width: 768px) {
-        max-width: 100%;
-      }
+      max-width: 100%;
     }
   }
 
   &__buttons {
     display: flex;
-    gap: 0;
+    gap: 0.5rem;
 
     @media (max-width: 768px) {
       width: 100%;
+      justify-content: center;
     }
   }
 
   &__button {
-    padding: 8px 15px;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
-    transition: box-shadow 0.1s ease;
-
-    @media (max-width: 768px) {
-      padding: 6px 12px;
-      font-size: 13px;
-      justify-content: space-between;
-    }
+    transition: opacity 0.2s;
 
     &__copy {
-      border-radius: 5px 0 0 5px;
-      margin-right: 2px;
-      background-color: var(--color-beige);
-      color: var(--color-dark-blue);
+      background-color: var(--text-main);
+      color: var(--bg-body);
 
-      @media (max-width: 768px) {
-        flex: 0.8;
-      }
-
-      &:hover {
-        background-color: var(--color-beige);
-      }
-
-      &:active {
-        box-shadow: inset 0 1px 2px 2px rgba(0, 0, 0, 0.2);
-      }
+      &:hover { opacity: 0.9; }
     }
 
     &__delete {
-      border-radius: 0 5px 5px 0;
-      margin-left: 1px;
-      background-color: var(--color-red);
-      color: var(--color-dark-blue);
+      background-color: var(--error-color);
+      color: #fff;
 
-      @media (max-width: 768px) {
-        flex: 0.2;
-      }
-
-      &:hover {
-        background-color: var(--color-red);
-      }
-
-      &:active {
-        box-shadow: inset 0 1px 2px 2px rgba(0, 0, 0, 0.2);
-      }
+      &:hover { opacity: 0.9; }
     }
   }
 }

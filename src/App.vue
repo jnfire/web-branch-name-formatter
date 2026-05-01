@@ -50,6 +50,7 @@ const branchManager = BranchManager.getInstance()
 const branches = ref<Branch[]>(branchManager.getBranches())
 const filteredBranches = ref<Branch[]>([])
 const hasFilterInputs = ref(false)
+const showHistory = ref(false)
 
 const updateBranches = () => {
   branches.value = [...branchManager.getBranches()]
@@ -94,107 +95,77 @@ const handleFilterChange = (filterData: {
 <template>
   <CookieBanner v-if="showCookieBanner" @accept="handleAccept" @decline="handleDecline" />
 
-  <header class="header">
-    <div class="header__name">
-      <a href="#">
-        <h1 class="header__name__text">V01-branch-name-generator</h1>
-      </a>
-    </div>
-    <div class="header__form">
-      <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
-    </div>
-  </header>
+  <div class="app-layout">
+    <header class="header">
+      <div class="header__name">
+        <a href="#">
+          <h1 class="header__name__text">Branch Name Formatter</h1>
+        </a>
+      </div>
+      <div class="header__form">
+        <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
+      </div>
+    </header>
 
-  <main class="main">
-    <BranchList
-      v-if="hasFilterInputs && filteredBranches.length"
-      :branches="filteredBranches"
-      @deleteBranch="handleDeleteBranch"
-    />
-    <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
-    <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
-  </main>
+    <main class="main-content">
+      <div class="history-toggle">
+        <button class="btn-secondary" @click="showHistory = !showHistory">
+          {{ showHistory ? 'Ocultar Historial' : 'Mostrar Historial' }}
+        </button>
+      </div>
 
-  <Footer />
+      <div v-if="showHistory" class="history-pane">
+        <BranchList
+          v-if="hasFilterInputs && filteredBranches.length"
+          :branches="filteredBranches"
+          @deleteBranch="handleDeleteBranch"
+        />
+        <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
+        <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
+      </div>
+    </main>
+
+    <Footer />
+  </div>
 </template>
 
 <style scoped lang="scss">
 /* .button styles removed as they are now in CookieBanner.vue */
 
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  background-color: var(--color-dark-blue);
-  width: 100%;
-  height: 10vh;
-  padding: 0.5rem 3.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
-    flex-direction: column;
-    height: auto;
-    gap: 10px;
-  }
+  margin-bottom: 2.5rem;
+  text-align: center;
 
   &__name {
-    flex: 1;
-    margin-right: 1rem;
-
-    @media (max-width: 768px) {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
+    margin-bottom: 1rem;
 
     &__text {
-      color: var(--color-beige);
-      font-size: 16px;
-      font-weight: bold;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      @media (max-width: 768px) {
-        font-size: 14px;
-        text-align: center;
-      }
+      color: var(--text-main);
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.05em;
     }
   }
 
   &__form {
     display: flex;
-    align-items: center;
-
-    @media (max-width: 768px) {
-      width: 100%;
-      justify-content: center;
-    }
+    justify-content: center;
   }
 }
 
-.main {
-  background-color: var(--color-blue);
-  width: 100%;
-  min-height: calc(100vh - 10vh); /* Ajusta la altura para evitar scroll innecesario */
-  padding: 0.5rem 2rem;
-  margin-top: 10vh;
-  overflow-y: auto;
+.history-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
 
-  @media (max-width: 768px) {
-    margin-top: 248px;
-    padding: 0.5rem 1rem;
-    overflow-y: auto;
-  }
+.history-pane {
+  animation: fadeIn 0.3s ease-out;
 }
 
 .separator {
   margin: 1rem 0;
   border: none;
-  border-top: 1px solid var(--color-light-gray);
+  border-top: 1px solid var(--border-color);
 }
 </style>

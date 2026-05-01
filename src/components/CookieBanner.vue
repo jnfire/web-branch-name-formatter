@@ -23,19 +23,19 @@ defineEmits(['accept', 'decline'])
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: var(--color-dark-blue);
-  color: var(--color-beige);
+  background-color: var(--bg-surface);
+  color: var(--text-main);
   padding: 1rem 2rem;
   z-index: 2000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-  border-top: 1px solid var(--color-blue);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--border-color);
 }
 
 .banner-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   gap: 1rem;
 }
@@ -54,30 +54,30 @@ defineEmits(['accept', 'decline'])
 .btn {
   padding: 0.6rem 1.2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
 .accept {
-  background-color: var(--color-blue);
-  color: var(--color-white);
+  background-color: var(--text-main);
+  color: var(--bg-body);
 }
 
 .accept:hover {
-  background-color: #0a5a7d; /* A slightly lighter shade of --color-blue */
+  opacity: 0.9;
 }
 
 .decline {
   background-color: transparent;
-  border: 1px solid var(--color-red);
-  color: var(--color-red);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
 }
 
 .decline:hover {
-  background-color: var(--color-red);
-  color: var(--color-white);
+  background-color: var(--error-color);
+  color: #fff;
 }
 
 @media (max-width: 768px) {

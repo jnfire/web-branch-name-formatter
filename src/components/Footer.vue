@@ -13,7 +13,7 @@
         </a>
       </p>
       <p class="footer__license">
-        Released under Mozilla Public License Version 2.0 -
+        Released under GPL-3.0 License -
         <a
           href="https://github.com/jnfire/web-branch-name-formatter/blob/main/LICENSE"
           target="_blank"
@@ -29,7 +29,8 @@
 
 <style scoped lang="scss">
 .footer {
-  background-color: var(--color-dark-blue);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
   width: 100%;
   padding: 1rem 3.5rem;
   margin-top: auto;
@@ -40,7 +41,7 @@
 
   &__text,
   &__license {
-    color: var(--color-beige);
+    color: var(--text-muted);
     font-size: 14px;
     margin: 0.5rem 0;
   }
@@ -50,7 +51,7 @@
   }
 
   &__link {
-    color: var(--color-beige);
+    color: var(--text-main);
     text-decoration: underline;
     transition: opacity 0.2s ease;
 

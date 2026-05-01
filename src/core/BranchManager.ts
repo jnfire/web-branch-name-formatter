@@ -38,6 +38,9 @@ export class BranchManager {
     const branches = localStorage.get('branches')
     if (branches) {
       this.branches = JSON.parse(branches).map((branch: Branch) => this.loadBranch(branch))
+      if (this.branches.length > 10) {
+        this.branches = this.branches.slice(-10)
+      }
     }
     this.setLastId()
   }
@@ -86,6 +89,11 @@ export class BranchManager {
       projectId: formData.projectId
     })
     this.branches.push(newBranch)
+    // Limitar el historial a los 10 últimos registros (los de ID más alto / más recientes)
+    if (this.branches.length > 10) {
+      // Como hacemos push, los más antiguos están al principio
+      this.branches.shift()
+    }
     this.saveBranches()
   }
 
