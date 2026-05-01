@@ -43,82 +43,73 @@ watch([projectId, ticketId, featureName], () => {
 
 <template>
   <form class="form" aria-label="Create branch name form" @submit="handleSubmit">
-    <input
-      class="input-element form__input__project_id"
-      type="text"
-      name="project-id"
-      aria-label="Project ID"
-      v-model="projectId"
-      placeholder="Project ID"
-    />
-    <input
-      class="input-element form__input__ticket_id"
-      type="text"
-      name="ticket-id"
-      aria-label="Ticket name"
-      v-model="ticketId"
-      placeholder="Ticket ID"
-    />
-    <input
-      class="input-element form__input__feature_name"
-      type="text"
-      name="develop-name"
-      aria-label="Develop name"
-      v-model="featureName"
-      placeholder="Develop name"
-    />
-    <button class="btn-primary form__button__generate" type="submit">Generate</button>
+    <div class="form-group">
+      <label class="form-label">Project ID</label>
+      <input
+        class="input-element"
+        type="text"
+        name="project-id"
+        v-model="projectId"
+        placeholder="e.g. WEB"
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ticket ID</label>
+      <input
+        class="input-element"
+        type="text"
+        name="ticket-id"
+        v-model="ticketId"
+        placeholder="e.g. 1234"
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Develop Name</label>
+      <input
+        class="input-element"
+        type="text"
+        name="develop-name"
+        v-model="featureName"
+        placeholder="e.g. add-login-form"
+      />
+    </div>
+
+    <button class="btn-primary generate-btn" type="submit">
+      Generate Branch Name
+    </button>
   </form>
 </template>
 
 <style scoped lang="scss">
 .form {
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  flex-wrap: wrap;
-  max-width: 800px;
+  flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
+}
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 8px;
-  }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  &__input__project_id {
-    flex: 2;
-    min-width: 120px;
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
-    @media (max-width: 768px) {
-      width: 100%;
-    }
-  }
+.input-element {
+  width: 100%;
+}
 
-  &__input__ticket_id {
-    flex: 3;
-    min-width: 150px;
-
-    @media (max-width: 768px) {
-      width: 100%;
-    }
-  }
-
-  &__input__feature_name {
-    flex: 5;
-    min-width: 200px;
-
-    @media (max-width: 768px) {
-      width: 100%;
-    }
-  }
-
-  &__button__generate {
-    flex: 1;
-    min-width: 100px;
-
-    @media (max-width: 768px) {
-      width: 100%;
-    }
-  }
+.generate-btn {
+  margin-top: 0.5rem;
+  font-size: 1rem;
 }
 </style>

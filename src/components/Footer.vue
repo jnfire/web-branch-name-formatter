@@ -2,66 +2,69 @@
   <footer class="footer">
     <div class="footer__content">
       <p class="footer__text">
-        Would you like to improve this branch name generator?
+        Designed with simplicity and a focus on privacy. All code runs on your device.
+      </p>
+      <div class="footer__links">
         <a
           href="https://github.com/jnfire/web-branch-name-formatter"
           target="_blank"
           rel="noopener noreferrer"
           class="footer__link"
         >
-          Collaborate on GitHub!
+          View Source Code
         </a>
-      </p>
-      <p class="footer__license">
-        Released under GPL-3.0 License -
+        <span class="footer__divider">|</span>
         <a
           href="https://github.com/jnfire/web-branch-name-formatter/blob/main/LICENSE"
           target="_blank"
           rel="noopener noreferrer"
           class="footer__link"
         >
-          View license
+          GPL-3.0 License
         </a>
-      </p>
+      </div>
     </div>
   </footer>
 </template>
 
 <style scoped lang="scss">
 .footer {
-  background-color: var(--bg-surface);
+  padding: 3rem 1.5rem;
+  margin-top: 4rem;
   border-top: 1px solid var(--border-color);
-  width: 100%;
-  padding: 1rem 3.5rem;
-  margin-top: auto;
 
   &__content {
     text-align: center;
   }
 
-  &__text,
-  &__license {
+  &__text {
     color: var(--text-muted);
-    font-size: 14px;
-    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 
-  &__license {
-    font-size: 11px;
+  &__links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
   }
 
   &__link {
     color: var(--text-main);
-    text-decoration: underline;
-    transition: opacity 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s;
 
     &:hover {
-      opacity: 0.8;
+      opacity: 0.7;
     }
   }
 
-  @media (max-width: 768px) {
-    padding: 1rem;
+  &__divider {
+    color: var(--border-color);
+    font-size: 0.8rem;
   }
 }
 </style>

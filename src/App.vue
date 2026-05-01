@@ -51,6 +51,16 @@ const branches = ref<Branch[]>(branchManager.getBranches())
 const filteredBranches = ref<Branch[]>([])
 const hasFilterInputs = ref(false)
 const showHistory = ref(false)
+const latestBranch = ref<Branch | null>(null)
+const copied = ref(false)
+
+const copyToClipboard = async (text: string) => {
+  await navigator.clipboard.writeText(text)
+  copied.value = true
+  setTimeout(() => {
+    copied.value = false
+  }, 2000)
+}
 
 const updateBranches = () => {
   branches.value = [...branchManager.getBranches()]
@@ -59,6 +69,7 @@ const updateBranches = () => {
 const handleFormSubmit = (formData: BranchFormType) => {
   branchManager.createBranch(formData)
   updateBranches()
+  latestBranch.value = branches.value[0] || null
 }
 
 const handleDeleteBranch = (branchId: number) => {
@@ -96,32 +107,50 @@ const handleFilterChange = (filterData: {
   <CookieBanner v-if="showCookieBanner" @accept="handleAccept" @decline="handleDecline" />
 
   <div class="app-layout">
-    <header class="header">
-      <div class="header__name">
-        <a href="#">
-          <h1 class="header__name__text">Branch Name Formatter</h1>
-        </a>
-      </div>
-      <div class="header__form">
-        <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
+    <header class="hero">
+      <h1 class="hero__title">Branch Name Formatter</h1>
+      <p class="hero__subtitle">
+        Format your branch names instantly and consistently.
+        100% private, zero server processing, open source.
+      </p>
+      <div class="badges">
+        <span class="badge">Open Source</span>
+        <span class="badge">Privacy First</span>
+        <span class="badge">Local Only</span>
       </div>
     </header>
 
     <main class="main-content">
-      <div class="history-toggle">
-        <button class="btn-secondary" @click="showHistory = !showHistory">
-          {{ showHistory ? 'Ocultar Historial' : 'Mostrar Historial' }}
-        </button>
+      <div class="converter-box">
+        <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
       </div>
 
-      <div v-if="showHistory" class="history-pane">
-        <BranchList
-          v-if="hasFilterInputs && filteredBranches.length"
-          :branches="filteredBranches"
-          @deleteBranch="handleDeleteBranch"
-        />
-        <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
-        <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
+      <div v-if="latestBranch" class="result-section">
+        <h2 class="result-title">Generated Branch Name</h2>
+        <div class="result-card">
+          <code class="result-code">{{ latestBranch.branchName }}</code>
+          <button class="btn-primary" @click="copyToClipboard(latestBranch.branchName)">
+            {{ copied ? '¡Copiado!' : 'Copy Name' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="history-section">
+        <div class="history-header">
+          <button class="btn-secondary toggle-btn" @click="showHistory = !showHistory">
+            {{ showHistory ? 'Hide History' : 'Show History' }}
+          </button>
+        </div>
+
+        <div v-if="showHistory" class="history-pane">
+          <BranchList
+            v-if="hasFilterInputs && filteredBranches.length"
+            :branches="filteredBranches"
+            @deleteBranch="handleDeleteBranch"
+          />
+          <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
+          <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
+        </div>
       </div>
     </main>
 
@@ -130,33 +159,96 @@ const handleFilterChange = (filterData: {
 </template>
 
 <style scoped lang="scss">
-/* .button styles removed as they are now in CookieBanner.vue */
-
-.header {
-  margin-bottom: 2.5rem;
+.hero {
   text-align: center;
+  margin-bottom: 3rem;
 
-  &__name {
-    margin-bottom: 1rem;
-
-    &__text {
-      color: var(--text-main);
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-    }
+  &__title {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
   }
 
-  &__form {
-    display: flex;
-    justify-content: center;
+  &__subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
   }
 }
 
-.history-toggle {
+.badges {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background-color: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.converter-box {
+  background-color: var(--bg-surface);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.result-section {
+  animation: fadeIn 0.3s ease-out;
+  margin-bottom: 3rem;
+}
+
+.result-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.result-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.result-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-main);
+  word-break: break-all;
+  text-align: center;
+}
+
+.history-section {
+  margin-top: 4rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
 .history-pane {
@@ -164,7 +256,7 @@ const handleFilterChange = (filterData: {
 }
 
 .separator {
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   border: none;
   border-top: 1px solid var(--border-color);
 }
