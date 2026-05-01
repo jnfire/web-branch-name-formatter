@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "title": "Branch Name Formatter",
+    "subtitle": "Formatea tus nombres de rama al instante y con consistencia. 100% privado, sin procesamiento en servidor, código abierto.",
+    "badges": {
+      "openSource": "Código Abierto",
+      "privacyFirst": "Privacidad Primero",
+      "localOnly": "Solo Local"
+    }
+  },
+  "form": {
+    "projectId": "ID del Proyecto",
+    "projectIdPlaceholder": "ej. WEB",
+    "ticketId": "ID del Ticket",
+    "ticketIdPlaceholder": "ej. 1234",
+    "developName": "Nombre de Desarrollo",
+    "developNamePlaceholder": "ej. add-login-form",
+    "generate": "Generar Nombre de Rama"
+  },
+  "result": {
+    "title": "Nombre de Rama Generado",
+    "copy": "Copiar Nombre",
+    "copied": "¡Copiado!"
+  },
+  "history": {
+    "show": "Mostrar Historial",
+    "hide": "Ocultar Historial",
+    "title": "Historial"
+  },
+  "footer": {
+    "privacy": "Diseñado con simplicidad y foco en la privacidad. Todo el código se ejecuta en tu dispositivo.",
+    "sourceCode": "Ver Código Fuente",
+    "license": "Licencia GPL-3.0"
+  }
+}

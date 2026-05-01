@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "title": "Branch Name Formatter",
+    "subtitle": "Format your branch names instantly and consistently. 100% private, zero server processing, open source.",
+    "badges": {
+      "openSource": "Open Source",
+      "privacyFirst": "Privacy First",
+      "localOnly": "Local Only"
+    }
+  },
+  "form": {
+    "projectId": "Project ID",
+    "projectIdPlaceholder": "e.g. WEB",
+    "ticketId": "Ticket ID",
+    "ticketIdPlaceholder": "e.g. 1234",
+    "developName": "Develop Name",
+    "developNamePlaceholder": "e.g. add-login-form",
+    "generate": "Generate Branch Name"
+  },
+  "result": {
+    "title": "Generated Branch Name",
+    "copy": "Copy Name",
+    "copied": "Copied!"
+  },
+  "history": {
+    "show": "Show History",
+    "hide": "Hide History",
+    "title": "History"
+  },
+  "footer": {
+    "privacy": "Designed with simplicity and a focus on privacy. All code runs on your device.",
+    "sourceCode": "View Source Code",
+    "license": "GPL-3.0 License"
+  }
+}

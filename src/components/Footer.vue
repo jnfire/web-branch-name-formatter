@@ -2,65 +2,69 @@
   <footer class="footer">
     <div class="footer__content">
       <p class="footer__text">
-        Would you like to improve this branch name generator?
+        {{ $t('footer.privacy') }}
+      </p>
+      <div class="footer__links">
         <a
           href="https://github.com/jnfire/web-branch-name-formatter"
           target="_blank"
           rel="noopener noreferrer"
           class="footer__link"
         >
-          Collaborate on GitHub!
+          {{ $t('footer.sourceCode') }}
         </a>
-      </p>
-      <p class="footer__license">
-        Released under Mozilla Public License Version 2.0 -
+        <span class="footer__divider">|</span>
         <a
           href="https://github.com/jnfire/web-branch-name-formatter/blob/main/LICENSE"
           target="_blank"
           rel="noopener noreferrer"
           class="footer__link"
         >
-          View license
+          {{ $t('footer.license') }}
         </a>
-      </p>
+      </div>
     </div>
   </footer>
 </template>
 
 <style scoped lang="scss">
 .footer {
-  background-color: var(--color-dark-blue);
-  width: 100%;
-  padding: 1rem 3.5rem;
-  margin-top: auto;
+  padding: 3rem 1.5rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--border-color);
 
   &__content {
     text-align: center;
   }
 
-  &__text,
-  &__license {
-    color: var(--color-beige);
-    font-size: 14px;
-    margin: 0.5rem 0;
+  &__text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 
-  &__license {
-    font-size: 11px;
+  &__links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
   }
 
   &__link {
-    color: var(--color-beige);
-    text-decoration: underline;
-    transition: opacity 0.2s ease;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s;
 
     &:hover {
-      opacity: 0.8;
+      opacity: 0.7;
     }
   }
 
-  @media (max-width: 768px) {
-    padding: 1rem;
+  &__divider {
+    color: var(--border-color);
+    font-size: 0.8rem;
   }
 }
 </style>

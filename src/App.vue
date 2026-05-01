@@ -5,51 +5,25 @@ import { onMounted, ref } from 'vue'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
-import CookieBanner from '@/components/CookieBanner.vue' // Import new component
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
-
-// --- Cookie Consent Logic ---
-const showCookieBanner = ref(false)
-
-// This function is called when user accepts
-const allowCookies = () => {
-  window.gtag('consent', 'update', {
-    analytics_storage: 'granted'
-  })
-  console.log('Cookies accepted. Consent updated.')
-}
-
-// Handlers for banner events
-const handleAccept = () => {
-  localStorage.setItem('cookie_consent_status', 'accepted')
-  showCookieBanner.value = false
-  allowCookies()
-}
-
-const handleDecline = () => {
-  localStorage.setItem('cookie_consent_status', 'declined')
-  showCookieBanner.value = false
-}
-
-onMounted(() => {
-  const consentStatus = localStorage.getItem('cookie_consent_status')
-  if (!consentStatus) {
-    // If no consent is stored, show the banner
-    showCookieBanner.value = true
-  } else if (consentStatus === 'accepted') {
-    // If consent was already given, grant it again on page load
-    allowCookies()
-  }
-})
 
 // --- Original Application Logic ---
 const branchManager = BranchManager.getInstance()
 
 const branches = ref<Branch[]>(branchManager.getBranches())
-const filteredBranches = ref<Branch[]>([])
-const hasFilterInputs = ref(false)
+const showHistory = ref(false)
+const latestBranch = ref<Branch | null>(null)
+const copied = ref(false)
+
+const copyToClipboard = async (text: string) => {
+  await navigator.clipboard.writeText(text)
+  copied.value = true
+  setTimeout(() => {
+    copied.value = false
+  }, 2000)
+}
 
 const updateBranches = () => {
   branches.value = [...branchManager.getBranches()]
@@ -58,143 +32,193 @@ const updateBranches = () => {
 const handleFormSubmit = (formData: BranchFormType) => {
   branchManager.createBranch(formData)
   updateBranches()
+  latestBranch.value = branches.value[0] || null
 }
 
 const handleDeleteBranch = (branchId: number) => {
   branchManager.deleteBranch(branchId)
   updateBranches()
 }
-
-const handleFilterChange = (filterData: {
-  projectId: string
-  ticketId: string
-  featureName: string
-}) => {
-  hasFilterInputs.value =
-    !!filterData.projectId || !!filterData.ticketId || !!filterData.featureName
-  filteredBranches.value = hasFilterInputs.value
-    ? branchManager.filterBranches({
-        projectId: filterData.projectId,
-        ticketId: filterData.ticketId,
-        featureName: filterData.featureName
-      })
-    : []
-
-  branches.value = hasFilterInputs.value
-    ? branchManager
-        .getBranches()
-        .filter(
-          (branch) =>
-            !filteredBranches.value.some((filteredBranch) => filteredBranch.id === branch.id)
-        )
-    : branchManager.getBranches()
-}
 </script>
 
 <template>
-  <CookieBanner v-if="showCookieBanner" @accept="handleAccept" @decline="handleDecline" />
+  <div class="app-layout">
+    <header class="hero">
+      <div class="hero-top">
+        <h1 class="hero__title">{{ $t('hero.title') }}</h1>
+        <button class="lang-toggle" @click="$i18n.locale = $i18n.locale === 'es' ? 'en' : 'es'" aria-label="Toggle language">
+          {{ $i18n.locale === 'es' ? '🇪🇸 ES' : '🇬🇧 EN' }}
+        </button>
+      </div>
+      <p class="hero__subtitle">
+        {{ $t('hero.subtitle') }}
+      </p>
+      <div class="badges">
+        <span class="badge">{{ $t('hero.badges.openSource') }}</span>
+        <span class="badge">{{ $t('hero.badges.privacyFirst') }}</span>
+        <span class="badge">{{ $t('hero.badges.localOnly') }}</span>
+      </div>
+    </header>
 
-  <header class="header">
-    <div class="header__name">
-      <a href="#">
-        <h1 class="header__name__text">V01-branch-name-generator</h1>
-      </a>
-    </div>
-    <div class="header__form">
-      <BranchForm @submitForm="handleFormSubmit" @filterChange="handleFilterChange" />
-    </div>
-  </header>
+    <main class="main-content">
+      <div class="converter-box">
+        <BranchForm @submitForm="handleFormSubmit" />
+      </div>
 
-  <main class="main">
-    <BranchList
-      v-if="hasFilterInputs && filteredBranches.length"
-      :branches="filteredBranches"
-      @deleteBranch="handleDeleteBranch"
-    />
-    <hr v-if="hasFilterInputs && filteredBranches.length" class="separator" />
-    <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
-  </main>
+      <div v-if="latestBranch" class="result-section">
+        <h2 class="result-title">{{ $t('result.title') }}</h2>
+        <div class="result-card">
+          <code class="result-code">{{ latestBranch.branchName }}</code>
+          <button class="btn-primary" @click="copyToClipboard(latestBranch.branchName)">
+            {{ copied ? $t('result.copied') : $t('result.copy') }}
+          </button>
+        </div>
+      </div>
 
-  <Footer />
+      <div class="history-section">
+        <div class="history-header">
+          <button class="btn-secondary toggle-btn" @click="showHistory = !showHistory">
+            {{ showHistory ? $t('history.hide') : $t('history.show') }}
+          </button>
+        </div>
+
+        <div v-if="showHistory" class="history-pane">
+          <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
+        </div>
+      </div>
+    </main>
+
+    <Footer />
+  </div>
 </template>
 
 <style scoped lang="scss">
-/* .button styles removed as they are now in CookieBanner.vue */
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
 
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  background-color: var(--color-dark-blue);
-  width: 100%;
-  height: 10vh;
-  padding: 0.5rem 3.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
-    flex-direction: column;
-    height: auto;
-    gap: 10px;
-  }
-
-  &__name {
-    flex: 1;
-    margin-right: 1rem;
-
-    @media (max-width: 768px) {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-
-    &__text {
-      color: var(--color-beige);
-      font-size: 16px;
-      font-weight: bold;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      @media (max-width: 768px) {
-        font-size: 14px;
-        text-align: center;
-      }
-    }
-  }
-
-  &__form {
-    display: flex;
-    align-items: center;
-
-    @media (max-width: 768px) {
-      width: 100%;
-      justify-content: center;
-    }
+  &__subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
   }
 }
 
-.main {
-  background-color: var(--color-blue);
-  width: 100%;
-  min-height: calc(100vh - 10vh); /* Ajusta la altura para evitar scroll innecesario */
-  padding: 0.5rem 2rem;
-  margin-top: 10vh;
-  overflow-y: auto;
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
 
-  @media (max-width: 768px) {
-    margin-top: 248px;
-    padding: 0.5rem 1rem;
-    overflow-y: auto;
+.lang-toggle {
+  position: absolute;
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--bg-surface-hover);
   }
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.badges {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background-color: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.converter-box {
+  background-color: var(--bg-surface);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.result-section {
+  animation: fadeIn 0.3s ease-out;
+  margin-bottom: 3rem;
+}
+
+.result-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.result-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.result-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-main);
+  word-break: break-all;
+  text-align: center;
+}
+
+.history-section {
+  margin-top: 4rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.history-pane {
+  animation: fadeIn 0.3s ease-out;
 }
 
 .separator {
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   border: none;
-  border-top: 1px solid var(--color-light-gray);
+  border-top: 1px solid var(--border-color);
 }
 </style>

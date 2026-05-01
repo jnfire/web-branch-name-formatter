@@ -38,6 +38,9 @@ export class BranchManager {
     const branches = localStorage.get('branches')
     if (branches) {
       this.branches = JSON.parse(branches).map((branch: Branch) => this.loadBranch(branch))
+      if (this.branches.length > 10) {
+        this.branches = this.branches.slice(-10)
+      }
     }
     this.setLastId()
   }
@@ -86,6 +89,11 @@ export class BranchManager {
       projectId: formData.projectId
     })
     this.branches.push(newBranch)
+    // Limitar el historial a los 10 últimos registros (los de ID más alto / más recientes)
+    if (this.branches.length > 10) {
+      // Como hacemos push, los más antiguos están al principio
+      this.branches.shift()
+    }
     this.saveBranches()
   }
 
@@ -112,41 +120,5 @@ export class BranchManager {
     this.lastId = 0
     this.branches = []
     this.saveBranches()
-  }
-
-  public filterBranches(filter: Partial<BranchFormType>): Branch[] {
-    let filteredBranches = this.getBranches()
-
-    const filterProjectId = this.getCleanValue(filter.projectId)
-    if (filterProjectId) {
-      filteredBranches = filteredBranches.filter((branch) =>
-        this.matchesFilter(branch.projectId, filterProjectId)
-      )
-    }
-
-    const filterTicketId = this.getCleanValue(filter.ticketId)
-    if (filterTicketId) {
-      filteredBranches = filteredBranches.filter((branch) =>
-        this.matchesFilter(branch.ticketId, filterTicketId)
-      )
-    }
-
-    const filterFeatureName = this.getCleanValue(filter.featureName)
-    if (filterFeatureName) {
-      filteredBranches = filteredBranches.filter((branch) =>
-        this.matchesFilter(branch.featureName, filterFeatureName)
-      )
-    }
-
-    return filteredBranches
-  }
-
-  private matchesFilter(branchValue: string | undefined, filterValue: string): boolean {
-    const cleanBranchValue = this.getCleanValue(branchValue)
-    return cleanBranchValue.includes(filterValue)
-  }
-
-  private getCleanValue(value: string | undefined): string {
-    return value ? value.trim().toLowerCase() : ''
   }
 }
