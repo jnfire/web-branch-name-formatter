@@ -140,6 +140,38 @@ h1 {
   margin-right: auto;
 }
 
+@media (max-width: 600px) {
+  .app-layout {
+    padding: 2rem 1rem;
+  }
+
+  .header-top {
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+  }
+
+  .lang-toggle {
+    position: static;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .converter-box {
+    padding: 1.5rem;
+  }
+
+  .result-code {
+    font-size: 1.25rem;
+  }
+}
+
 .badges {
   display: flex;
   justify-content: center;
