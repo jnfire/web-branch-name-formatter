@@ -71,12 +71,12 @@ const handleFilterChange = (filterData: {
 <template>
   <div class="app-layout">
     <header class="hero">
-      <div class="lang-switcher">
-        <button class="lang-btn" :class="{ active: $i18n.locale === 'es' }" @click="$i18n.locale = 'es'">ES</button>
-        <span class="lang-divider">|</span>
-        <button class="lang-btn" :class="{ active: $i18n.locale === 'en' }" @click="$i18n.locale = 'en'">EN</button>
+      <div class="hero-top">
+        <h1 class="hero__title">{{ $t('hero.title') }}</h1>
+        <button class="lang-toggle" @click="$i18n.locale = $i18n.locale === 'es' ? 'en' : 'es'" aria-label="Toggle language">
+          {{ $i18n.locale === 'es' ? '🇪🇸 ES' : '🇬🇧 EN' }}
+        </button>
       </div>
-      <h1 class="hero__title">{{ $t('hero.title') }}</h1>
       <p class="hero__subtitle">
         {{ $t('hero.subtitle') }}
       </p>
@@ -126,51 +126,45 @@ const handleFilterChange = (filterData: {
 </template>
 
 <style scoped lang="scss">
-.lang-switcher {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.lang-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0.2rem 0.4rem;
-  transition: color 0.2s;
-
-  &:hover {
-    color: var(--text-main);
-  }
-
-  &.active {
-    color: var(--text-main);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-}
-
-.lang-divider {
-  color: var(--border-color);
-  font-size: 0.7rem;
-}
-
 .hero {
   text-align: center;
   margin-bottom: 3rem;
+}
 
-  &__title {
-    font-size: 3rem;
-    font-weight: 800;
-    letter-spacing: -0.05em;
-    color: var(--text-main);
-    margin-bottom: 0.5rem;
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.lang-toggle {
+  position: absolute;
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--bg-surface-hover);
   }
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--text-main);
+  margin: 0;
+}
 
   &__subtitle {
     font-size: 1.1rem;
