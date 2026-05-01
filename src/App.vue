@@ -43,16 +43,14 @@ const handleDeleteBranch = (branchId: number) => {
 
 <template>
   <div class="app-layout">
-    <header class="hero">
-      <div class="hero-top">
-        <h1 class="hero__title">{{ $t('hero.title') }}</h1>
+    <header class="app-header">
+      <div class="header-top">
+        <h1>{{ $t('hero.title') }}</h1>
         <button class="lang-toggle" @click="$i18n.locale = $i18n.locale === 'es' ? 'en' : 'es'" aria-label="Toggle language">
           {{ $i18n.locale === 'es' ? '🇪🇸 ES' : '🇬🇧 EN' }}
         </button>
       </div>
-      <p class="hero__subtitle">
-        {{ $t('hero.subtitle') }}
-      </p>
+      <p class="subtitle">{{ $t('hero.subtitle') }}</p>
       <div class="badges">
         <span class="badge">{{ $t('hero.badges.openSource') }}</span>
         <span class="badge">{{ $t('hero.badges.privacyFirst') }}</span>
@@ -93,19 +91,12 @@ const handleDeleteBranch = (branchId: number) => {
 </template>
 
 <style scoped lang="scss">
-.hero {
+.app-header {
   text-align: center;
-  margin-bottom: 3rem;
-
-  &__subtitle {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    max-width: 600px;
-    margin: 0 auto 1.5rem;
-  }
+  margin-bottom: 2.5rem;
 }
 
-.hero-top {
+.header-top {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,28 +123,38 @@ const handleDeleteBranch = (branchId: number) => {
   }
 }
 
-.hero__title {
-  font-size: 3rem;
-  font-weight: 800;
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
   letter-spacing: -0.05em;
   color: var(--text-main);
   margin: 0;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .badges {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .badge {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   padding: 0.2rem 0.6rem;
   border-radius: 9999px;
   background-color: var(--bg-surface);
   color: var(--text-muted);
   border: 1px solid var(--border-color);
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
