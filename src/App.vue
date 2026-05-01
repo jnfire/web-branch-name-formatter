@@ -129,6 +129,13 @@ const handleFilterChange = (filterData: {
 .hero {
   text-align: center;
   margin-bottom: 3rem;
+
+  &__subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+  }
 }
 
 .hero-top {
@@ -164,14 +171,6 @@ const handleFilterChange = (filterData: {
   letter-spacing: -0.05em;
   color: var(--text-main);
   margin: 0;
-}
-
-  &__subtitle {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    max-width: 600px;
-    margin: 0 auto 1.5rem;
-  }
 }
 
 .badges {
