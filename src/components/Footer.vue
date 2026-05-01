@@ -2,7 +2,7 @@
   <footer class="footer">
     <div class="footer__content">
       <p class="footer__text">
-        Designed with simplicity and a focus on privacy. All code runs on your device.
+        {{ $t('footer.privacy') }}
       </p>
       <div class="footer__links">
         <a
@@ -11,7 +11,7 @@
           rel="noopener noreferrer"
           class="footer__link"
         >
-          View Source Code
+          {{ $t('footer.sourceCode') }}
         </a>
         <span class="footer__divider">|</span>
         <a
@@ -20,7 +20,7 @@
           rel="noopener noreferrer"
           class="footer__link"
         >
-          GPL-3.0 License
+          {{ $t('footer.license') }}
         </a>
       </div>
     </div>

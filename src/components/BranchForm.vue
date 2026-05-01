@@ -44,40 +44,40 @@ watch([projectId, ticketId, featureName], () => {
 <template>
   <form class="form" aria-label="Create branch name form" @submit="handleSubmit">
     <div class="form-group">
-      <label class="form-label">Project ID</label>
+      <label class="form-label">{{ $t('form.projectId') }}</label>
       <input
         class="input-element"
         type="text"
         name="project-id"
         v-model="projectId"
-        placeholder="e.g. WEB"
+        :placeholder="$t('form.projectIdPlaceholder')"
       />
     </div>
 
     <div class="form-group">
-      <label class="form-label">Ticket ID</label>
+      <label class="form-label">{{ $t('form.ticketId') }}</label>
       <input
         class="input-element"
         type="text"
         name="ticket-id"
         v-model="ticketId"
-        placeholder="e.g. 1234"
+        :placeholder="$t('form.ticketIdPlaceholder')"
       />
     </div>
 
     <div class="form-group">
-      <label class="form-label">Develop Name</label>
+      <label class="form-label">{{ $t('form.developName') }}</label>
       <input
         class="input-element"
         type="text"
         name="develop-name"
         v-model="featureName"
-        placeholder="e.g. add-login-form"
+        :placeholder="$t('form.developNamePlaceholder')"
       />
     </div>
 
     <button class="btn-primary generate-btn" type="submit">
-      Generate Branch Name
+      {{ $t('form.generate') }}
     </button>
   </form>
 </template>

@@ -71,15 +71,19 @@ const handleFilterChange = (filterData: {
 <template>
   <div class="app-layout">
     <header class="hero">
-      <h1 class="hero__title">Branch Name Formatter</h1>
+      <div class="lang-switcher">
+        <button class="lang-btn" :class="{ active: $i18n.locale === 'es' }" @click="$i18n.locale = 'es'">ES</button>
+        <span class="lang-divider">|</span>
+        <button class="lang-btn" :class="{ active: $i18n.locale === 'en' }" @click="$i18n.locale = 'en'">EN</button>
+      </div>
+      <h1 class="hero__title">{{ $t('hero.title') }}</h1>
       <p class="hero__subtitle">
-        Format your branch names instantly and consistently.
-        100% private, zero server processing, open source.
+        {{ $t('hero.subtitle') }}
       </p>
       <div class="badges">
-        <span class="badge">Open Source</span>
-        <span class="badge">Privacy First</span>
-        <span class="badge">Local Only</span>
+        <span class="badge">{{ $t('hero.badges.openSource') }}</span>
+        <span class="badge">{{ $t('hero.badges.privacyFirst') }}</span>
+        <span class="badge">{{ $t('hero.badges.localOnly') }}</span>
       </div>
     </header>
 
@@ -89,11 +93,11 @@ const handleFilterChange = (filterData: {
       </div>
 
       <div v-if="latestBranch" class="result-section">
-        <h2 class="result-title">Generated Branch Name</h2>
+        <h2 class="result-title">{{ $t('result.title') }}</h2>
         <div class="result-card">
           <code class="result-code">{{ latestBranch.branchName }}</code>
           <button class="btn-primary" @click="copyToClipboard(latestBranch.branchName)">
-            {{ copied ? '¡Copiado!' : 'Copy Name' }}
+            {{ copied ? $t('result.copied') : $t('result.copy') }}
           </button>
         </div>
       </div>
@@ -101,7 +105,7 @@ const handleFilterChange = (filterData: {
       <div class="history-section">
         <div class="history-header">
           <button class="btn-secondary toggle-btn" @click="showHistory = !showHistory">
-            {{ showHistory ? 'Hide History' : 'Show History' }}
+            {{ showHistory ? $t('history.hide') : $t('history.show') }}
           </button>
         </div>
 
@@ -122,6 +126,40 @@ const handleFilterChange = (filterData: {
 </template>
 
 <style scoped lang="scss">
+.lang-switcher {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--text-main);
+  }
+
+  &.active {
+    color: var(--text-main);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.lang-divider {
+  color: var(--border-color);
+  font-size: 0.7rem;
+}
+
 .hero {
   text-align: center;
   margin-bottom: 3rem;
