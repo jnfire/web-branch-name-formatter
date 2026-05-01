@@ -5,44 +5,9 @@ import { onMounted, ref } from 'vue'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
-import CookieBanner from '@/components/CookieBanner.vue' // Import new component
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
-
-// --- Cookie Consent Logic ---
-const showCookieBanner = ref(false)
-
-// This function is called when user accepts
-const allowCookies = () => {
-  window.gtag('consent', 'update', {
-    analytics_storage: 'granted'
-  })
-  console.log('Cookies accepted. Consent updated.')
-}
-
-// Handlers for banner events
-const handleAccept = () => {
-  localStorage.setItem('cookie_consent_status', 'accepted')
-  showCookieBanner.value = false
-  allowCookies()
-}
-
-const handleDecline = () => {
-  localStorage.setItem('cookie_consent_status', 'declined')
-  showCookieBanner.value = false
-}
-
-onMounted(() => {
-  const consentStatus = localStorage.getItem('cookie_consent_status')
-  if (!consentStatus) {
-    // If no consent is stored, show the banner
-    showCookieBanner.value = true
-  } else if (consentStatus === 'accepted') {
-    // If consent was already given, grant it again on page load
-    allowCookies()
-  }
-})
 
 // --- Original Application Logic ---
 const branchManager = BranchManager.getInstance()
@@ -104,8 +69,6 @@ const handleFilterChange = (filterData: {
 </script>
 
 <template>
-  <CookieBanner v-if="showCookieBanner" @accept="handleAccept" @decline="handleDecline" />
-
   <div class="app-layout">
     <header class="hero">
       <h1 class="hero__title">Branch Name Formatter</h1>
