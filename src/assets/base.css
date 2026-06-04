@@ -6,6 +6,7 @@
   --text-muted: #6b7280;
   --border-color: #e5e7eb;
   --accent-color: #000000;
+  --accent-color-alpha: rgba(0, 0, 0, 0.1);
   --error-color: #ef4444;
 }
 
@@ -18,6 +19,7 @@
     --text-muted: #9ca3af;
     --border-color: #374151;
     --accent-color: #ffffff;
+    --accent-color-alpha: rgba(255, 255, 255, 0.1);
     --error-color: #f87171;
   }
 }
@@ -51,18 +53,20 @@ body {
 }
 
 .input-element {
-  background-color: var(--bg-surface);
+  background-color: var(--bg-body);
   color: var(--text-main);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 0.75rem 1rem;
-  transition: border-color 0.2s;
-  font-size: 0.95rem;
+  padding: 1rem;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  font-family: inherit;
 }
 
 .input-element:focus {
   outline: none;
   border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color-alpha);
 }
 
 .btn-primary {

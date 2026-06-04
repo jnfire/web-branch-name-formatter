@@ -3,9 +3,9 @@
     "title": "Branch Name Formatter",
     "subtitle": "Formatea tus nombres de rama al instante y con consistencia. 100% privado, sin procesamiento en servidor, código abierto.",
     "badges": {
-      "openSource": "Código Abierto",
-      "privacyFirst": "Privacidad Primero",
-      "localOnly": "Solo Local"
+      "opensource": "Open Source",
+      "privacy": "Privacidad Local",
+      "serverless": "Sin Servidor"
     }
   },
   "form": {

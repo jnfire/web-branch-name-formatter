@@ -3,9 +3,9 @@
     "title": "Branch Name Formatter",
     "subtitle": "Format your branch names instantly and consistently. 100% private, zero server processing, open source.",
     "badges": {
-      "openSource": "Open Source",
-      "privacyFirst": "Privacy First",
-      "localOnly": "Local Only"
+      "opensource": "Open Source",
+      "privacy": "Local Privacy",
+      "serverless": "Serverless"
     }
   },
   "form": {

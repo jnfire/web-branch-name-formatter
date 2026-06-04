@@ -46,15 +46,16 @@ const handleDeleteBranch = (branchId: number) => {
     <header class="app-header">
       <div class="header-top">
         <h1>{{ $t('hero.title') }}</h1>
-        <button class="lang-toggle" @click="$i18n.locale = $i18n.locale === 'es' ? 'en' : 'es'" aria-label="Toggle language">
-          {{ $i18n.locale === 'es' ? '🇪🇸 ES' : '🇬🇧 EN' }}
-        </button>
+        <select class="lang-selector" v-model="$i18n.locale" aria-label="Select language">
+          <option value="es">🇪🇸 ES</option>
+          <option value="en">🇬🇧 EN</option>
+        </select>
       </div>
       <p class="subtitle">{{ $t('hero.subtitle') }}</p>
       <div class="badges">
-        <span class="badge">{{ $t('hero.badges.openSource') }}</span>
-        <span class="badge">{{ $t('hero.badges.privacyFirst') }}</span>
-        <span class="badge">{{ $t('hero.badges.localOnly') }}</span>
+        <span class="badge">{{ $t('hero.badges.opensource') }}</span>
+        <span class="badge">{{ $t('hero.badges.privacy') }}</span>
+        <span class="badge">{{ $t('hero.badges.serverless') }}</span>
       </div>
     </header>
 
@@ -105,7 +106,7 @@ const handleDeleteBranch = (branchId: number) => {
   position: relative;
 }
 
-.lang-toggle {
+.lang-selector {
   position: absolute;
   right: 0;
   background: var(--bg-surface);
@@ -150,7 +151,7 @@ h1 {
     margin-bottom: 1.5rem;
   }
 
-  .lang-toggle {
+  .lang-selector {
     position: static;
     margin-bottom: 1rem;
   }
