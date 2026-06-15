@@ -37,10 +37,15 @@ export class BranchFormatter {
   }
 
   private static basicClean(text: string): string {
+    text = this.replaceDots(text)
     text = this.replaceSpaces(text)
     text = this.removeMultipleDashes(text)
     text = this.removeSpecialCharacters(text)
     return text
+  }
+
+  private static replaceDots(text: string): string {
+    return text.replace(/\./g, '-')
   }
 
   private static replaceSpaces(text: string): string {

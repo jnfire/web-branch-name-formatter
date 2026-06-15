@@ -92,4 +92,15 @@ describe('BranchFormatter', () => {
 
     expect(formattedName).toBe('TICKET-505--feature-o-slashes')
   })
+
+  it('should replace dots with dashes', () => {
+    const branch: BranchType = {
+      ticketId: 'ticket-606',
+      featureName: 'version 5.1.0'
+    } as BranchType
+
+    const formattedName = BranchFormatter.format(branch)
+
+    expect(formattedName).toBe('TICKET-606--version-5-1-0')
+  })
 })
