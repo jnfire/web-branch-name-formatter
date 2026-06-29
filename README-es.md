@@ -2,9 +2,9 @@
 
 *Read this in [English](README.md).*
 
-Una herramienta web rápida, privada y sin servidor diseñada para que los desarrolladores generen nombres de ramas de Git consistentes al instante.
+Una herramienta web rápida y local-first diseñada para que los desarrolladores generen nombres de ramas de Git consistentes al instante.
 
-Todo el procesamiento se realiza localmente en tu navegador web, garantizando la **privacidad total** de tus datos. Construido con **Vue 3 (Composition API)** y **TypeScript**.
+Todo el procesamiento se realiza localmente en tu navegador web, garantizando un **control total** de tus datos (Local-First). Construido con **Vue 3 (Composition API)** y **TypeScript**.
 
 ## ✨ Características Clave
 - **Formateo Instantáneo:** Combina automáticamente el ID del Proyecto, el ID del Ticket y el Nombre del Desarrollo en un nombre de rama limpio.

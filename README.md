@@ -2,9 +2,9 @@
 
 *Leer esto en [Español](README-es.md).*
 
-A fast, private, and serverless web tool designed for developers to generate consistent Git branch names instantly. 
+A fast, local-first web tool designed for developers to generate consistent Git branch names instantly.
 
-All processing is done locally in your web browser, ensuring **total privacy** for your data. Built with **Vue 3 (Composition API)** and **TypeScript**.
+All processing is done locally in your web browser, ensuring **complete control** of your data (Local-First). Built with **Vue 3 (Composition API)** and **TypeScript**.
 
 ## ✨ Key Features
 - **Instant Formatting:** Automatically combines Project ID, Ticket ID, and Feature Name into a clean branch name.
