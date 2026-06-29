@@ -1,11 +1,11 @@
 {
   "hero": {
     "title": "Branch Name Formatter",
-    "subtitle": "Formatea tus nombres de rama al instante y con consistencia. 100% privado, sin procesamiento en servidor, código abierto.",
+    "subtitle": "Formatea tus nombres de rama al instante y con consistencia. Local-first, sin registro y de código abierto.",
     "badges": {
       "opensource": "Open Source",
-      "privacy": "Privacidad Local",
-      "serverless": "Sin Servidor"
+      "privacy": "Local-First",
+      "serverless": "Sin Registro"
     }
   },
   "form": {
@@ -28,7 +28,7 @@
     "title": "Historial"
   },
   "footer": {
-    "privacy": "Diseñado con simplicidad y foco en la privacidad. Todo el código se ejecuta en tu dispositivo.",
+    "privacy": "Diseñado para desarrolladores. Tus datos te pertenecen: herramientas rápidas y de código abierto que se ejecutan directamente en tu dispositivo.",
     "sourceCode": "Ver Código Fuente",
     "license": "Licencia GPL-3.0"
   }

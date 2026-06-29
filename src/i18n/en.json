@@ -1,11 +1,11 @@
 {
   "hero": {
     "title": "Branch Name Formatter",
-    "subtitle": "Format your branch names instantly and consistently. 100% private, zero server processing, open source.",
+    "subtitle": "Format your branch names instantly and consistently. Local-first, no registration, and open source.",
     "badges": {
       "opensource": "Open Source",
-      "privacy": "Local Privacy",
-      "serverless": "Serverless"
+      "privacy": "Local-First",
+      "serverless": "No Registration"
     }
   },
   "form": {
@@ -28,7 +28,7 @@
     "title": "History"
   },
   "footer": {
-    "privacy": "Designed with simplicity and a focus on privacy. All code runs on your device.",
+    "privacy": "Designed for developers. Your data belongs to you: fast, open-source tools running directly on your device.",
     "sourceCode": "View Source Code",
     "license": "GPL-3.0 License"
   }
