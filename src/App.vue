@@ -53,7 +53,7 @@ const handleDeleteBranch = (branchId: number) => {
       </div>
       <p class="subtitle">{{ $t('hero.subtitle') }}</p>
       <div class="badges">
-        <span class="badge">{{ $t('hero.badges.opensource') }}</span>
+        <span class="badge">{{ $t('hero.badges.auditable') }}</span>
         <span class="badge">{{ $t('hero.badges.privacy') }}</span>
         <span class="badge">{{ $t('hero.badges.serverless') }}</span>
       </div>
