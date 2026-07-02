@@ -27,6 +27,11 @@
     "hide": "Hide History",
     "title": "History"
   },
+  "cookies": {
+    "text": "Help us improve? We use anonymous analytics cookies to understand usage and optimize the web.",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
   "footer": {
     "privacy": "Local-first development. Your data, your control.",
     "sourceCode": "View Source Code",

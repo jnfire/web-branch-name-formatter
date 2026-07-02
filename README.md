@@ -9,7 +9,7 @@ All processing is done locally in your web browser, ensuring **complete control*
 ## ✨ Key Features
 - **Instant Formatting:** Automatically combines Project ID, Ticket ID, and Feature Name into a clean branch name.
 - **History Management:** Keeps track of your last 10 generated names for quick access (stored locally).
-- **Total Privacy:** Everything happens 100% client-side. No trackers, no server processing.
+- **Local Processing:** Everything happens client-side. No server-side storage or processing of your branch data.
 - **Interface:** Clean, professional, and responsive design with native dark/light mode support.
 - **Multi-language:** Support for English and Spanish.
 

@@ -5,9 +5,16 @@ import { onMounted, ref } from 'vue'
 import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
+import CookieBanner from '@/components/CookieBanner.vue'
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
+import { initAnalytics } from '@/utils/analytics'
+
+const handleCookieAccept = () => {
+  const gaId = (import.meta.env.VITE_GA_ID as string) || 'G-XXXXXXXXXX';
+  initAnalytics(gaId);
+};
 
 // --- Original Application Logic ---
 const branchManager = BranchManager.getInstance()
@@ -88,6 +95,7 @@ const handleDeleteBranch = (branchId: number) => {
     </main>
 
     <Footer />
+    <CookieBanner @accept="handleCookieAccept" />
   </div>
 </template>
 

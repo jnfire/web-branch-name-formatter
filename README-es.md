@@ -9,7 +9,7 @@ Todo el procesamiento se realiza localmente en tu navegador web, garantizando un
 ## ✨ Características Clave
 - **Formateo Instantáneo:** Combina automáticamente el ID del Proyecto, el ID del Ticket y el Nombre del Desarrollo en un nombre de rama limpio.
 - **Gestión de Historial:** Mantiene un registro de tus últimos 10 nombres generados para un acceso rápido (almacenado localmente).
-- **Privacidad Total:** Todo sucede 100% en el lado del cliente. Sin rastreadores, sin procesamiento en el servidor.
+- **Procesamiento Local:** Todo sucede en el lado del cliente. Sin almacenamiento ni procesamiento en servidor de tus datos de ramas.
 - **Interfaz:** Diseño limpio, profesional y responsivo con soporte nativo para modo oscuro/claro.
 - **Multilingüe:** Soporte para Inglés y Español.
 
