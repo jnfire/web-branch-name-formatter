@@ -54,8 +54,8 @@ const handleDeleteBranch = (branchId: number) => {
       <div class="header-top">
         <h1>{{ $t('hero.title') }}</h1>
         <select class="lang-selector" v-model="$i18n.locale" aria-label="Select language">
-          <option value="es">🇪🇸 ES</option>
-          <option value="en">🇬🇧 EN</option>
+          <option value="es">ES</option>
+          <option value="en">EN</option>
         </select>
       </div>
       <p class="subtitle">{{ $t('hero.subtitle') }}</p>
