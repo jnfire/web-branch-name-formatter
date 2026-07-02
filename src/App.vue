@@ -6,10 +6,16 @@ import BranchForm from '@/components/BranchForm.vue'
 import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
 import CookieBanner from '@/components/CookieBanner.vue'
+import LangSelector from '@/components/LangSelector.vue'
 import { BranchManager } from '@/core/BranchManager'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { Branch } from '@/core/Branch'
 import { initAnalytics } from '@/utils/analytics'
+
+const languages = [
+  { code: 'es', label: 'ES' },
+  { code: 'en', label: 'EN' }
+]
 
 const handleCookieAccept = () => {
   const gaId = (import.meta.env.VITE_GA_ID as string) || 'G-XXXXXXXXXX';
@@ -51,12 +57,9 @@ const handleDeleteBranch = (branchId: number) => {
 <template>
   <div class="app-layout">
     <header class="app-header">
-      <div class="header-top">
-        <h1>{{ $t('hero.title') }}</h1>
-        <select class="lang-selector" v-model="$i18n.locale" aria-label="Select language">
-          <option value="es">ES</option>
-          <option value="en">EN</option>
-        </select>
+      <h1>{{ $t('hero.title') }}</h1>
+      <div class="lang-selector-wrapper">
+        <LangSelector v-model="$i18n.locale" :options="languages" />
       </div>
       <p class="subtitle">{{ $t('hero.subtitle') }}</p>
       <div class="badges">
@@ -105,31 +108,10 @@ const handleDeleteBranch = (branchId: number) => {
   margin-bottom: 2.5rem;
 }
 
-.header-top {
+.lang-selector-wrapper {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-  position: relative;
-}
-
-.lang-selector {
-  position: absolute;
-  right: 0;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.2s;
-
-  &:hover {
-    background: var(--bg-surface-hover);
-  }
+  margin: 0.75rem 0 1rem 0;
 }
 
 h1 {
@@ -154,15 +136,7 @@ h1 {
     padding: 2rem 1rem;
   }
 
-  .header-top {
-    flex-direction: column;
-    margin-bottom: 1.5rem;
-  }
 
-  .lang-selector {
-    position: static;
-    margin-bottom: 1rem;
-  }
 
   h1 {
     font-size: 2rem;
