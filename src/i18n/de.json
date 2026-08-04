@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "Branch Name Formatter",
+    "subtitle": "Formatieren Sie Ihre Branch-Namen sofort und konsistent. Local-First und ohne Registrierung.",
+    "badges": {
+      "auditable": "Überprüfbar",
+      "privacy": "Local-First",
+      "serverless": "Keine Registrierung"
+    }
+  },
+  "form": {
+    "projectId": "Projekt-ID",
+    "projectIdPlaceholder": "z. B. WEB",
+    "ticketId": "Ticket-ID",
+    "ticketIdPlaceholder": "z. B. 1234",
+    "developName": "Entwicklungsname",
+    "developNamePlaceholder": "z. B. add-login-form",
+    "generate": "Branch-Namen Generieren"
+  },
+  "result": {
+    "title": "Generierter Branch-Name",
+    "copy": "Name Kopieren",
+    "copied": "Kopiert!"
+  },
+  "history": {
+    "show": "Verlauf Anzeigen",
+    "hide": "Verlauf Ausblenden",
+    "title": "Verlauf"
+  },
+  "cookies": {
+    "text": "Helfen Sie uns, uns zu verbessern? Wir verwenden anonyme Analyse-Cookies, um die Nutzung zu verstehen und die Website zu optimieren.",
+    "accept": "Akzeptieren",
+    "decline": "Ablehnen"
+  },
+  "footer": {
+    "privacy": "Local-First-Entwicklung. Ihre Daten, Ihre Kontrolle.",
+    "sourceCode": "Quellcode Anzeigen",
+    "license": "Alle Rechte Vorbehalten"
+  }
+}

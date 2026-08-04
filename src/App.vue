@@ -13,8 +13,12 @@ import type { Branch } from '@/core/Branch'
 import { initAnalytics } from '@/utils/analytics'
 
 const languages = [
-  { code: 'es', label: 'ES' },
-  { code: 'en', label: 'EN' }
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'pt', label: 'Português' }
 ]
 
 const handleCookieAccept = () => {

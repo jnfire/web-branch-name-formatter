@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "Branch Name Formatter",
+    "subtitle": "Formate seus nomes de branch instantaneamente e de forma consistente. Local-first e sem registo.",
+    "badges": {
+      "auditable": "Auditável",
+      "privacy": "Local-First",
+      "serverless": "Sem Registo"
+    }
+  },
+  "form": {
+    "projectId": "ID do Projeto",
+    "projectIdPlaceholder": "ex. WEB",
+    "ticketId": "ID do Ticket",
+    "ticketIdPlaceholder": "ex. 1234",
+    "developName": "Nome de Desenvolvimento",
+    "developNamePlaceholder": "ex. add-login-form",
+    "generate": "Gerar Nome de Branch"
+  },
+  "result": {
+    "title": "Nome de Branch Gerado",
+    "copy": "Copiar Nome",
+    "copied": "Copiado!"
+  },
+  "history": {
+    "show": "Mostrar Histórico",
+    "hide": "Ocultar Histórico",
+    "title": "Histórico"
+  },
+  "cookies": {
+    "text": "Ajuda-nos a melhorar? Usamos cookies de análise anónimos para compreender o uso e otimizar a web.",
+    "accept": "Aceitar",
+    "decline": "Recusar"
+  },
+  "footer": {
+    "privacy": "Desenvolvimento local-first. Seus dados, seu controlo.",
+    "sourceCode": "Ver Código Fonte",
+    "license": "Todos os Direitos Reservados"
+  }
+}

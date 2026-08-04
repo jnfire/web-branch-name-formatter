@@ -1,6 +1,7 @@
 <!-- src/components/LangSelector.vue -->
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import FlagIcon from './FlagIcon.vue';
 
 const props = defineProps<{
   modelValue: string;
@@ -13,15 +14,84 @@ const emit = defineEmits<{
 
 const isOpen = ref(false);
 const containerRef = ref<HTMLElement | null>(null);
+const triggerRef = ref<HTMLButtonElement | null>(null);
+const optionRefs = ref<HTMLButtonElement[]>([]);
 
 const currentLabel = computed(() => {
   const found = props.options.find(opt => opt.code === props.modelValue);
   return found ? found.label : props.modelValue;
 });
 
+const setOptionRef = (el: any, index: number) => {
+  if (el) optionRefs.value[index] = el as HTMLButtonElement;
+};
+
+const openDropdown = async () => {
+  isOpen.value = true;
+  await nextTick();
+  const selectedIndex = props.options.findIndex(opt => opt.code === props.modelValue);
+  optionRefs.value[selectedIndex >= 0 ? selectedIndex : 0]?.focus();
+};
+
+const closeDropdown = (returnFocus = true) => {
+  isOpen.value = false;
+  if (returnFocus) triggerRef.value?.focus();
+};
+
+const toggleDropdown = () => {
+  if (isOpen.value) {
+    closeDropdown(false);
+  } else {
+    openDropdown();
+  }
+};
+
 const selectOption = (code: string) => {
   emit('update:modelValue', code);
-  isOpen.value = false;
+  closeDropdown();
+};
+
+// Moves focus between options with the arrow keys (roving focus), wrapping
+// around at the edges, so keyboard users never get stuck in the listbox.
+const focusOptionByOffset = (currentIndex: number, offset: number) => {
+  const count = props.options.length;
+  const nextIndex = (currentIndex + offset + count) % count;
+  optionRefs.value[nextIndex]?.focus();
+};
+
+const handleOptionKeydown = (event: KeyboardEvent, index: number) => {
+  switch (event.key) {
+    case 'ArrowDown':
+      event.preventDefault();
+      focusOptionByOffset(index, 1);
+      break;
+    case 'ArrowUp':
+      event.preventDefault();
+      focusOptionByOffset(index, -1);
+      break;
+    case 'Home':
+      event.preventDefault();
+      optionRefs.value[0]?.focus();
+      break;
+    case 'End':
+      event.preventDefault();
+      optionRefs.value[props.options.length - 1]?.focus();
+      break;
+    case 'Escape':
+      event.preventDefault();
+      closeDropdown();
+      break;
+    case 'Tab':
+      closeDropdown(false);
+      break;
+  }
+};
+
+const handleTriggerKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault();
+    openDropdown();
+  }
 };
 
 const handleClickOutside = (event: MouseEvent) => {
@@ -41,29 +111,41 @@ onUnmounted(() => {
 
 <template>
   <div class="lang-selector-container" ref="containerRef">
-    <button 
-      type="button" 
-      class="lang-selector-trigger" 
-      @click="isOpen = !isOpen"
+    <button
+      ref="triggerRef"
+      type="button"
+      class="lang-selector-trigger"
+      @click="toggleDropdown"
+      @keydown="handleTriggerKeydown"
       aria-haspopup="listbox"
       :aria-expanded="isOpen"
     >
+      <FlagIcon :code="modelValue" />
       <span class="lang-label">{{ currentLabel }}</span>
-      <span class="dropdown-arrow" :class="{ 'arrow-open': isOpen }">▾</span>
+      <span class="dropdown-arrow" :class="{ 'arrow-open': isOpen }" aria-hidden="true">▾</span>
     </button>
 
     <transition name="fade-slide">
       <ul v-if="isOpen" class="lang-selector-dropdown" role="listbox">
-        <li 
-          v-for="opt in options" 
+        <li
+          v-for="(opt, index) in options"
           :key="opt.code"
-          class="lang-option"
-          :class="{ 'option-selected': opt.code === modelValue }"
-          role="option"
-          :aria-selected="opt.code === modelValue"
-          @click="selectOption(opt.code)"
+          role="presentation"
         >
-          {{ opt.label }}
+          <button
+            type="button"
+            :ref="(el) => setOptionRef(el, index)"
+            class="lang-option"
+            :class="{ 'option-selected': opt.code === modelValue }"
+            role="option"
+            :aria-selected="opt.code === modelValue"
+            :tabindex="opt.code === modelValue ? 0 : -1"
+            @click="selectOption(opt.code)"
+            @keydown="handleOptionKeydown($event, index)"
+          >
+            <FlagIcon :code="opt.code" />
+            <span>{{ opt.label }}</span>
+          </button>
         </li>
       </ul>
     </transition>
@@ -87,7 +169,7 @@ onUnmounted(() => {
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   transition: all 0.2s;
   user-select: none;
 }
@@ -116,23 +198,31 @@ onUnmounted(() => {
   border-radius: 8px;
   box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
   padding: 0.35rem 0;
-  min-width: 80px;
+  min-width: 120px;
   list-style: none;
   z-index: 2000;
   margin: 0;
 }
 
 .lang-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
   padding: 0.45rem 1rem;
   font-size: 0.85rem;
   font-weight: 500;
+  font-family: inherit;
   color: var(--text-main);
+  background: transparent;
+  border: none;
   cursor: pointer;
   transition: background-color 0.15s;
-  text-align: center;
+  text-align: left;
 }
 
-.lang-option:hover {
+.lang-option:hover,
+.lang-option:focus-visible {
   background-color: var(--bg-surface-hover);
 }
 
@@ -141,7 +231,8 @@ onUnmounted(() => {
   color: var(--bg-body);
 }
 
-.option-selected:hover {
+.option-selected:hover,
+.option-selected:focus-visible {
   background-color: var(--accent-color);
   color: var(--bg-body);
 }
@@ -160,5 +251,13 @@ onUnmounted(() => {
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateY(-0.25rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-slide-enter-active,
+  .fade-slide-leave-active,
+  .dropdown-arrow {
+    transition: none;
+  }
 }
 </style>
