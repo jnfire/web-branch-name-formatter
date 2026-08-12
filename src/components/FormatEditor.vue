@@ -160,7 +160,8 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
           <div class="field-control type-select">
             <label class="field-label-small">{{ $t('configurator.editor.type') }}</label>
             <CustomSelect
-              v-model="field.type"
+              :model-value="field.type || 'text'"
+              @update:model-value="field.type = $event as 'text' | 'select'"
               size="sm"
               :disabled="format.isReadonly"
               :options="typeOptions"

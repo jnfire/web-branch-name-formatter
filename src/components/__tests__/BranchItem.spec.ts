@@ -9,24 +9,15 @@ describe('BranchList.vue', () => {
     const branches: Branch[] = [
       new Branch({
         id: 1,
-        ticketId: 'T1',
-        featureName: 'Feature1',
-        branchName: 'T1-Feature1',
-        projectId: 'PROJ1'
+        branchName: 'T1-Feature1'
       }),
       new Branch({
         id: 2,
-        ticketId: 'T2',
-        featureName: 'Feature2',
-        branchName: 'T2-Feature2',
-        projectId: 'PROJ2'
+        branchName: 'T2-Feature2'
       }),
       new Branch({
         id: 3,
-        ticketId: 'T3',
-        featureName: 'Feature3',
-        branchName: 'T3-Feature3',
-        projectId: 'PROJ3'
+        branchName: 'T3-Feature3'
       })
     ]
 
@@ -47,17 +38,11 @@ describe('BranchList.vue', () => {
     const branches: Branch[] = [
       new Branch({
         id: 1,
-        ticketId: 'T1',
-        featureName: 'Feature1',
-        branchName: 'T1-Feature1',
-        projectId: 'PROJ1'
+        branchName: 'T1-Feature1'
       }),
       new Branch({
         id: 2,
-        ticketId: 'T2',
-        featureName: 'Feature2',
-        branchName: 'T2-Feature2',
-        projectId: 'PROJ2'
+        branchName: 'T2-Feature2'
       })
     ]
 
@@ -72,24 +57,15 @@ describe('BranchList.vue', () => {
     const newBranches: Branch[] = [
       new Branch({
         id: 1,
-        ticketId: 'T1',
-        featureName: 'Feature1',
-        branchName: 'T1-Feature1',
-        projectId: 'PROJ1'
+        branchName: 'T1-Feature1'
       }),
       new Branch({
         id: 2,
-        ticketId: 'T2',
-        featureName: 'Feature2',
-        branchName: 'T2-Feature2',
-        projectId: 'PROJ2'
+        branchName: 'T2-Feature2'
       }),
       new Branch({
         id: 3,
-        ticketId: 'T3',
-        featureName: 'Feature3',
-        branchName: 'T3-Feature3',
-        projectId: 'PROJ3'
+        branchName: 'T3-Feature3'
       })
     ]
 
@@ -107,10 +83,7 @@ describe('BranchList.vue', () => {
     const branches: Branch[] = [
       new Branch({
         id: 1,
-        ticketId: 'T1',
-        featureName: 'Feature1',
-        branchName: 'T1-Feature1',
-        projectId: 'PROJ1'
+        branchName: 'T1-Feature1'
       })
     ]
 
@@ -130,10 +103,7 @@ describe('BranchItem.vue', () => {
   it('renders branch item correctly', () => {
     const branch = new Branch({
       id: 1,
-      ticketId: 'T1',
-      featureName: 'Feature1',
-      branchName: 'T1-Feature1',
-      projectId: 'PROJ'
+      branchName: 'T1-Feature1'
     })
 
     const wrapper = mount(BranchItem, {

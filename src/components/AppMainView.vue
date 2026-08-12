@@ -29,15 +29,9 @@ const updateBranches = () => {
 
 // Now handleFormSubmit receives both the template and the form data
 const handleFormSubmit = (template: BranchFormatTemplate, formData: BranchFormType) => {
-  // We need to update branchManager to accept template or just format it here.
-  // Actually BranchManager should receive the branchName directly or the template + values.
-  // For now, let's keep BranchManager API as simple as possible.
-  // Wait, Branch constructor expects `BranchType` which now has `branchName`.
-  
   import('@/core/BranchFormatter').then(({ BranchFormatter }) => {
     const branchName = BranchFormatter.format(template, formData)
     branchManager.createBranch({ 
-      id: Date.now(), 
       branchName, 
       formatId: template.id 
     })

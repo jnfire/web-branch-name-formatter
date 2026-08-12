@@ -44,8 +44,9 @@ describe('FormatManager', () => {
       templateString: '{customField}',
       isReadonly: false,
       isVisible: true,
+      language: 'es',
       fields: [
-        { id: 'customField', label: 'Custom Field', type: 'select', options: ['A', 'B'], operations: [] }
+        { id: 'customField', label: 'Custom Field', type: 'select', options: ['A', 'B'], capitalization: 'AS_IS' }
       ]
     }
     
@@ -70,6 +71,7 @@ describe('FormatManager', () => {
       templateString: '',
       isReadonly: false,
       isVisible: true,
+      language: 'es',
       fields: []
     }
     

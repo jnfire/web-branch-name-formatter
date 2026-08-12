@@ -14,8 +14,9 @@ FormatManager.getVisibleFormats = () => [
     templateString: '{testId}',
     isReadonly: false,
     isVisible: true,
+    language: 'es',
     fields: [
-      { id: 'testId', label: 'Test ID', type: 'text', operations: [] }
+      { id: 'testId', label: 'Test ID', type: 'text', capitalization: 'AS_IS' }
     ]
   }
 ]
