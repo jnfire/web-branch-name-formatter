@@ -42,12 +42,9 @@ const getPreviewFallback = (): BranchFormatTemplate | null => {
 }
 
 // Al hacer clic en una tarjeta se previsualiza y, a la vez, se marca como
-// el formato predeterminado de la app. Un formato oculto solo se previsualiza:
-// no puede convertirse en predeterminado mientras no esté visible.
+// el formato predeterminado de la app.
 const selectFormat = (format: BranchFormatTemplate) => {
   previewFormat.value = format
-  if (!format.isVisible) return
-
   defaultFormatId.value = format.id
   FormatManager.setDefaultFormatId(format.id)
 }
@@ -73,21 +70,6 @@ const refreshEditingFormat = (id: string) => {
   const refreshed = formats.value.find(f => f.id === id) || null
   editingFormat.value = refreshed
   previewFormat.value = refreshed
-}
-
-const handleToggleVisibilityInEditor = () => {
-  if (!editingFormat.value) return
-  const { id, isVisible } = editingFormat.value
-  FormatManager.setVisibility(id, !isVisible)
-
-  // Un formato oculto no puede seguir siendo el predeterminado de la app.
-  if (defaultFormatId.value === id && isVisible) {
-    loadFormats()
-    defaultFormatId.value = formats.value.find(f => f.isVisible)?.id ?? null
-    FormatManager.setDefaultFormatId(defaultFormatId.value ?? '')
-  }
-
-  refreshEditingFormat(id)
 }
 
 const handleUpdateLanguageInEditor = (language: BranchFormatTemplate['language']) => {
@@ -126,7 +108,6 @@ const startNewFormat = () => {
     name: t('configurator.newFormatName'),
     templateString: '{campo1}-{campo2}',
     isReadonly: false,
-    isVisible: true,
     language: locale.value as BranchFormatTemplate['language'],
     fields: [
       { id: 'campo1', label: `${t('configurator.newFieldLabel')} 1`, type: 'text', capitalization: 'LOWERCASE' },
@@ -205,7 +186,6 @@ const handleImport = (event: Event) => {
         @update:format="updatePreview"
         @save="handleSave"
         @cancel="handleCancel"
-        @toggle-visibility="handleToggleVisibilityInEditor"
         @update-language="handleUpdateLanguageInEditor"
       />
     </div>
@@ -222,8 +202,7 @@ const handleImport = (event: Event) => {
           :key="format.id"
           class="format-card"
           :class="{
-            'format-card--selected': format.id === defaultFormatId,
-            'format-card--hidden': !format.isVisible
+            'format-card--selected': format.id === defaultFormatId
           }"
           @click="selectFormat(format)"
         >
@@ -232,7 +211,6 @@ const handleImport = (event: Event) => {
               {{ format.name.includes('.') ? $t(format.name) : format.name }}
               <span v-if="format.isReadonly" class="badge">{{ $t('configurator.badgeBuiltin') }}</span>
               <span v-if="format.id === defaultFormatId" class="badge badge--selected">{{ $t('configurator.badgeSelected') }}</span>
-              <span v-if="!format.isVisible" class="badge">{{ $t('configurator.badgeHidden') }}</span>
             </span>
             <code class="format-template">{{ format.templateString }}</code>
           </div>
@@ -245,18 +223,11 @@ const handleImport = (event: Event) => {
       </div>
 
       <div class="import-export-section">
-        <button class="btn-secondary" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
-        <label class="btn-secondary file-upload-btn">
+        <button class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
+        <label class="btn-secondary file-upload-btn import-export-btn">
           {{ $t('configurator.importJson') }}
           <input type="file" accept=".json" @change="handleImport" hidden />
         </label>
-      </div>
-
-      <div class="back-section">
-        <button class="btn-secondary back-btn" @click="emit('close')">
-          <ArrowLeftIcon class="icon" />
-          <span>{{ $t('configurator.back') }}</span>
-        </button>
       </div>
     </div>
 
@@ -336,10 +307,6 @@ const handleImport = (event: Event) => {
     box-shadow: 0 0 0 1px var(--accent-color);
   }
 
-  &--hidden .format-info {
-    opacity: 0.55;
-  }
-
   @media (min-width: vars.$bp-mobile) {
     flex-direction: row;
     justify-content: space-between;
@@ -414,20 +381,18 @@ const handleImport = (event: Event) => {
   border-top: 1px solid var(--border-color);
 }
 
+.import-export-btn {
+  flex: 1;
+  max-width: 200px;
+  text-align: center;
+  justify-content: center;
+  display: inline-flex;
+  align-items: center;
+}
+
 .file-upload-btn {
   cursor: pointer;
   margin: 0;
 }
 
-.back-section {
-  display: flex;
-  justify-content: center;
-  margin-top: 1.5rem;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
 </style>

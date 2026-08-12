@@ -18,5 +18,4 @@ export interface BranchFormatTemplate {
   fields: FieldDefinition[];
   language: LanguageProfile; // Idioma usado para el saneado de caracteres (ñ, /, etc.)
   isReadonly: boolean;
-  isVisible: boolean;
 }

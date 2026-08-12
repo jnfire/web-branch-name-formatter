@@ -7,13 +7,12 @@ import i18n from '@/i18n'
 import { nextTick } from 'vue'
 
 // Mocking FormatManager for the tests
-FormatManager.getVisibleFormats = () => [
+FormatManager.getFormats = () => [
   {
     id: 'test',
     name: 'Test',
     templateString: '{testId}',
     isReadonly: false,
-    isVisible: true,
     language: 'es',
     fields: [
       { id: 'testId', label: 'Test ID', type: 'text', capitalization: 'AS_IS' }

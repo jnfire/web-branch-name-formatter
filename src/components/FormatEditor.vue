@@ -8,7 +8,7 @@ const props = defineProps<{
   format: BranchFormatTemplate
 }>()
 
-const emit = defineEmits(['save', 'cancel', 'update:format', 'toggle-visibility', 'update-language'])
+const emit = defineEmits(['save', 'cancel', 'update:format', 'update-language'])
 
 const { t } = useI18n()
 
@@ -25,9 +25,7 @@ const displayName = computed(() => resolveLabel(localFormat.value.name))
 const handleLanguageChange = (language: string) => {
   const value = language as LanguageProfile
   localFormat.value.language = value
-  if (props.format.isReadonly) {
-    emit('update-language', value)
-  }
+  emit('update-language', value)
 }
 
 const capitalizationOptions = computed<{ value: Capitalization; label: string }[]>(() => [
@@ -85,25 +83,6 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
 
 <template>
   <div class="editor">
-    <div class="status-section">
-      <button
-        type="button"
-        class="switch"
-        :class="{ 'switch--on': format.isVisible }"
-        role="switch"
-        :aria-checked="format.isVisible"
-        @click="emit('toggle-visibility')"
-      >
-        <span class="switch-track"><span class="switch-thumb"></span></span>
-        <span class="switch-label">{{ format.isVisible ? $t('configurator.editor.on') : $t('configurator.editor.off') }}</span>
-      </button>
-      <p class="switch-hint">
-        {{ format.isVisible
-          ? $t('configurator.editor.visibleHintOn')
-          : $t('configurator.editor.visibleHintOff') }}
-      </p>
-    </div>
-
     <p v-if="format.isReadonly" class="readonly-hint">
       {{ $t('configurator.editor.readonlyHint') }}
     </p>
@@ -127,6 +106,7 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
     <div class="form-group">
       <label class="form-label">{{ $t('configurator.editor.language') }}</label>
       <CustomSelect :model-value="localFormat.language" :options="languageOptions" @update:modelValue="handleLanguageChange" />
+      <span class="help-text">{{ $t('configurator.editor.languageHelp') }}</span>
     </div>
 
     <div class="fields-section">
@@ -217,77 +197,19 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
   gap: 0.5rem;
 }
 
-.status-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.switch-hint {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-.switch {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-main);
-  font-family: inherit;
-}
-
-.switch-track {
-  position: relative;
-  width: 38px;
-  height: 22px;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  background-color: var(--border-color);
-  transition: background-color 0.2s ease;
-}
-
-.switch-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: var(--bg-body);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
-}
-
-.switch--on .switch-track {
-  background-color: var(--accent-color);
-}
-
-.switch--on .switch-thumb {
-  transform: translateX(16px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .switch-track,
-  .switch-thumb {
-    transition: none;
-  }
-}
 
 .readonly-hint {
   font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.5;
   margin-top: -0.5rem;
+}
+
+.help-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 0.25rem;
 }
 
 .form-label {
