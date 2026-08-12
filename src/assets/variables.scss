@@ -2,9 +2,9 @@
 $bp-mobile: 600px;
 $bp-tablet: 900px;
 
-// Anchos de contenedor
-$container-width: 800px;
-$container-width-wide: 960px;
+// Nota: los anchos de contenedor (.container / .container-wide) viven como
+// valores planos en base.css, que no puede leer variables SCSS. Si cambian
+// aquí, hay que actualizarlos también allí.
 
 // Tamaños de control (inputs, selects) — origen único para que no diverjan entre sí
 $control-padding-y: 0.85rem;

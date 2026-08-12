@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { BranchFormatTemplate, Capitalization, FieldDefinition, LanguageProfile } from '@/core/FormatTypes'
 import CustomSelect from '@/components/CustomSelect.vue'
 
@@ -7,16 +8,35 @@ const props = defineProps<{
   format: BranchFormatTemplate
 }>()
 
-const emit = defineEmits(['save', 'cancel', 'update:format', 'toggle-visibility'])
+const emit = defineEmits(['save', 'cancel', 'update:format', 'toggle-visibility', 'update-language'])
+
+const { t } = useI18n()
 
 const localFormat = ref<BranchFormatTemplate>(JSON.parse(JSON.stringify(props.format)))
 
-const capitalizationOptions: { value: Capitalization; label: string }[] = [
-  { value: 'UPPERCASE', label: 'Mayúsculas' },
-  { value: 'LOWERCASE', label: 'Minúsculas' },
-  { value: 'AS_IS', label: 'Tal cual' }
-]
+// Los nombres/etiquetas de los formatos predefinidos son claves i18n (contienen un punto);
+// los de los formatos personalizados son texto libre y se muestran tal cual.
+const resolveLabel = (value: string) => value.includes('.') ? t(value) : value
 
+const displayName = computed(() => resolveLabel(localFormat.value.name))
+
+// En los formatos predefinidos solo se puede editar si están visibles/son el predeterminado
+// y el idioma (clave para el saneado multi-idioma); el resto queda bloqueado.
+const handleLanguageChange = (language: string) => {
+  const value = language as LanguageProfile
+  localFormat.value.language = value
+  if (props.format.isReadonly) {
+    emit('update-language', value)
+  }
+}
+
+const capitalizationOptions = computed<{ value: Capitalization; label: string }[]>(() => [
+  { value: 'UPPERCASE', label: t('configurator.editor.capUpper') },
+  { value: 'LOWERCASE', label: t('configurator.editor.capLower') },
+  { value: 'AS_IS', label: t('configurator.editor.capAsIs') }
+])
+
+// Los nombres de idioma se muestran siempre en su propio idioma nativo (no se traducen).
 const languageOptions: { value: LanguageProfile; label: string }[] = [
   { value: 'es', label: 'Español' },
   { value: 'en', label: 'English' },
@@ -25,6 +45,11 @@ const languageOptions: { value: LanguageProfile; label: string }[] = [
   { value: 'it', label: 'Italiano' },
   { value: 'pt', label: 'Português' }
 ]
+
+const typeOptions = computed(() => [
+  { value: 'text', label: t('configurator.editor.typeText') },
+  { value: 'select', label: t('configurator.editor.typeSelect') }
+])
 
 watch(() => props.format, (newFormat) => {
   localFormat.value = JSON.parse(JSON.stringify(newFormat))
@@ -38,7 +63,7 @@ const addField = () => {
   const newId = `campo${localFormat.value.fields.length + 1}`
   localFormat.value.fields.push({
     id: newId,
-    label: `Nuevo Campo`,
+    label: t('configurator.newFieldLabel'),
     capitalization: 'AS_IS',
     type: 'text'
   })
@@ -70,67 +95,80 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
         @click="emit('toggle-visibility')"
       >
         <span class="switch-track"><span class="switch-thumb"></span></span>
-        <span class="switch-label">{{ format.isVisible ? 'Activado' : 'Desactivado' }}</span>
+        <span class="switch-label">{{ format.isVisible ? $t('configurator.editor.on') : $t('configurator.editor.off') }}</span>
       </button>
       <p class="switch-hint">
         {{ format.isVisible
-          ? 'Este formato aparece como opción en el formulario principal.'
-          : 'Este formato está oculto: no aparecerá como opción en el formulario principal.' }}
+          ? $t('configurator.editor.visibleHintOn')
+          : $t('configurator.editor.visibleHintOff') }}
       </p>
     </div>
 
     <p v-if="format.isReadonly" class="readonly-hint">
-      Este formato viene incluido en la app y no se puede modificar. Para personalizarlo, clónalo desde la lista y edita la copia.
+      {{ $t('configurator.editor.readonlyHint') }}
     </p>
 
     <div class="form-group">
-      <label class="form-label">Nombre del formato</label>
-      <input type="text" v-model="localFormat.name" class="input-element" :disabled="format.isReadonly" />
+      <label class="form-label">{{ $t('configurator.editor.formatName') }}</label>
+      <input
+        type="text"
+        :value="displayName"
+        @input="localFormat.name = ($event.target as HTMLInputElement).value"
+        class="input-element"
+        :disabled="format.isReadonly"
+      />
     </div>
 
     <div class="form-group">
-      <label class="form-label">Plantilla (Usa {id} para inyectar campos)</label>
+      <label class="form-label">{{ $t('configurator.editor.template') }}</label>
       <input type="text" v-model="localFormat.templateString" class="input-element" :disabled="format.isReadonly" />
     </div>
 
     <div class="form-group">
-      <label class="form-label">Idioma (saneado de caracteres: ñ, /, tildes...)</label>
-      <CustomSelect v-model="localFormat.language" :options="languageOptions" :disabled="format.isReadonly" />
+      <label class="form-label">{{ $t('configurator.editor.language') }}</label>
+      <CustomSelect :model-value="localFormat.language" :options="languageOptions" @update:modelValue="handleLanguageChange" />
     </div>
 
     <div class="fields-section">
-      <h4 class="form-label">Campos</h4>
+      <h4 class="form-label">{{ $t('configurator.editor.fields') }}</h4>
       <div v-for="(field, index) in localFormat.fields" :key="index" class="field-editor">
         <div class="field-editor-head">
-          <span class="field-index">Campo {{ index + 1 }}</span>
-          <button v-if="!format.isReadonly" @click="removeField(index)" class="icon-btn delete-btn" title="Eliminar campo">
+          <span class="field-index">{{ $t('configurator.editor.field', { n: index + 1 }) }}</span>
+          <button v-if="!format.isReadonly" @click="removeField(index)" class="icon-btn delete-btn" :title="$t('configurator.editor.deleteField')">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
           </button>
         </div>
 
         <div class="field-header">
           <div class="field-control">
-            <label class="field-label-small">ID del Campo</label>
-            <input type="text" v-model="field.id" placeholder="ej: ticketId" class="input-element small" :disabled="format.isReadonly" />
+            <label class="field-label-small">{{ $t('configurator.editor.fieldId') }}</label>
+            <input type="text" v-model="field.id" :placeholder="$t('configurator.editor.fieldIdPlaceholder')" class="input-element small" :disabled="format.isReadonly" />
           </div>
 
           <div class="field-control">
-            <label class="field-label-small">Nombre del Campo</label>
-            <input type="text" v-model="field.label" placeholder="ej: ID Ticket" class="input-element small" :disabled="format.isReadonly" />
-          </div>
-
-          <div class="field-control type-select">
-            <label class="field-label-small">Tipo</label>
-            <CustomSelect
-              v-model="field.type"
-              size="sm"
+            <label class="field-label-small">{{ $t('configurator.editor.fieldLabel') }}</label>
+            <input
+              type="text"
+              :value="resolveLabel(field.label)"
+              @input="field.label = ($event.target as HTMLInputElement).value"
+              :placeholder="$t('configurator.editor.fieldLabelPlaceholder')"
+              class="input-element small"
               :disabled="format.isReadonly"
-              :options="[{value: 'text', label: 'Texto Libre'}, {value: 'select', label: 'Selector'}]"
             />
           </div>
 
           <div class="field-control type-select">
-            <label class="field-label-small">Capitalización</label>
+            <label class="field-label-small">{{ $t('configurator.editor.type') }}</label>
+            <CustomSelect
+              v-model="field.type"
+              size="sm"
+              :disabled="format.isReadonly"
+              :options="typeOptions"
+            />
+          </div>
+
+          <div class="field-control type-select">
+            <label class="field-label-small">{{ $t('configurator.editor.capitalization') }}</label>
             <CustomSelect
               v-model="field.capitalization"
               size="sm"
@@ -141,25 +179,25 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
         </div>
 
         <div v-if="field.type === 'select'" class="field-options-control">
-          <label class="field-label-small">Opciones (separadas por comas)</label>
+          <label class="field-label-small">{{ $t('configurator.editor.options') }}</label>
           <input
             type="text"
             :value="(field.options || []).join(', ')"
             @input="updateOptions(field, $event)"
-            placeholder="ej: feature, fix, hotfix"
+            :placeholder="$t('configurator.editor.optionsPlaceholder')"
             class="input-element small"
             :disabled="format.isReadonly"
           />
         </div>
       </div>
-      <button v-if="!format.isReadonly" @click="addField" class="btn-secondary">+ Añadir Campo</button>
+      <button v-if="!format.isReadonly" @click="addField" class="btn-secondary">{{ $t('configurator.editor.addField') }}</button>
     </div>
 
     <div class="actions">
-      <button v-if="format.isReadonly" @click="emit('cancel')" class="btn-secondary">Cerrar</button>
+      <button v-if="format.isReadonly" @click="emit('cancel')" class="btn-secondary">{{ $t('configurator.editor.close') }}</button>
       <template v-else>
-        <button @click="emit('cancel')" class="btn-secondary">Cancelar</button>
-        <button @click="handleSave" class="btn-primary">Guardar</button>
+        <button @click="emit('cancel')" class="btn-secondary">{{ $t('configurator.editor.cancel') }}</button>
+        <button @click="handleSave" class="btn-primary">{{ $t('configurator.editor.save') }}</button>
       </template>
     </div>
   </div>

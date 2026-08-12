@@ -34,7 +34,7 @@ const emit = defineEmits<{
           @click="emit('toggleConfig')"
         >
           <SettingsIcon class="icon" />
-          <span class="text">Configuración</span>
+          <span class="text">{{ $t('header.config') }}</span>
         </button>
       </div>
     </div>

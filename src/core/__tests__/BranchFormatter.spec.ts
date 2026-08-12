@@ -73,4 +73,31 @@ describe('BranchFormatter', () => {
     })
     expect(result).toBe('PROJ-1--a-or-b')
   })
+
+  it.each([
+    ['es', 'o'],
+    ['en', 'or'],
+    ['fr', 'ou'],
+    ['de', 'oder'],
+    ['it', 'o'],
+    ['pt', 'ou']
+  ] as const)('translates "/" to "-%s-" for language %s', (language, slashWord) => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'a/b'
+    })
+    expect(result).toBe(`PROJ-1--a-${slashWord}-b`)
+  })
+
+  it('should replace ß with ss (de)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'de' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'straße/api'
+    })
+    expect(result).toBe('PROJ-1--strasse-oder-api')
+  })
 })

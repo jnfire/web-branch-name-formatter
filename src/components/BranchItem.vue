@@ -4,8 +4,8 @@
       <p class="branch__name__text">{{ props.branchName }}</p>
     </div>
     <div class="branch__buttons">
-      <button class="branch__button branch__button__copy" @click="copyToClipboard">Copy</button>
-      <button class="branch__button branch__button__delete" @click="deleteBranch">Delete</button>
+      <button class="branch__button branch__button__copy" @click="copyToClipboard">{{ $t('history.copy') }}</button>
+      <button class="branch__button branch__button__delete" @click="deleteBranch">{{ $t('history.delete') }}</button>
     </div>
   </div>
 </template>

@@ -31,7 +31,8 @@ describe('BranchList.vue', () => {
     ]
 
     const wrapper = mount(BranchList, {
-      props: { branches }
+      props: { branches },
+      global: { mocks: { $t: (msg: string) => msg } }
     })
 
     const items = wrapper.findAllComponents(BranchItem)
@@ -61,7 +62,8 @@ describe('BranchList.vue', () => {
     ]
 
     const wrapper = mount(BranchList, {
-      props: { branches }
+      props: { branches },
+      global: { mocks: { $t: (msg: string) => msg } }
     })
 
     let items = wrapper.findAllComponents(BranchItem)
@@ -113,7 +115,8 @@ describe('BranchList.vue', () => {
     ]
 
     const wrapper = mount(BranchList, {
-      props: { branches }
+      props: { branches },
+      global: { mocks: { $t: (msg: string) => msg } }
     })
 
     await wrapper.findComponent(BranchItem).vm.$emit('deleteBranch', 1)
@@ -137,7 +140,8 @@ describe('BranchItem.vue', () => {
       props: {
         branchName: branch.branchName,
         branchId: branch.id
-      }
+      },
+      global: { mocks: { $t: (msg: string) => msg } }
     })
 
     expect(wrapper.text()).toContain(branch.branchName)

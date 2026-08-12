@@ -31,7 +31,8 @@ describe('BranchList.vue', () => {
     ]
 
     const wrapper = mount(BranchList, {
-      props: { branches }
+      props: { branches },
+      global: { mocks: { $t: (msg: string) => msg } }
     })
 
     const items = wrapper.findAllComponents(BranchItem)
@@ -61,7 +62,8 @@ describe('BranchList.vue', () => {
     ]
 
     const wrapper = mount(BranchList, {
-      props: { branches }
+      props: { branches },
+      global: { mocks: { $t: (msg: string) => msg } }
     })
 
     let items = wrapper.findAllComponents(BranchItem)

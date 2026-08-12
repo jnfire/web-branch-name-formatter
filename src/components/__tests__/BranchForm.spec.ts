@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import BranchForm from '../BranchForm.vue'
 import { FormatManager } from '@/core/FormatManager'
+import i18n from '@/i18n'
 
 // Mocking FormatManager for the tests
 FormatManager.getVisibleFormats = () => [
@@ -22,9 +23,7 @@ describe('BranchForm', () => {
   it('renders the dynamic form correctly', () => {
     const wrapper = mount(BranchForm, {
       global: {
-        mocks: {
-          $t: (msg: string) => msg
-        }
+        plugins: [i18n]
       }
     })
     // Expect input with name testId to exist
@@ -34,9 +33,7 @@ describe('BranchForm', () => {
   it('emits submitForm event with correct payload', async () => {
     const wrapper = mount(BranchForm, {
       global: {
-        mocks: {
-          $t: (msg: string) => msg
-        }
+        plugins: [i18n]
       }
     })
 

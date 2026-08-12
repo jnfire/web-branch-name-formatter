@@ -50,14 +50,14 @@ onUnmounted(() => {
         
         <div class="modal-actions">
           <button type="button" class="btn-secondary" @click="handleClose">
-            {{ cancelText || $t('cancel') || 'Cancelar' }}
+            {{ cancelText || $t('common.cancel') }}
           </button>
-          <button 
-            type="button" 
-            :class="danger ? 'btn-danger' : 'btn-primary'" 
+          <button
+            type="button"
+            :class="danger ? 'btn-danger' : 'btn-primary'"
             @click="handleConfirm"
           >
-            {{ confirmText || $t('confirm') || 'Confirmar' }}
+            {{ confirmText || $t('common.confirm') }}
           </button>
         </div>
       </div>

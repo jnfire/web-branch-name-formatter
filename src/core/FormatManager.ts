@@ -1,48 +1,49 @@
-import type { BranchFormatTemplate } from '@/core/FormatTypes'
+import type { BranchFormatTemplate, LanguageProfile } from '@/core/FormatTypes'
 
 export class FormatManager {
   private static readonly STORAGE_KEY_CUSTOM = 'branch-formats-custom'
   private static readonly STORAGE_KEY_HIDDEN_PREDEFINED = 'branch-formats-hidden'
   private static readonly STORAGE_KEY_DEFAULT_FORMAT = 'branch-format-default-id'
+  private static readonly STORAGE_KEY_PREDEFINED_LANGUAGE = 'branch-formats-predefined-language'
 
   private static readonly DEFAULT_FORMATS: BranchFormatTemplate[] = [
     {
       id: 'default-app',
-      name: 'Formato por defecto (App)',
+      name: 'formats.defaultApp.name',
       templateString: '{projectId}-{ticketId}--{featureName}',
       isReadonly: true,
       isVisible: true,
       language: 'es',
       fields: [
-        { id: 'projectId', label: 'ID Proyecto', type: 'text', capitalization: 'UPPERCASE' },
-        { id: 'ticketId', label: 'ID Ticket', type: 'text', capitalization: 'UPPERCASE' },
-        { id: 'featureName', label: 'Nombre Funcionalidad', type: 'text', capitalization: 'LOWERCASE' }
+        { id: 'projectId', label: 'formats.defaultApp.projectId', type: 'text', capitalization: 'UPPERCASE' },
+        { id: 'ticketId', label: 'formats.defaultApp.ticketId', type: 'text', capitalization: 'UPPERCASE' },
+        { id: 'featureName', label: 'formats.defaultApp.featureName', type: 'text', capitalization: 'LOWERCASE' }
       ]
     },
     {
       id: 'gitflow',
-      name: 'GitFlow (type/ticket-desc)',
+      name: 'formats.gitflow.name',
       templateString: '{type}/{ticketId}-{description}',
       isReadonly: true,
       isVisible: true,
       language: 'es',
       fields: [
-        { id: 'type', label: 'Tipo', type: 'select', options: ['feature', 'bugfix', 'hotfix', 'release', 'chore'], capitalization: 'LOWERCASE' },
-        { id: 'ticketId', label: 'ID Ticket', type: 'text', capitalization: 'UPPERCASE' },
-        { id: 'description', label: 'Descripción', type: 'text', capitalization: 'LOWERCASE' }
+        { id: 'type', label: 'formats.gitflow.type', type: 'select', options: ['feature', 'bugfix', 'hotfix', 'release', 'chore'], capitalization: 'LOWERCASE' },
+        { id: 'ticketId', label: 'formats.gitflow.ticketId', type: 'text', capitalization: 'UPPERCASE' },
+        { id: 'description', label: 'formats.gitflow.description', type: 'text', capitalization: 'LOWERCASE' }
       ]
     },
     {
       id: 'conventional-commits',
-      name: 'Conventional Commits',
+      name: 'formats.conventionalCommits.name',
       templateString: '{type}/{scope}/{description}',
       isReadonly: true,
       isVisible: true,
       language: 'es',
       fields: [
-        { id: 'type', label: 'Tipo (feat, fix...)', type: 'select', options: ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert'], capitalization: 'LOWERCASE' },
-        { id: 'scope', label: 'Ámbito', type: 'text', capitalization: 'LOWERCASE' },
-        { id: 'description', label: 'Descripción', type: 'text', capitalization: 'LOWERCASE' }
+        { id: 'type', label: 'formats.conventionalCommits.type', type: 'select', options: ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert'], capitalization: 'LOWERCASE' },
+        { id: 'scope', label: 'formats.conventionalCommits.scope', type: 'text', capitalization: 'LOWERCASE' },
+        { id: 'description', label: 'formats.conventionalCommits.description', type: 'text', capitalization: 'LOWERCASE' }
       ]
     }
   ]
@@ -50,10 +51,12 @@ export class FormatManager {
   static getFormats(): BranchFormatTemplate[] {
     const customFormats = this.getCustomFormats()
     const hiddenPredefined = this.getHiddenPredefinedIds()
+    const languageOverrides = this.getPredefinedLanguageOverrides()
 
     const predefined = this.DEFAULT_FORMATS.map(format => ({
       ...format,
-      isVisible: !hiddenPredefined.includes(format.id)
+      isVisible: !hiddenPredefined.includes(format.id),
+      language: languageOverrides[format.id] ?? format.language
     }))
 
     return [...predefined, ...customFormats]
@@ -97,6 +100,20 @@ export class FormatManager {
 
   private static saveHiddenPredefinedIds(ids: string[]): void {
     localStorage.setItem(this.STORAGE_KEY_HIDDEN_PREDEFINED, JSON.stringify(ids))
+  }
+
+  private static getPredefinedLanguageOverrides(): Partial<Record<string, LanguageProfile>> {
+    const data = localStorage.getItem(this.STORAGE_KEY_PREDEFINED_LANGUAGE)
+    if (!data) return {}
+    try {
+      return JSON.parse(data) as Partial<Record<string, LanguageProfile>>
+    } catch {
+      return {}
+    }
+  }
+
+  private static savePredefinedLanguageOverrides(overrides: Partial<Record<string, LanguageProfile>>): void {
+    localStorage.setItem(this.STORAGE_KEY_PREDEFINED_LANGUAGE, JSON.stringify(overrides))
   }
 
   static addFormat(format: BranchFormatTemplate): void {
@@ -151,18 +168,44 @@ export class FormatManager {
     }
   }
 
-  static cloneFormat(id: string): BranchFormatTemplate | null {
+  // Único ajuste editable en un formato predefinido (además de visible/predeterminado):
+  // el idioma usado para el saneado de caracteres.
+  static setLanguage(id: string, language: LanguageProfile): void {
+    const custom = this.getCustomFormats()
+    const customIndex = custom.findIndex(f => f.id === id)
+
+    if (customIndex !== -1) {
+      custom[customIndex].language = language
+      this.saveCustomFormats(custom)
+      return
+    }
+
+    const isPredefined = this.DEFAULT_FORMATS.some(f => f.id === id)
+    if (isPredefined) {
+      const overrides = this.getPredefinedLanguageOverrides()
+      overrides[id] = language
+      this.savePredefinedLanguageOverrides(overrides)
+    }
+  }
+
+  static cloneFormat(id: string, resolveLabel: (value: string) => string, cloneSuffix: string): BranchFormatTemplate | null {
     const allFormats = this.getFormats()
     const formatToClone = allFormats.find(f => f.id === id)
     if (!formatToClone) return null
 
+    // Al clonar, se "hornean" los textos traducidos (nombre y etiquetas de campo):
+    // el clon es un formato normal editable, no debe seguir arrastrando claves i18n.
     const newId = `custom-${Date.now()}`
     const clonedFormat: BranchFormatTemplate = {
       ...JSON.parse(JSON.stringify(formatToClone)), // Deep clone for fields
       id: newId,
-      name: `${formatToClone.name} (Clon)`,
+      name: `${resolveLabel(formatToClone.name)} ${cloneSuffix}`,
       isReadonly: false,
-      isVisible: true
+      isVisible: true,
+      fields: formatToClone.fields.map(field => ({
+        ...field,
+        label: resolveLabel(field.label)
+      }))
     }
     this.addFormat(clonedFormat)
     return clonedFormat
@@ -176,7 +219,7 @@ export class FormatManager {
     try {
       const parsed = JSON.parse(jsonString) as BranchFormatTemplate[]
       if (!Array.isArray(parsed)) throw new Error('Invalid format')
-      
+
       const currentCustom = this.getCustomFormats()
       // Create new IDs for imported to avoid collisions, or just append them if they look valid
       const newFormats = parsed.map(f => ({
@@ -184,7 +227,7 @@ export class FormatManager {
         id: `imported-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         isReadonly: false
       }))
-      
+
       this.saveCustomFormats([...currentCustom, ...newFormats])
     } catch (e) {
       console.error('Error importing formats:', e)

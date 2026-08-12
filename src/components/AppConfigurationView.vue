@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { FormatManager } from '@/core/FormatManager'
 import type { BranchFormatTemplate } from '@/core/FormatTypes'
 import FormatPreview from '@/components/FormatPreview.vue'
@@ -8,6 +9,8 @@ import CustomModal from '@/components/CustomModal.vue'
 import ArrowLeftIcon from '@/components/ArrowLeftIcon.vue'
 
 const emit = defineEmits(['close'])
+
+const { t, locale } = useI18n()
 
 const formats = ref<BranchFormatTemplate[]>([])
 const editingFormat = ref<BranchFormatTemplate | null>(null)
@@ -39,9 +42,12 @@ const getPreviewFallback = (): BranchFormatTemplate | null => {
 }
 
 // Al hacer clic en una tarjeta se previsualiza y, a la vez, se marca como
-// el formato predeterminado de la app.
+// el formato predeterminado de la app. Un formato oculto solo se previsualiza:
+// no puede convertirse en predeterminado mientras no esté visible.
 const selectFormat = (format: BranchFormatTemplate) => {
   previewFormat.value = format
+  if (!format.isVisible) return
+
   defaultFormatId.value = format.id
   FormatManager.setDefaultFormatId(format.id)
 }
@@ -52,11 +58,21 @@ const handleEdit = (format: BranchFormatTemplate) => {
 }
 
 const handleClone = (formatId: string) => {
-  const cloned = FormatManager.cloneFormat(formatId)
+  const resolveLabel = (value: string) => value.includes('.') ? t(value) : value
+  const cloned = FormatManager.cloneFormat(formatId, resolveLabel, t('configurator.cloneSuffix'))
   if (cloned) {
     loadFormats()
     handleEdit(cloned)
   }
+}
+
+// Recarga la lista y refresca el formato que se está editando/previsualizando
+// tras un cambio persistido fuera del flujo normal de Guardar (toggles instantáneos).
+const refreshEditingFormat = (id: string) => {
+  loadFormats()
+  const refreshed = formats.value.find(f => f.id === id) || null
+  editingFormat.value = refreshed
+  previewFormat.value = refreshed
 }
 
 const handleToggleVisibilityInEditor = () => {
@@ -71,10 +87,13 @@ const handleToggleVisibilityInEditor = () => {
     FormatManager.setDefaultFormatId(defaultFormatId.value ?? '')
   }
 
-  loadFormats()
-  const refreshed = formats.value.find(f => f.id === id) || null
-  editingFormat.value = refreshed
-  previewFormat.value = refreshed
+  refreshEditingFormat(id)
+}
+
+const handleUpdateLanguageInEditor = (language: BranchFormatTemplate['language']) => {
+  if (!editingFormat.value) return
+  FormatManager.setLanguage(editingFormat.value.id, language)
+  refreshEditingFormat(editingFormat.value.id)
 }
 
 const promptDelete = (formatId: string) => {
@@ -104,14 +123,14 @@ const cancelDelete = () => {
 const startNewFormat = () => {
   const newFormat: BranchFormatTemplate = {
     id: `custom-${Date.now()}`,
-    name: 'Nuevo Formato',
+    name: t('configurator.newFormatName'),
     templateString: '{campo1}-{campo2}',
     isReadonly: false,
     isVisible: true,
-    language: 'es',
+    language: locale.value as BranchFormatTemplate['language'],
     fields: [
-      { id: 'campo1', label: 'Campo 1', type: 'text', capitalization: 'LOWERCASE' },
-      { id: 'campo2', label: 'Campo 2', type: 'text', capitalization: 'LOWERCASE' }
+      { id: 'campo1', label: `${t('configurator.newFieldLabel')} 1`, type: 'text', capitalization: 'LOWERCASE' },
+      { id: 'campo2', label: `${t('configurator.newFieldLabel')} 2`, type: 'text', capitalization: 'LOWERCASE' }
     ]
   }
   editingFormat.value = newFormat
@@ -143,7 +162,7 @@ const updatePreview = (format: BranchFormatTemplate) => {
 const handleExport = () => {
   const dataStr = FormatManager.exportCustomFormats()
   if (dataStr === '[]') {
-    alert('No hay formatos personalizados para exportar.')
+    alert(t('configurator.exportEmpty'))
     return
   }
   const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr)
@@ -165,9 +184,9 @@ const handleImport = (event: Event) => {
       const jsonStr = e.target?.result as string
       FormatManager.importCustomFormats(jsonStr)
       loadFormats()
-      alert('Formatos importados correctamente.')
+      alert(t('configurator.importSuccess'))
     } catch (err) {
-      alert('Error al importar formatos. Archivo inválido.')
+      alert(t('configurator.importError'))
     }
   }
   reader.readAsText(file)
@@ -187,13 +206,14 @@ const handleImport = (event: Event) => {
         @save="handleSave"
         @cancel="handleCancel"
         @toggle-visibility="handleToggleVisibilityInEditor"
+        @update-language="handleUpdateLanguageInEditor"
       />
     </div>
 
     <div v-else class="formats-list-section">
       <div class="list-header">
-        <h3>Formatos Disponibles</h3>
-        <button class="btn-primary" @click="startNewFormat">Crear Formato</button>
+        <h3>{{ $t('configurator.availableFormats') }}</h3>
+        <button class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
       </div>
 
       <div class="format-items">
@@ -209,25 +229,25 @@ const handleImport = (event: Event) => {
         >
           <div class="format-info">
             <span class="format-name">
-              {{ format.name }}
-              <span v-if="format.isReadonly" class="badge">Predeterminado</span>
-              <span v-if="format.id === defaultFormatId" class="badge badge--selected">Seleccionado</span>
-              <span v-if="!format.isVisible" class="badge">Oculto</span>
+              {{ format.name.includes('.') ? $t(format.name) : format.name }}
+              <span v-if="format.isReadonly" class="badge">{{ $t('configurator.badgeBuiltin') }}</span>
+              <span v-if="format.id === defaultFormatId" class="badge badge--selected">{{ $t('configurator.badgeSelected') }}</span>
+              <span v-if="!format.isVisible" class="badge">{{ $t('configurator.badgeHidden') }}</span>
             </span>
             <code class="format-template">{{ format.templateString }}</code>
           </div>
           <div class="format-actions" @click.stop>
-            <button class="btn-secondary small-btn" @click="handleEdit(format)">Editar</button>
-            <button v-if="format.isReadonly" class="btn-secondary small-btn" @click="handleClone(format.id)">Clonar</button>
-            <button v-else class="btn-secondary small-btn delete-btn" @click="promptDelete(format.id)">Borrar</button>
+            <button class="btn-secondary small-btn" @click="handleEdit(format)">{{ $t('configurator.edit') }}</button>
+            <button v-if="format.isReadonly" class="btn-secondary small-btn" @click="handleClone(format.id)">{{ $t('configurator.clone') }}</button>
+            <button v-else class="btn-secondary small-btn delete-btn" @click="promptDelete(format.id)">{{ $t('configurator.delete') }}</button>
           </div>
         </div>
       </div>
 
       <div class="import-export-section">
-        <button class="btn-secondary" @click="handleExport">Exportar Personalizados</button>
+        <button class="btn-secondary" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
         <label class="btn-secondary file-upload-btn">
-          Importar JSON
+          {{ $t('configurator.importJson') }}
           <input type="file" accept=".json" @change="handleImport" hidden />
         </label>
       </div>
@@ -235,17 +255,17 @@ const handleImport = (event: Event) => {
       <div class="back-section">
         <button class="btn-secondary back-btn" @click="emit('close')">
           <ArrowLeftIcon class="icon" />
-          <span>Volver</span>
+          <span>{{ $t('configurator.back') }}</span>
         </button>
       </div>
     </div>
 
     <CustomModal
       v-model="showDeleteModal"
-      title="Eliminar Formato"
-      message="¿Estás seguro de que quieres eliminar este formato personalizado? Esta acción no se puede deshacer."
-      confirmText="Borrar"
-      cancelText="Cancelar"
+      :title="$t('configurator.deleteModal.title')"
+      :message="$t('configurator.deleteModal.message')"
+      :confirmText="$t('configurator.delete')"
+      :cancelText="$t('common.cancel')"
       :danger="true"
       @confirm="confirmDelete"
       @cancel="cancelDelete"

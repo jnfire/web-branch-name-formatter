@@ -1,4 +1,4 @@
-# Branch Name Formatter 🌿
+# Branch Name Formatter
 
 *Read this in [English](README.md).*
 
@@ -6,30 +6,35 @@ Una herramienta web rápida y local-first diseñada para que los desarrolladores
 
 Todo el procesamiento se realiza localmente en tu navegador web, garantizando un **control total** de tus datos (Local-First). Construido con **Vue 3 (Composition API)** y **TypeScript**.
 
-## ✨ Características Clave
-- **Formateo Instantáneo:** Combina automáticamente el ID del Proyecto, el ID del Ticket y el Nombre del Desarrollo en un nombre de rama limpio.
+## Características Clave
+- **Formatos de Rama Dinámicos:** Incluye tres formatos listos para usar (formato por defecto, GitFlow, Conventional Commits) y permite crear, clonar, editar o borrar los tuyos propios desde la pantalla de Configuración, con previsualización en vivo mientras escribes.
+- **Nombres Siempre Válidos:** El saneado (quitar tildes, espacios, puntos, caracteres especiales, colapsar guiones...) se aplica siempre, así que cada nombre generado es un nombre de rama válido en git. Solo eliges la capitalización por campo (mayúsculas, minúsculas o tal cual).
+- **Saneado Consciente del Idioma:** Cada formato tiene un idioma asociado (los 6 idiomas que soporta la app) que controla cómo se traducen la `/` y caracteres específicos de cada idioma (`ñ`, `ß`...) al nombre de la rama.
 - **Gestión de Historial:** Mantiene un registro de tus últimos 10 nombres generados para un acceso rápido (almacenado localmente).
 - **Procesamiento Local:** Todo sucede en el lado del cliente. Sin almacenamiento ni procesamiento en servidor de tus datos de ramas.
 - **Interfaz:** Diseño limpio, profesional y responsivo con soporte nativo para modo oscuro/claro.
-- **Multilingüe:** Soporte para Inglés y Español.
+- **Multilingüe:** Soporte completo de interfaz para Español, Inglés, Francés, Alemán, Italiano y Portugués — incluyendo el editor de formatos y los propios formatos predefinidos.
 
-## 🛠️ Construido Con
+## Construido Con
 - **Vue.js 3** (Composition API) + **Vite**
 - **TypeScript** para un código robusto y tipado.
 - **Vue-i18n** para soporte multilingüe.
-- **CSS Vanilla** para un rendimiento óptimo y un aspecto profesional "nativo".
+- **CSS Vanilla / SCSS** para un rendimiento óptimo y un aspecto profesional "nativo".
 
-## 📁 Arquitectura del Proyecto
-El proyecto sigue una arquitectura modular separando la lógica de negocio (`BranchManager`) de los componentes de la vista. Puedes consultar los detalles en [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE_ES.md).
+## Arquitectura del Proyecto
+El proyecto separa la lógica de negocio (`BranchManager`, `FormatManager`, `BranchFormatter`) de los componentes de la vista. Consulta [`docs/ARCHITECTURE_ES.md`](docs/ARCHITECTURE_ES.md) para más detalles.
 
-## 🚀 Cómo Ejecutar Localmente
+## Registro de Cambios
+Los cambios notables de cada versión se documentan en [`CHANGELOG.md`](CHANGELOG.md). El número de versión vive en `package.json` y se muestra en directo en el pie de página de la app.
+
+## Cómo Ejecutar Localmente
 ```sh
 npm install
 npm run dev
 ```
 
-## 📄 Licencia
+## Licencia
 Este proyecto es propietario y tiene todos los derechos reservados por Javier Nicolás Pérez Mesa. Se publica exclusivamente con fines de revisión de portafolio, auditoría de código y uso estrictamente personal. Consulta el archivo `LICENSE` para más detalles.
 
 ---
-Hecho con ❤️ 2026.
+Hecho con cuidado, 2026.
