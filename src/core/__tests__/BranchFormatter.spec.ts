@@ -8,7 +8,6 @@ describe('BranchFormatter', () => {
     name: 'Test',
     templateString: '{projectId}-{ticketId}--{featureName}',
     isReadonly: true,
-    isVisible: true,
     language: 'es',
     fields: [
       { id: 'projectId', label: 'ID', capitalization: 'UPPERCASE' },
