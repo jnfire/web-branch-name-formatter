@@ -1,35 +1,35 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { BranchFormatTemplate, FieldDefinition, FormatOperation } from '@/core/FormatTypes'
+import type { BranchFormatTemplate, Capitalization, FieldDefinition, LanguageProfile } from '@/core/FormatTypes'
+import CustomSelect from '@/components/CustomSelect.vue'
 
 const props = defineProps<{
   format: BranchFormatTemplate
 }>()
 
-const emit = defineEmits(['save', 'cancel'])
+const emit = defineEmits(['save', 'cancel', 'update:format', 'toggle-visibility'])
 
 const localFormat = ref<BranchFormatTemplate>(JSON.parse(JSON.stringify(props.format)))
 
-const availableOperations: { value: FormatOperation; label: string }[] = [
+const capitalizationOptions: { value: Capitalization; label: string }[] = [
   { value: 'UPPERCASE', label: 'Mayúsculas' },
   { value: 'LOWERCASE', label: 'Minúsculas' },
-  { value: 'REPLACE_SLASHES', label: 'Reemplazar "/" por "-o-"' },
-  { value: 'REPLACE_DOTS', label: 'Reemplazar "." por "-"' },
-  { value: 'REPLACE_SPACES', label: 'Reemplazar espacios por "-"' },
-  { value: 'REMOVE_MULTIPLE_DASHES', label: 'Quitar guiones múltiples' },
-  { value: 'SET_NY', label: 'Cambiar "ñ" por "ny"' },
-  { value: 'REMOVE_ACCENTS', label: 'Quitar tildes' },
-  { value: 'REMOVE_SPECIAL_CHARS', label: 'Quitar caracteres especiales' },
-  { value: 'BASIC_CLEAN', label: 'Limpieza Básica' },
+  { value: 'AS_IS', label: 'Tal cual' }
+]
+
+const languageOptions: { value: LanguageProfile; label: string }[] = [
+  { value: 'es', label: 'Español' },
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'Français' },
+  { value: 'de', label: 'Deutsch' },
+  { value: 'it', label: 'Italiano' },
+  { value: 'pt', label: 'Português' }
 ]
 
 watch(() => props.format, (newFormat) => {
   localFormat.value = JSON.parse(JSON.stringify(newFormat))
 }, { deep: true })
 
-// Actualizamos la prop 'format' original si cambia localFormat (para previsualización en vivo)
-// No mutamos props, emitimos un update o el padre le pasa el mismo ref que está editando.
-// En este caso, emitiremos update:format para que el padre actualice la previsualización
 watch(localFormat, (newVal) => {
   emit('update:format', newVal)
 }, { deep: true })
@@ -39,7 +39,8 @@ const addField = () => {
   localFormat.value.fields.push({
     id: newId,
     label: `Nuevo Campo`,
-    operations: []
+    capitalization: 'AS_IS',
+    type: 'text'
   })
 }
 
@@ -51,53 +52,115 @@ const handleSave = () => {
   emit('save', localFormat.value)
 }
 
-const toggleOperation = (field: FieldDefinition, op: FormatOperation) => {
-  const index = field.operations.indexOf(op)
-  if (index === -1) {
-    field.operations.push(op)
-  } else {
-    field.operations.splice(index, 1)
-  }
+const updateOptions = (field: FieldDefinition, event: Event) => {
+  const val = (event.target as HTMLInputElement).value;
+  field.options = val.split(',').map(s => s.trim()).filter(Boolean);
 }
 </script>
 
 <template>
   <div class="editor">
+    <div class="status-section">
+      <button
+        type="button"
+        class="switch"
+        :class="{ 'switch--on': format.isVisible }"
+        role="switch"
+        :aria-checked="format.isVisible"
+        @click="emit('toggle-visibility')"
+      >
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span class="switch-label">{{ format.isVisible ? 'Activado' : 'Desactivado' }}</span>
+      </button>
+      <p class="switch-hint">
+        {{ format.isVisible
+          ? 'Este formato aparece como opción en el formulario principal.'
+          : 'Este formato está oculto: no aparecerá como opción en el formulario principal.' }}
+      </p>
+    </div>
+
+    <p v-if="format.isReadonly" class="readonly-hint">
+      Este formato viene incluido en la app y no se puede modificar. Para personalizarlo, clónalo desde la lista y edita la copia.
+    </p>
+
     <div class="form-group">
       <label class="form-label">Nombre del formato</label>
-      <input type="text" v-model="localFormat.name" class="input-element" />
+      <input type="text" v-model="localFormat.name" class="input-element" :disabled="format.isReadonly" />
     </div>
-    
+
     <div class="form-group">
       <label class="form-label">Plantilla (Usa {id} para inyectar campos)</label>
-      <input type="text" v-model="localFormat.templateString" class="input-element" />
+      <input type="text" v-model="localFormat.templateString" class="input-element" :disabled="format.isReadonly" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Idioma (saneado de caracteres: ñ, /, tildes...)</label>
+      <CustomSelect v-model="localFormat.language" :options="languageOptions" :disabled="format.isReadonly" />
     </div>
 
     <div class="fields-section">
       <h4 class="form-label">Campos</h4>
       <div v-for="(field, index) in localFormat.fields" :key="index" class="field-editor">
-        <div class="field-header">
-          <input type="text" v-model="field.id" placeholder="ID (ej: ticketId)" class="input-element small" />
-          <input type="text" v-model="field.label" placeholder="Etiqueta UI" class="input-element small" />
-          <button @click="removeField(index)" class="btn-secondary small-btn" title="Eliminar campo">X</button>
+        <div class="field-editor-head">
+          <span class="field-index">Campo {{ index + 1 }}</span>
+          <button v-if="!format.isReadonly" @click="removeField(index)" class="icon-btn delete-btn" title="Eliminar campo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+          </button>
         </div>
-        <div class="operations-list">
-          <label v-for="op in availableOperations" :key="op.value" class="op-label">
-            <input 
-              type="checkbox" 
-              :checked="field.operations.includes(op.value)"
-              @change="toggleOperation(field, op.value)"
+
+        <div class="field-header">
+          <div class="field-control">
+            <label class="field-label-small">ID del Campo</label>
+            <input type="text" v-model="field.id" placeholder="ej: ticketId" class="input-element small" :disabled="format.isReadonly" />
+          </div>
+
+          <div class="field-control">
+            <label class="field-label-small">Nombre del Campo</label>
+            <input type="text" v-model="field.label" placeholder="ej: ID Ticket" class="input-element small" :disabled="format.isReadonly" />
+          </div>
+
+          <div class="field-control type-select">
+            <label class="field-label-small">Tipo</label>
+            <CustomSelect
+              v-model="field.type"
+              size="sm"
+              :disabled="format.isReadonly"
+              :options="[{value: 'text', label: 'Texto Libre'}, {value: 'select', label: 'Selector'}]"
             />
-            {{ op.label }}
-          </label>
+          </div>
+
+          <div class="field-control type-select">
+            <label class="field-label-small">Capitalización</label>
+            <CustomSelect
+              v-model="field.capitalization"
+              size="sm"
+              :disabled="format.isReadonly"
+              :options="capitalizationOptions"
+            />
+          </div>
+        </div>
+
+        <div v-if="field.type === 'select'" class="field-options-control">
+          <label class="field-label-small">Opciones (separadas por comas)</label>
+          <input
+            type="text"
+            :value="(field.options || []).join(', ')"
+            @input="updateOptions(field, $event)"
+            placeholder="ej: feature, fix, hotfix"
+            class="input-element small"
+            :disabled="format.isReadonly"
+          />
         </div>
       </div>
-      <button @click="addField" class="btn-secondary">+ Añadir Campo</button>
+      <button v-if="!format.isReadonly" @click="addField" class="btn-secondary">+ Añadir Campo</button>
     </div>
 
     <div class="actions">
-      <button @click="emit('cancel')" class="btn-secondary">Cancelar</button>
-      <button @click="handleSave" class="btn-primary">Guardar</button>
+      <button v-if="format.isReadonly" @click="emit('cancel')" class="btn-secondary">Cerrar</button>
+      <template v-else>
+        <button @click="emit('cancel')" class="btn-secondary">Cancelar</button>
+        <button @click="handleSave" class="btn-primary">Guardar</button>
+      </template>
     </div>
   </div>
 </template>
@@ -115,6 +178,79 @@ const toggleOperation = (field: FieldDefinition, op: FormatOperation) => {
   gap: 0.5rem;
 }
 
+.status-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.switch-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-main);
+  font-family: inherit;
+}
+
+.switch-track {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background-color: var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--bg-body);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.switch--on .switch-track {
+  background-color: var(--accent-color);
+}
+
+.switch--on .switch-thumb {
+  transform: translateX(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch-track,
+  .switch-thumb {
+    transition: none;
+  }
+}
+
+.readonly-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: -0.5rem;
+}
+
 .form-label {
   font-size: 0.85rem;
   font-weight: 600;
@@ -126,8 +262,14 @@ const toggleOperation = (field: FieldDefinition, op: FormatOperation) => {
 .input-element {
   width: 100%;
   &.small {
-    padding: 0.5rem;
-    font-size: 0.9rem;
+    padding: vars.$control-padding-y-sm vars.$control-padding-x-sm;
+    font-size: vars.$control-font-size-sm;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    background-color: var(--bg-surface);
   }
 }
 
@@ -146,29 +288,51 @@ const toggleOperation = (field: FieldDefinition, op: FormatOperation) => {
   padding: 1rem;
 }
 
+.field-editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.field-index {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .field-header {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-bottom: 1rem;
+  align-items: flex-end;
 }
 
-.small-btn {
-  padding: 0 0.75rem;
-}
-
-.operations-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.5rem;
-}
-
-.op-label {
+.field-control {
+  flex: 1 1 160px;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text-main);
-  cursor: pointer;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field-options-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  background-color: var(--bg-body);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+}
+
+.field-label-small {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .actions {
@@ -176,5 +340,35 @@ const toggleOperation = (field: FieldDefinition, op: FormatOperation) => {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.delete-btn {
+  color: var(--error-color);
+}
+
+.delete-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+@media (max-width: vars.$bp-mobile) {
+  .field-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .field-control {
+    flex-basis: auto;
+  }
 }
 </style>

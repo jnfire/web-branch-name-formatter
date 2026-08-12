@@ -72,7 +72,7 @@ const handleDecline = () => {
     gap: 1rem;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: vars.$bp-mobile) {
     &__content {
       flex-direction: row;
       align-items: center;

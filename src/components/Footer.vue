@@ -1,8 +1,12 @@
+<script setup lang="ts">
+const appVersion = __APP_VERSION__
+</script>
+
 <template>
   <footer class="footer">
     <div class="footer__content">
       <p class="footer__text">
-        {{ $t('footer.privacy') }}
+        {{ $t('footer.privacy') }} <span class="footer__version">• v{{ appVersion }}</span>
       </p>
       <div class="footer__links">
         <a
@@ -41,6 +45,10 @@
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 1rem;
+  }
+
+  &__version {
+    opacity: 0.8;
   }
 
   &__links {

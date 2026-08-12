@@ -3,6 +3,7 @@ import { ref, watch, onMounted, computed } from 'vue'
 import type { BranchFormType } from '@/core/BranchTypes'
 import type { BranchFormatTemplate } from '@/core/FormatTypes'
 import { FormatManager } from '@/core/FormatManager'
+import CustomSelect from '@/components/CustomSelect.vue'
 
 const emit = defineEmits(['submitForm'])
 
@@ -13,7 +14,9 @@ const formData = ref<Record<string, string>>({})
 onMounted(() => {
   availableFormats.value = FormatManager.getVisibleFormats()
   if (availableFormats.value.length > 0) {
-    selectedFormatId.value = availableFormats.value[0].id
+    const defaultId = FormatManager.getDefaultFormatId()
+    const defaultStillAvailable = availableFormats.value.some(f => f.id === defaultId)
+    selectedFormatId.value = defaultStillAvailable ? defaultId! : availableFormats.value[0].id
   }
 })
 
@@ -21,8 +24,20 @@ const selectedFormat = computed(() => {
   return availableFormats.value.find(f => f.id === selectedFormatId.value) || null
 })
 
+const formatOptions = computed(() => {
+  return availableFormats.value.map(f => ({ value: f.id, label: f.name }))
+})
+
 watch(selectedFormatId, () => {
   formData.value = {}
+  // Initialize default values for select fields
+  if (selectedFormat.value) {
+    selectedFormat.value.fields.forEach(field => {
+      if (field.type === 'select' && field.options && field.options.length > 0) {
+        formData.value[field.id] = field.options[0]
+      }
+    })
+  }
 })
 
 const handleSubmit = (event: Event) => {
@@ -46,6 +61,14 @@ function validateInput() {
 
 function cleanInput() {
   formData.value = {}
+  // Re-initialize default values for select fields
+  if (selectedFormat.value) {
+    selectedFormat.value.fields.forEach(field => {
+      if (field.type === 'select' && field.options && field.options.length > 0) {
+        formData.value[field.id] = field.options[0]
+      }
+    })
+  }
 }
 </script>
 
@@ -54,11 +77,10 @@ function cleanInput() {
     
     <div class="form-group" v-if="availableFormats.length > 1">
       <label class="form-label">Formato</label>
-      <select class="input-element select-element" v-model="selectedFormatId">
-        <option v-for="format in availableFormats" :key="format.id" :value="format.id">
-          {{ format.name }}
-        </option>
-      </select>
+      <CustomSelect 
+        v-model="selectedFormatId" 
+        :options="formatOptions" 
+      />
     </div>
 
     <template v-if="selectedFormat">
@@ -66,7 +88,15 @@ function cleanInput() {
         <label class="form-label">
            {{ field.label.includes('.') ? $t(field.label) : field.label }}
         </label>
+        
+        <CustomSelect
+          v-if="field.type === 'select' && field.options"
+          v-model="formData[field.id]"
+          :options="field.options.map(opt => ({ value: opt, label: opt }))"
+          :name="field.id"
+        />
         <input
+          v-else
           class="input-element"
           type="text"
           :name="field.id"
@@ -105,16 +135,6 @@ function cleanInput() {
 
 .input-element {
   width: 100%;
-}
-
-.select-element {
-  background-color: var(--bg-surface);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  appearance: auto;
 }
 
 .generate-btn {

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 import Footer from '@/components/Footer.vue'
 import CookieBanner from '@/components/CookieBanner.vue'
-import LangSelector from '@/components/LangSelector.vue'
+import AppHeader from '@/components/AppHeader.vue'
 import { initAnalytics } from '@/utils/analytics'
 
 import AppMainView from '@/components/AppMainView.vue'
@@ -28,20 +28,17 @@ const showConfig = ref(false)
 const toggleConfig = () => {
   showConfig.value = !showConfig.value
 }
+
+const goHome = () => {
+  showConfig.value = false
+}
 </script>
 
 <template>
+  <AppHeader :showConfig="showConfig" :languages="languages" @toggleConfig="toggleConfig" @home="goHome" />
+
   <div class="app-layout">
-    <header class="app-header">
-      <div class="header-top">
-        <button class="btn-secondary config-toggle" @click="toggleConfig">
-          {{ showConfig ? '← Volver' : '⚙️ Configuración' }}
-        </button>
-      </div>
-      <h1>{{ $t('hero.title') }}</h1>
-      <div class="lang-selector-wrapper">
-        <LangSelector v-model="$i18n.locale" :options="languages" />
-      </div>
+    <header class="app-hero container" v-if="!showConfig">
       <p class="subtitle">{{ $t('hero.subtitle') }}</p>
       <div class="badges">
         <span class="badge">{{ $t('hero.badges.auditable') }}</span>
@@ -51,7 +48,7 @@ const toggleConfig = () => {
     </header>
 
     <!-- Simulación de router con v-if -->
-    <AppConfigurationView v-if="showConfig" />
+    <AppConfigurationView v-if="showConfig" @close="toggleConfig" />
     <AppMainView v-else />
 
     <Footer />
@@ -60,37 +57,10 @@ const toggleConfig = () => {
 </template>
 
 <style scoped lang="scss">
-.app-header {
+.app-hero {
   text-align: center;
+  margin-top: 2.5rem;
   margin-bottom: 2.5rem;
-  position: relative;
-}
-
-.header-top {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
-.config-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.lang-selector-wrapper {
-  display: flex;
-  justify-content: center;
-  margin: 0.75rem 0 1rem 0;
-}
-
-h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  color: var(--text-main);
-  margin: 0;
 }
 
 .subtitle {
@@ -102,12 +72,9 @@ h1 {
   margin-right: auto;
 }
 
-@media (max-width: 600px) {
-  .app-layout {
-    padding: 2rem 1rem;
-  }
-  h1 {
-    font-size: 2rem;
+@media (max-width: vars.$bp-mobile) {
+  .app-hero {
+    margin-top: 1.5rem;
   }
   .subtitle {
     font-size: 1rem;

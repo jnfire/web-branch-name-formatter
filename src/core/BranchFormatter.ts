@@ -1,5 +1,19 @@
-import type { BranchFormatTemplate, FormatOperation } from '@/core/FormatTypes'
+import type { BranchFormatTemplate, Capitalization, LanguageProfile } from '@/core/FormatTypes'
 import type { BranchFormType } from '@/core/BranchTypes'
+
+interface LanguageRules {
+  slashWord: string; // "/" se sustituye por "-{slashWord}-"
+  charMap?: [RegExp, string][]; // sustituciones específicas del idioma que deben aplicarse antes de quitar tildes
+}
+
+const LANGUAGE_RULES: Record<LanguageProfile, LanguageRules> = {
+  es: { slashWord: 'o', charMap: [[/ñ/g, 'ny'], [/Ñ/g, 'NY']] },
+  en: { slashWord: 'or' },
+  fr: { slashWord: 'ou' },
+  de: { slashWord: 'oder', charMap: [[/ß/g, 'ss']] },
+  it: { slashWord: 'o' },
+  pt: { slashWord: 'ou' }
+}
 
 export class BranchFormatter {
   static format(template: BranchFormatTemplate, values: BranchFormType): string {
@@ -7,7 +21,8 @@ export class BranchFormatter {
 
     for (const field of template.fields) {
       const rawValue = values[field.id] || ''
-      const formattedValue = this.applyOperations(rawValue, field.operations)
+      const sanitized = this.sanitize(rawValue, template.language)
+      const formattedValue = this.applyCapitalization(sanitized, field.capitalization)
 
       const placeholder = `{${field.id}}`
       result = result.split(placeholder).join(formattedValue)
@@ -16,50 +31,33 @@ export class BranchFormatter {
     return this.removeLeadingAndTrailingDashes(result)
   }
 
-  static applyOperations(text: string, operations: FormatOperation[]): string {
+  // Saneado fijo: garantiza un nombre de rama válido en git, independientemente de la configuración del campo.
+  private static sanitize(text: string, language: LanguageProfile): string {
+    const rules = LANGUAGE_RULES[language]
     let result = text
-    for (const op of operations) {
-      switch (op) {
-        case 'UPPERCASE':
-          result = result.toUpperCase()
-          break
-        case 'LOWERCASE':
-          result = result.toLowerCase()
-          break
-        case 'REPLACE_SLASHES':
-          result = result.replace(/\//g, '-o-')
-          break
-        case 'REPLACE_DOTS':
-          result = result.replace(/\./g, '-')
-          break
-        case 'REPLACE_SPACES':
-          result = result.replace(/\s/g, '-')
-          break
-        case 'REMOVE_MULTIPLE_DASHES':
-          result = result.replace(/-+/g, '-')
-          break
-        case 'SET_NY':
-          result = result.replace(/ñ/g, 'ny').replace(/Ñ/g, 'NY')
-          break
-        case 'REMOVE_ACCENTS':
-          result = result.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-          break
-        case 'REMOVE_SPECIAL_CHARS':
-          result = result.replace(/[^a-zA-Z0-9-]/g, '')
-          break
-        case 'BASIC_CLEAN':
-          result = this.applyOperations(result, [
-            'REPLACE_DOTS',
-            'REPLACE_SPACES',
-            'REMOVE_MULTIPLE_DASHES',
-            'SET_NY',
-            'REMOVE_ACCENTS',
-            'REMOVE_SPECIAL_CHARS'
-          ])
-          break
-      }
+
+    result = result.replace(/\//g, `-${rules.slashWord}-`)
+    for (const [pattern, replacement] of rules.charMap ?? []) {
+      result = result.replace(pattern, replacement)
     }
+    result = result.replace(/\./g, '-')
+    result = result.replace(/\s/g, '-')
+    result = result.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    result = result.replace(/[^a-zA-Z0-9-]/g, '')
+    result = result.replace(/-+/g, '-')
+
     return result
+  }
+
+  private static applyCapitalization(text: string, capitalization: Capitalization): string {
+    switch (capitalization) {
+      case 'UPPERCASE':
+        return text.toUpperCase()
+      case 'LOWERCASE':
+        return text.toLowerCase()
+      default:
+        return text
+    }
   }
 
   private static removeLeadingAndTrailingDashes(text: string): string {

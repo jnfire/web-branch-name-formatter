@@ -53,7 +53,7 @@ const handleDeleteBranch = (branchId: number) => {
 </script>
 
 <template>
-  <main class="main-content">
+  <main class="main-content container">
     <div class="converter-box">
       <BranchForm @submitForm="handleFormSubmit" />
     </div>
@@ -92,7 +92,7 @@ const handleDeleteBranch = (branchId: number) => {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-@media (max-width: 600px) {
+@media (max-width: vars.$bp-mobile) {
   .converter-box {
     padding: 1.5rem;
   }

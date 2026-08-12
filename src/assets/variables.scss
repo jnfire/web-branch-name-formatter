@@ -1,9 +1,16 @@
-@use 'sass:color';
+// Breakpoints compartidos
+$bp-mobile: 600px;
+$bp-tablet: 900px;
 
-$color-white: #eee5e9;
-$color-beige: #f3d5b5;
-$color-red: #e24c4b;
-$color-dark-blue: #0e2a3a;
-$color-blue: #08415c;
+// Anchos de contenedor
+$container-width: 800px;
+$container-width-wide: 960px;
 
-// Renombrado a SCSS para compatibilidad moderna
+// Tamaños de control (inputs, selects) — origen único para que no diverjan entre sí
+$control-padding-y: 0.85rem;
+$control-padding-x: 1rem;
+$control-font-size: 0.95rem;
+
+$control-padding-y-sm: 0.5rem;
+$control-padding-x-sm: 0.75rem;
+$control-font-size-sm: 0.9rem;

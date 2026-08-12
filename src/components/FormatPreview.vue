@@ -12,7 +12,7 @@ const previewName = computed(() => {
   
   const fakeData: Record<string, string> = {}
   props.format.fields.forEach(f => {
-    fakeData[f.id] = `ejemplo-${f.id}`
+    fakeData[f.id] = f.id
   })
   
   return BranchFormatter.format(props.format, fakeData)
@@ -42,9 +42,10 @@ const previewName = computed(() => {
   margin-bottom: 0.5rem;
 }
 .preview-code {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 0.85rem + 1vw, 1.25rem);
   font-weight: 600;
   color: var(--text-main);
-  word-break: break-all;
+  overflow-wrap: break-word;
+  display: inline-block;
 }
 </style>

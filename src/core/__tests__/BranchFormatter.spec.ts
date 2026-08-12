@@ -9,14 +9,15 @@ describe('BranchFormatter', () => {
     templateString: '{projectId}-{ticketId}--{featureName}',
     isReadonly: true,
     isVisible: true,
+    language: 'es',
     fields: [
-      { id: 'projectId', label: 'ID', operations: ['UPPERCASE', 'BASIC_CLEAN'] },
-      { id: 'ticketId', label: 'TICKET', operations: ['UPPERCASE', 'BASIC_CLEAN'] },
-      { id: 'featureName', label: 'FEATURE', operations: ['LOWERCASE', 'REPLACE_SLASHES', 'BASIC_CLEAN'] }
+      { id: 'projectId', label: 'ID', capitalization: 'UPPERCASE' },
+      { id: 'ticketId', label: 'TICKET', capitalization: 'UPPERCASE' },
+      { id: 'featureName', label: 'FEATURE', capitalization: 'LOWERCASE' }
     ]
   }
 
-  it('should apply operations correctly', () => {
+  it('should sanitize and apply capitalization correctly', () => {
     const values = {
       projectId: 'proj',
       ticketId: 't-123',
@@ -36,7 +37,7 @@ describe('BranchFormatter', () => {
     expect(result).toBe('PROJ-123--my-feature')
   })
 
-  it('should replace ñ and accents', () => {
+  it('should replace ñ and accents (es)', () => {
     const values = {
       projectId: 'prój',
       ticketId: 'tíckët',
@@ -44,5 +45,32 @@ describe('BranchFormatter', () => {
     }
     const result = BranchFormatter.format(dummyTemplate, values)
     expect(result).toBe('PROJ-TICKET--ninyo')
+  })
+
+  it('should respect AS_IS capitalization', () => {
+    const template: BranchFormatTemplate = {
+      ...dummyTemplate,
+      fields: [
+        { id: 'projectId', label: 'ID', capitalization: 'AS_IS' },
+        { id: 'ticketId', label: 'TICKET', capitalization: 'AS_IS' },
+        { id: 'featureName', label: 'FEATURE', capitalization: 'AS_IS' }
+      ]
+    }
+    const result = BranchFormatter.format(template, {
+      projectId: 'Proj',
+      ticketId: 'T-123',
+      featureName: 'MixedCase'
+    })
+    expect(result).toBe('Proj-T-123--MixedCase')
+  })
+
+  it('should use the language profile to translate the slash word', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'en' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'a/b'
+    })
+    expect(result).toBe('PROJ-1--a-or-b')
   })
 })
