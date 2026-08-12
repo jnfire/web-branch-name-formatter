@@ -1,8 +1,23 @@
+<script setup lang="ts">
+const appVersion = __APP_VERSION__
+</script>
+
 <template>
   <footer class="footer">
     <div class="footer__content">
       <p class="footer__text">
         {{ $t('footer.privacy') }}
+        <span class="footer__version">
+          •
+          <a
+            :href="`https://github.com/jnfire/web-branch-name-formatter/releases/tag/v${appVersion}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer__version-link"
+          >
+            v{{ appVersion }}
+          </a>
+        </span>
       </p>
       <div class="footer__links">
         <a
@@ -41,6 +56,21 @@
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 1rem;
+  }
+
+  &__version {
+    opacity: 0.8;
+  }
+
+  &__version-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+      text-decoration: underline;
+      opacity: 1;
+    }
   }
 
   &__links {

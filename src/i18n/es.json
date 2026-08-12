@@ -8,13 +8,11 @@
       "serverless": "Sin Registro"
     }
   },
+  "header": {
+    "config": "Configuración"
+  },
   "form": {
-    "projectId": "ID del Proyecto",
-    "projectIdPlaceholder": "ej. WEB",
-    "ticketId": "ID del Ticket",
-    "ticketIdPlaceholder": "ej. 1234",
-    "developName": "Nombre de Desarrollo",
-    "developNamePlaceholder": "ej. add-login-form",
+    "formatLabel": "Formato",
     "generate": "Generar Nombre de Rama"
   },
   "result": {
@@ -25,7 +23,9 @@
   "history": {
     "show": "Mostrar Historial",
     "hide": "Ocultar Historial",
-    "title": "Historial"
+    "title": "Historial",
+    "copy": "Copiar",
+    "delete": "Borrar"
   },
   "cookies": {
     "text": "¿Nos ayudas a mejorar? Usamos cookies de análisis anónimas para comprender el uso y optimizar la web.",
@@ -36,5 +36,86 @@
     "privacy": "Desarrollo local-first. Tus datos, tu control.",
     "sourceCode": "Ver Código Fuente",
     "license": "Derechos Reservados"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "preview": {
+    "title": "Previsualización",
+    "placeholder": "Selecciona un formato"
+  },
+  "configurator": {
+    "availableFormats": "Formatos Disponibles",
+    "createFormat": "Crear Formato",
+    "badgeBuiltin": "Predeterminado",
+    "badgeSelected": "Seleccionado",
+    "badgeHidden": "Oculto",
+    "edit": "Editar",
+    "clone": "Clonar",
+    "delete": "Borrar",
+    "exportCustom": "Exportar Personalizados",
+    "importJson": "Importar JSON",
+    "back": "Volver",
+    "exportEmpty": "No hay formatos personalizados para exportar.",
+    "importSuccess": "Formatos importados correctamente.",
+    "importError": "Error al importar formatos. Archivo inválido.",
+    "newFormatName": "Nuevo Formato",
+    "newFieldLabel": "Nuevo Campo",
+    "deleteModal": {
+      "title": "Eliminar Formato",
+      "message": "¿Estás seguro de que quieres eliminar este formato personalizado? Esta acción no se puede deshacer."
+    },
+    "editor": {
+      "on": "Activado",
+      "off": "Desactivado",
+      "visibleHintOn": "Este formato aparece como opción en el formulario principal.",
+      "visibleHintOff": "Este formato está oculto: no aparecerá como opción en el formulario principal.",
+      "readonlyHint": "Este formato viene incluido en la app: solo puedes cambiar si está visible y su idioma. Para editar sus campos o plantilla, clónalo desde la lista y edita la copia.",
+      "formatName": "Nombre del formato",
+      "template": "Plantilla (Usa {id} para inyectar campos)",
+      "language": "Idioma (saneado de caracteres: ñ, /, tildes...)",
+      "fields": "Campos",
+      "field": "Campo {n}",
+      "deleteField": "Eliminar campo",
+      "fieldId": "ID del Campo",
+      "fieldIdPlaceholder": "ej: ticketId",
+      "fieldLabel": "Nombre del Campo",
+      "fieldLabelPlaceholder": "ej: ID Ticket",
+      "type": "Tipo",
+      "typeText": "Texto Libre",
+      "typeSelect": "Selector",
+      "capitalization": "Capitalización",
+      "capUpper": "Mayúsculas",
+      "capLower": "Minúsculas",
+      "capAsIs": "Tal cual",
+      "options": "Opciones (separadas por comas)",
+      "optionsPlaceholder": "ej: feature, fix, hotfix",
+      "addField": "+ Añadir Campo",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "close": "Cerrar"
+    },
+    "cloneSuffix": "(Clon)"
+  },
+  "formats": {
+    "defaultApp": {
+      "name": "Formato por defecto (App)",
+      "projectId": "ID Proyecto",
+      "ticketId": "ID Ticket",
+      "featureName": "Nombre Funcionalidad"
+    },
+    "gitflow": {
+      "name": "GitFlow (type/ticket-desc)",
+      "type": "Tipo",
+      "ticketId": "ID Ticket",
+      "description": "Descripción"
+    },
+    "conventionalCommits": {
+      "name": "Conventional Commits",
+      "type": "Tipo (feat, fix...)",
+      "scope": "Ámbito",
+      "description": "Descripción"
+    }
   }
 }

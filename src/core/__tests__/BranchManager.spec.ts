@@ -1,219 +1,89 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { BranchManager } from '../../core/BranchManager'
-import type { BranchFormType } from '../../core/BranchTypes'
-import { LocalStorageManager } from '../../utils/LocalStorageManager'
-import { Branch } from '@/core/Branch'
-
-const mockBranches = [
-  new Branch({ id: 1, projectId: 'PRJ', ticketId: '123', featureName: 'feature-a' }),
-  new Branch({ id: 2, projectId: 'PRJ', ticketId: '124', featureName: 'feature-b' }),
-  new Branch({ id: 3, projectId: 'PRJ2', ticketId: '125', featureName: 'feature-c' }),
-  new Branch({ id: 4, projectId: 'PRJ2', ticketId: '126', featureName: 'feature-d' })
-]
-
-const branchManager = BranchManager.getInstance()
-branchManager['branches'] = mockBranches
+import { beforeEach, describe, expect, it } from 'vitest'
+import { BranchManager } from '../BranchManager'
 
 describe('BranchManager', () => {
+  let manager: BranchManager
+
   beforeEach(() => {
-    const manager = BranchManager.getInstance()
+    localStorage.clear()
+    manager = BranchManager.getInstance()
     manager.clearBranches()
   })
 
-  it('should initialize with an empty list of branches', () => {
-    const manager = BranchManager.getInstance()
-    expect(manager.getBranches()).toEqual([])
+  it('should be a singleton', () => {
+    const manager2 = BranchManager.getInstance()
+    expect(manager).toBe(manager2)
   })
 
   it('should add a new branch', () => {
-    const manager = BranchManager.getInstance()
-    const formData: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
-    }
-
-    manager.createBranch(formData)
-
+    manager.createBranch({
+      branchName: 'PROJ-123--new-feature',
+      formatId: 'default'
+    })
+    
     const branches = manager.getBranches()
     expect(branches).toHaveLength(1)
-    expect(branches[0].projectId).toBe('PROJ')
-    expect(branches[0].ticketId).toBe('TICKET-123')
-    expect(branches[0].featureName).toBe('New Feature')
-    expect(branches[0].branchName).toBe('PROJ-TICKET-123--new-feature')
+    expect(branches[0].branchName).toBe('PROJ-123--new-feature')
   })
 
-  it('should remove a branch', () => {
-    const manager = BranchManager.getInstance()
-    const formData: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
-    }
-
-    manager.createBranch(formData)
-    const branchToDelete = manager.getBranches()[0]
-
-    manager.deleteBranch(branchToDelete.id)
-
-    expect(manager.getBranches()).toHaveLength(0)
-  })
-
-  it('should not remove a branch if it does not exist', () => {
-    const manager = BranchManager.getInstance()
-    const formData: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
-    }
-
-    manager.createBranch(formData)
-    const nonExistentBranchId = 999
-
-    const result = manager.deleteBranch(nonExistentBranchId)
-
-    expect(result).toBe(false) // Verifica que no se eliminó ninguna rama
-    expect(manager.getBranches()).toHaveLength(1) // Asegura que la rama original sigue existiendo
-  })
-
-  it('shoulf sort branches in ascending order', () => {
-    const manager = BranchManager.getInstance()
-    manager.clearBranches()
-
-    const formData1: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
-    }
-    const formData2: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-456',
-      featureName: 'Another Feature'
-    }
-
-    manager.createBranch(formData2)
-    manager.createBranch(formData1)
+  it('should sort branches in ascending order', () => {
+    manager.createBranch({ branchName: 'B1' })
+    manager.createBranch({ branchName: 'B2' })
 
     const branches = manager.getBranches(false)
-    expect(branches[0].ticketId).toBe('TICKET-456')
-    expect(branches[1].ticketId).toBe('TICKET-123')
+    expect(branches[0].branchName).toBe('B1')
+    expect(branches[1].branchName).toBe('B2')
   })
 
   it('should sort branches in descending order', () => {
-    const manager = BranchManager.getInstance()
-    manager.clearBranches()
-
-    const formData1: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
-    }
-    const formData2: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-456',
-      featureName: 'Another Feature'
-    }
-
-    manager.createBranch(formData2)
-    manager.createBranch(formData1)
+    manager.createBranch({ branchName: 'B1' })
+    manager.createBranch({ branchName: 'B2' })
 
     const branches = manager.getBranches()
-    expect(branches[0].ticketId).toBe('TICKET-123')
-    expect(branches[1].ticketId).toBe('TICKET-456')
+    expect(branches[0].branchName).toBe('B2')
+    expect(branches[1].branchName).toBe('B1')
   })
 
-  it('should not repeat branch ids', () => {
-    const manager = BranchManager.getInstance()
-    manager.clearBranches()
-
-    const formData1: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
+  it('should keep only the last 10 branches', () => {
+    for (let i = 0; i < 15; i++) {
+      manager.createBranch({ branchName: `B${i}` })
     }
-    const formData2: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-456',
-      featureName: 'Another Feature'
-    }
-    const formData3: BranchFormType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-789',
-      featureName: 'Yet Another Feature'
-    }
-
-    manager.createBranch(formData1)
-    manager.createBranch(formData2)
-    manager.deleteBranch(1)
-    manager.createBranch(formData3)
 
     const branches = manager.getBranches()
-    expect(branches[0].id).not.toBe(branches[1].id)
+    expect(branches).toHaveLength(10)
+    // The most recent ones (highest IDs) should be kept
+    expect(branches[0].branchName).toBe('B14')
+    expect(branches[9].branchName).toBe('B5')
   })
 
-  it('should correct a branch name during load from local storage', () => {
-    const manager = BranchManager.getInstance()
-    manager.clearBranches()
-
-    // Simulate local storage with a combined projectId and ticketId in ticketId field
-    const localStorageMock = {
-      get: (key: string) => {
-        if (key === 'branches') {
-          return JSON.stringify([
-            {
-              id: 1,
-              ticketId: 'PROJECT-123',
-              featureName: 'Feature Name',
-              projectId: ''
-            }
-          ])
-        }
-        return null
-      },
-      save: () => {}
-    }
-
-    vi.spyOn(LocalStorageManager, 'getInstance').mockReturnValue(localStorageMock as any)
-
-    manager['loadBranches']()
-
+  it('should delete a branch', () => {
+    manager.createBranch({ branchName: 'B1' })
     const branches = manager.getBranches()
+    const id = branches[0].id
+
+    const deleted = manager.deleteBranch(id)
+    expect(deleted).toBe(true)
+    expect(manager.getBranches()).toHaveLength(0)
+  })
+
+  it('should maintain retrocompatibility with old branch format in localstorage', () => {
+    localStorage.setItem('branches', JSON.stringify([{
+      id: 1,
+      projectId: 'OLD',
+      ticketId: '123',
+      featureName: 'feature'
+    }]))
+
+    // need to recreate manager to force load
+    const tempManager = (BranchManager as any).instance
+    ;(BranchManager as any).instance = undefined
+    const newManager = BranchManager.getInstance()
+
+    const branches = newManager.getBranches()
     expect(branches).toHaveLength(1)
-    expect(branches[0].projectId).toBe('PROJECT')
-    expect(branches[0].ticketId).toBe('123')
-    expect(branches[0].featureName).toBe('Feature Name')
-  })
-
-  it('should correctly handle a branch with a hyphen in the ticketId and a valid projectId', () => {
-    const manager = BranchManager.getInstance()
-    manager.clearBranches()
-
-    // Simulate local storage with a branch having a hyphen in ticketId and a valid projectId
-    const localStorageMock = {
-      get: (key: string) => {
-        if (key === 'branches') {
-          return JSON.stringify([
-            {
-              id: 1,
-              ticketId: 'TICKET-123-456',
-              featureName: 'Feature Name',
-              projectId: 'PROJ'
-            }
-          ])
-        }
-        return null
-      },
-      save: () => {}
-    }
-
-    vi.spyOn(LocalStorageManager, 'getInstance').mockReturnValue(localStorageMock as any)
-
-    manager['loadBranches']()
-
-    const branches = manager.getBranches()
-    expect(branches).toHaveLength(1)
-    expect(branches[0].projectId).toBe('PROJ') // Ensure projectId is not overwritten
-    expect(branches[0].ticketId).toBe('TICKET-123-456') // Ensure ticketId remains intact
-    expect(branches[0].featureName).toBe('Feature Name')
+    expect(branches[0].branchName).toBe('OLD-123--feature')
+    
+    // restore instance
+    ;(BranchManager as any).instance = tempManager
   })
 })

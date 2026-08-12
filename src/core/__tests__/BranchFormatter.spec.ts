@@ -1,106 +1,103 @@
-import { describe, it, expect } from 'vitest'
-import { BranchFormatter } from '../../core/BranchFormatter'
-import type { BranchType } from '../../core/BranchTypes'
+import { describe, expect, it } from 'vitest'
+import { BranchFormatter } from '../BranchFormatter'
+import type { BranchFormatTemplate } from '../FormatTypes'
 
 describe('BranchFormatter', () => {
-  it('should format branch name correctly', () => {
-    const branch: BranchType = {
+  const dummyTemplate: BranchFormatTemplate = {
+    id: 'test',
+    name: 'Test',
+    templateString: '{projectId}-{ticketId}--{featureName}',
+    isReadonly: true,
+    isVisible: true,
+    language: 'es',
+    fields: [
+      { id: 'projectId', label: 'ID', capitalization: 'UPPERCASE' },
+      { id: 'ticketId', label: 'TICKET', capitalization: 'UPPERCASE' },
+      { id: 'featureName', label: 'FEATURE', capitalization: 'LOWERCASE' }
+    ]
+  }
+
+  it('should sanitize and apply capitalization correctly', () => {
+    const values = {
+      projectId: 'proj',
+      ticketId: 't-123',
+      featureName: 'My/Feature Name'
+    }
+    const result = BranchFormatter.format(dummyTemplate, values)
+    expect(result).toBe('PROJ-T-123--my-o-feature-name')
+  })
+
+  it('should remove multiple dashes', () => {
+    const values = {
       projectId: 'PROJ',
-      ticketId: 'TICKET-123',
-      featureName: 'New Feature'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('PROJ-TICKET-123--new-feature')
+      ticketId: '123',
+      featureName: 'my----feature'
+    }
+    const result = BranchFormatter.format(dummyTemplate, values)
+    expect(result).toBe('PROJ-123--my-feature')
   })
 
-  it('should handle special characters in featureName', () => {
-    const branch: BranchType = {
-      projectId: 'PROJ',
-      ticketId: 'TICKET-456',
-      featureName: 'Feature with Special Characters!@#'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('PROJ-TICKET-456--feature-with-special-characters')
+  it('should replace ñ and accents (es)', () => {
+    const values = {
+      projectId: 'prój',
+      ticketId: 'tíckët',
+      featureName: 'niño'
+    }
+    const result = BranchFormatter.format(dummyTemplate, values)
+    expect(result).toBe('PROJ-TICKET--ninyo')
   })
 
-  it('should handle spaces in featureName', () => {
-    const branch: BranchType = {
-      ticketId: 'TICKET-789',
-      featureName: 'Feature with spaces'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-789--feature-with-spaces')
+  it('should respect AS_IS capitalization', () => {
+    const template: BranchFormatTemplate = {
+      ...dummyTemplate,
+      fields: [
+        { id: 'projectId', label: 'ID', capitalization: 'AS_IS' },
+        { id: 'ticketId', label: 'TICKET', capitalization: 'AS_IS' },
+        { id: 'featureName', label: 'FEATURE', capitalization: 'AS_IS' }
+      ]
+    }
+    const result = BranchFormatter.format(template, {
+      projectId: 'Proj',
+      ticketId: 'T-123',
+      featureName: 'MixedCase'
+    })
+    expect(result).toBe('Proj-T-123--MixedCase')
   })
 
-  it('should handle multiple dashes in featureName', () => {
-    const branch: BranchType = {
-      ticketId: 'TICKET-101',
-      featureName: 'Feature---with---multiple---dashes'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-101--feature-with-multiple-dashes')
+  it('should use the language profile to translate the slash word', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'en' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'a/b'
+    })
+    expect(result).toBe('PROJ-1--a-or-b')
   })
 
-  it('should convert ticketId to uppercase', () => {
-    const branch: BranchType = {
-      ticketId: 'ticket-202',
-      featureName: 'Feature'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-202--feature')
+  it.each([
+    ['es', 'o'],
+    ['en', 'or'],
+    ['fr', 'ou'],
+    ['de', 'oder'],
+    ['it', 'o'],
+    ['pt', 'ou']
+  ] as const)('translates "/" to "-%s-" for language %s', (language, slashWord) => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'a/b'
+    })
+    expect(result).toBe(`PROJ-1--a-${slashWord}-b`)
   })
 
-  it('should convert ñ to ny', () => {
-    const branch: BranchType = {
-      ticketId: 'ticket-303',
-      featureName: 'Año nuevo'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-303--anyo-nuevo')
-  })
-
-  it('should remove accents', () => {
-    const branch: BranchType = {
-      ticketId: 'ticket-404',
-      featureName: 'Áccentéd fëatüre'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-404--accented-feature')
-  })
-
-  it('should replace slashes with -o-', () => {
-    const branch: BranchType = {
-      ticketId: 'ticket-505',
-      featureName: 'Feature/slashes'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-505--feature-o-slashes')
-  })
-
-  it('should replace dots with dashes', () => {
-    const branch: BranchType = {
-      ticketId: 'ticket-606',
-      featureName: 'version 5.1.0'
-    } as BranchType
-
-    const formattedName = BranchFormatter.format(branch)
-
-    expect(formattedName).toBe('TICKET-606--version-5-1-0')
+  it('should replace ß with ss (de)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'de' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'straße/api'
+    })
+    expect(result).toBe('PROJ-1--strasse-oder-api')
   })
 })

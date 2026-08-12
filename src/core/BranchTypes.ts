@@ -1,10 +1,7 @@
-export interface BranchFormType {
-  projectId: string;
-  ticketId: string;
-  featureName: string;
-}
+export type BranchFormType = Record<string, string>;
 
-export interface BranchType extends BranchFormType {
+export interface BranchType {
   id: number;
-  branchName?: string;
+  branchName: string;
+  formatId?: string; // Optional: To know which format was used
 }

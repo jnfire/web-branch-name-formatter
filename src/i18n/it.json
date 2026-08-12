@@ -8,13 +8,11 @@
       "serverless": "Senza Registrazione"
     }
   },
+  "header": {
+    "config": "Impostazioni"
+  },
   "form": {
-    "projectId": "ID Progetto",
-    "projectIdPlaceholder": "es. WEB",
-    "ticketId": "ID Ticket",
-    "ticketIdPlaceholder": "es. 1234",
-    "developName": "Nome Sviluppo",
-    "developNamePlaceholder": "es. add-login-form",
+    "formatLabel": "Formato",
     "generate": "Genera Nome Branch"
   },
   "result": {
@@ -25,7 +23,9 @@
   "history": {
     "show": "Mostra Cronologia",
     "hide": "Nascondi Cronologia",
-    "title": "Cronologia"
+    "title": "Cronologia",
+    "copy": "Copia",
+    "delete": "Elimina"
   },
   "cookies": {
     "text": "Aiutaci a migliorare? Utilizziamo cookie di analisi anonimi per comprendere l'uso e ottimizzare il sito.",
@@ -36,5 +36,86 @@
     "privacy": "Sviluppo local-first. I tuoi dati, il tuo controllo.",
     "sourceCode": "Visualizza Codice Sorgente",
     "license": "Tutti i Diritti Riservati"
+  },
+  "common": {
+    "cancel": "Annulla",
+    "confirm": "Conferma"
+  },
+  "preview": {
+    "title": "Anteprima",
+    "placeholder": "Seleziona un formato"
+  },
+  "configurator": {
+    "availableFormats": "Formati Disponibili",
+    "createFormat": "Crea Formato",
+    "badgeBuiltin": "Predefinito",
+    "badgeSelected": "Selezionato",
+    "badgeHidden": "Nascosto",
+    "edit": "Modifica",
+    "clone": "Clona",
+    "delete": "Elimina",
+    "exportCustom": "Esporta Formati Personalizzati",
+    "importJson": "Importa JSON",
+    "back": "Indietro",
+    "exportEmpty": "Non ci sono formati personalizzati da esportare.",
+    "importSuccess": "Formati importati correttamente.",
+    "importError": "Errore durante l'importazione. File non valido.",
+    "newFormatName": "Nuovo Formato",
+    "newFieldLabel": "Nuovo Campo",
+    "deleteModal": {
+      "title": "Elimina Formato",
+      "message": "Sei sicuro di voler eliminare questo formato personalizzato? Questa azione non può essere annullata."
+    },
+    "editor": {
+      "on": "Attivo",
+      "off": "Disattivo",
+      "visibleHintOn": "Questo formato appare come opzione nel modulo principale.",
+      "visibleHintOff": "Questo formato è nascosto: non apparirà come opzione nel modulo principale.",
+      "readonlyHint": "Questo formato è incluso nell'app: puoi modificare solo se è visibile e la sua lingua. Per modificare campi o modello, clonalo dall'elenco e modifica la copia.",
+      "formatName": "Nome del formato",
+      "template": "Modello (usa {id} per inserire i campi)",
+      "language": "Lingua (pulizia caratteri: ñ, /, accenti...)",
+      "fields": "Campi",
+      "field": "Campo {n}",
+      "deleteField": "Elimina campo",
+      "fieldId": "ID del Campo",
+      "fieldIdPlaceholder": "es. ticketId",
+      "fieldLabel": "Nome del Campo",
+      "fieldLabelPlaceholder": "es. ID Ticket",
+      "type": "Tipo",
+      "typeText": "Testo Libero",
+      "typeSelect": "Selettore",
+      "capitalization": "Maiuscole/Minuscole",
+      "capUpper": "Maiuscolo",
+      "capLower": "Minuscolo",
+      "capAsIs": "Invariato",
+      "options": "Opzioni (separate da virgole)",
+      "optionsPlaceholder": "es. feature, fix, hotfix",
+      "addField": "+ Aggiungi Campo",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "close": "Chiudi"
+    },
+    "cloneSuffix": "(Clone)"
+  },
+  "formats": {
+    "defaultApp": {
+      "name": "Formato predefinito (App)",
+      "projectId": "ID Progetto",
+      "ticketId": "ID Ticket",
+      "featureName": "Nome Funzionalità"
+    },
+    "gitflow": {
+      "name": "GitFlow (type/ticket-desc)",
+      "type": "Tipo",
+      "ticketId": "ID Ticket",
+      "description": "Descrizione"
+    },
+    "conventionalCommits": {
+      "name": "Conventional Commits",
+      "type": "Tipo (feat, fix...)",
+      "scope": "Ambito",
+      "description": "Descrizione"
+    }
   }
 }

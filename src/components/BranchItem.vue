@@ -4,8 +4,8 @@
       <p class="branch__name__text">{{ props.branchName }}</p>
     </div>
     <div class="branch__buttons">
-      <button class="branch__button branch__button__copy" @click="copyToClipboard">Copy</button>
-      <button class="branch__button branch__button__delete" @click="deleteBranch">Delete</button>
+      <button class="branch__button branch__button__copy" @click="copyToClipboard">{{ $t('history.copy') }}</button>
+      <button class="branch__button branch__button__delete" @click="deleteBranch">{{ $t('history.delete') }}</button>
     </div>
   </div>
 </template>
@@ -36,11 +36,10 @@ const deleteBranch = () => {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 20px;
-  margin-bottom: 0.75rem;
   color: var(--text-main);
   transition: all 0.2s;
 
-  @media (max-width: 768px) {
+  @media (max-width: vars.$bp-mobile) {
     padding: 10px 15px;
     flex-direction: column;
     gap: 10px;
@@ -54,7 +53,7 @@ const deleteBranch = () => {
     flex: 1;
     min-width: 0;
 
-    @media (max-width: 768px) {
+    @media (max-width: vars.$bp-mobile) {
       width: 100%;
       text-align: center;
     }
@@ -73,7 +72,7 @@ const deleteBranch = () => {
     display: flex;
     gap: 0.5rem;
 
-    @media (max-width: 768px) {
+    @media (max-width: vars.$bp-mobile) {
       width: 100%;
       justify-content: center;
     }
