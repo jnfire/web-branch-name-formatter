@@ -1,5 +1,5 @@
 import { Branch } from '@/core/Branch'
-import type { BranchFormType } from '@/core/BranchTypes'
+import type { BranchType } from '@/core/BranchTypes'
 import { LocalStorageManager } from '@/utils/LocalStorageManager'
 
 export class BranchManager {
@@ -37,7 +37,7 @@ export class BranchManager {
     const localStorage = LocalStorageManager.getInstance()
     const branches = localStorage.get('branches')
     if (branches) {
-      this.branches = JSON.parse(branches).map((branch: Branch) => this.loadBranch(branch))
+      this.branches = JSON.parse(branches).map((branch: any) => this.loadBranch(branch))
       if (this.branches.length > 10) {
         this.branches = this.branches.slice(-10)
       }
@@ -45,33 +45,24 @@ export class BranchManager {
     this.setLastId()
   }
 
-  private loadBranch(branch: Branch): Branch {
-    let projectId = branch.projectId || ''
-    let ticketId = branch.ticketId || ''
-
-    if (ticketId.includes('-') && !projectId) {
-      const splitIds = this.splitProjectAndTicketId(ticketId)
-      projectId = splitIds.projectId
-      ticketId = splitIds.ticketId
+  private loadBranch(data: any): Branch {
+    let branchName = data.branchName || ''
+    
+    // Retrocompatibilidad con datos antiguos guardados en localStorage
+    if (!branchName) {
+      const projectId = data.projectId ? `${data.projectId}-` : ''
+      const ticketId = data.ticketId || ''
+      const featureName = data.featureName ? `--${data.featureName}` : ''
+      branchName = `${projectId}${ticketId}${featureName}`
     }
 
-    const id = branch.id || 0
-    const featureName = branch.featureName || ''
+    const id = data.id || 0
 
     return new Branch({
-      id: id,
-      projectId: projectId.trim(),
-      ticketId: ticketId.trim(),
-      featureName: featureName.trim()
+      id,
+      branchName,
+      formatId: data.formatId
     })
-  }
-
-  private splitProjectAndTicketId(combinedId: string): { projectId: string; ticketId: string } {
-    const [projectId, ticketId] = combinedId.split('-')
-    return {
-      projectId: projectId || '',
-      ticketId: ticketId || ''
-    }
   }
 
   private setLastId(): void {
@@ -80,18 +71,15 @@ export class BranchManager {
     }, 0)
   }
 
-  public createBranch(formData: BranchFormType): void {
+  public createBranch(branchData: Omit<BranchType, 'id'>): void {
     this.setNewId()
     const newBranch = new Branch({
       id: this.lastId,
-      ticketId: formData.ticketId,
-      featureName: formData.featureName,
-      projectId: formData.projectId
+      branchName: branchData.branchName,
+      formatId: branchData.formatId
     })
     this.branches.push(newBranch)
-    // Limitar el historial a los 10 últimos registros (los de ID más alto / más recientes)
     if (this.branches.length > 10) {
-      // Como hacemos push, los más antiguos están al principio
       this.branches.shift()
     }
     this.saveBranches()
@@ -106,9 +94,9 @@ export class BranchManager {
     if (index !== -1) {
       this.branches.splice(index, 1)
       this.saveBranches()
-      return true // Indica que la rama fue eliminada
+      return true
     }
-    return false // Indica que la rama no existía
+    return false
   }
 
   private saveBranches(): void {

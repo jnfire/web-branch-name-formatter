@@ -1,16 +1,13 @@
-<!-- src/App.vue -->
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
-import BranchForm from '@/components/BranchForm.vue'
-import BranchList from '@/components/BranchList.vue'
 import Footer from '@/components/Footer.vue'
 import CookieBanner from '@/components/CookieBanner.vue'
 import LangSelector from '@/components/LangSelector.vue'
-import { BranchManager } from '@/core/BranchManager'
-import type { BranchFormType } from '@/core/BranchTypes'
-import type { Branch } from '@/core/Branch'
 import { initAnalytics } from '@/utils/analytics'
+
+import AppMainView from '@/components/AppMainView.vue'
+import AppConfigurationView from '@/components/AppConfigurationView.vue'
 
 const languages = [
   { code: 'en', label: 'English' },
@@ -22,45 +19,25 @@ const languages = [
 ]
 
 const handleCookieAccept = () => {
-  const gaId = (import.meta.env.VITE_GA_ID as string) || 'G-XXXXXXXXXX';
-  initAnalytics(gaId);
-};
-
-// --- Original Application Logic ---
-const branchManager = BranchManager.getInstance()
-
-const branches = ref<Branch[]>(branchManager.getBranches())
-const showHistory = ref(false)
-const latestBranch = ref<Branch | null>(null)
-const copied = ref(false)
-
-const copyToClipboard = async (text: string) => {
-  await navigator.clipboard.writeText(text)
-  copied.value = true
-  setTimeout(() => {
-    copied.value = false
-  }, 2000)
+  const gaId = (import.meta.env.VITE_GA_ID as string) || 'G-XXXXXXXXXX'
+  initAnalytics(gaId)
 }
 
-const updateBranches = () => {
-  branches.value = [...branchManager.getBranches()]
-}
+const showConfig = ref(false)
 
-const handleFormSubmit = (formData: BranchFormType) => {
-  branchManager.createBranch(formData)
-  updateBranches()
-  latestBranch.value = branches.value[0] || null
-}
-
-const handleDeleteBranch = (branchId: number) => {
-  branchManager.deleteBranch(branchId)
-  updateBranches()
+const toggleConfig = () => {
+  showConfig.value = !showConfig.value
 }
 </script>
 
 <template>
   <div class="app-layout">
     <header class="app-header">
+      <div class="header-top">
+        <button class="btn-secondary config-toggle" @click="toggleConfig">
+          {{ showConfig ? '← Volver' : '⚙️ Configuración' }}
+        </button>
+      </div>
       <h1>{{ $t('hero.title') }}</h1>
       <div class="lang-selector-wrapper">
         <LangSelector v-model="$i18n.locale" :options="languages" />
@@ -73,33 +50,9 @@ const handleDeleteBranch = (branchId: number) => {
       </div>
     </header>
 
-    <main class="main-content">
-      <div class="converter-box">
-        <BranchForm @submitForm="handleFormSubmit" />
-      </div>
-
-      <div v-if="latestBranch" class="result-section">
-        <h2 class="result-title">{{ $t('result.title') }}</h2>
-        <div class="result-card">
-          <code class="result-code">{{ latestBranch.branchName }}</code>
-          <button class="btn-primary" @click="copyToClipboard(latestBranch.branchName)">
-            {{ copied ? $t('result.copied') : $t('result.copy') }}
-          </button>
-        </div>
-      </div>
-
-      <div class="history-section">
-        <div class="history-header">
-          <button class="btn-secondary toggle-btn" @click="showHistory = !showHistory">
-            {{ showHistory ? $t('history.hide') : $t('history.show') }}
-          </button>
-        </div>
-
-        <div v-if="showHistory" class="history-pane">
-          <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
-        </div>
-      </div>
-    </main>
+    <!-- Simulación de router con v-if -->
+    <AppConfigurationView v-if="showConfig" />
+    <AppMainView v-else />
 
     <Footer />
     <CookieBanner @accept="handleCookieAccept" />
@@ -110,6 +63,20 @@ const handleDeleteBranch = (branchId: number) => {
 .app-header {
   text-align: center;
   margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.header-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.config-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .lang-selector-wrapper {
@@ -139,23 +106,11 @@ h1 {
   .app-layout {
     padding: 2rem 1rem;
   }
-
-
-
   h1 {
     font-size: 2rem;
   }
-
   .subtitle {
     font-size: 1rem;
-  }
-
-  .converter-box {
-    padding: 1.5rem;
-  }
-
-  .result-code {
-    font-size: 1.25rem;
   }
 }
 
@@ -176,69 +131,5 @@ h1 {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.converter-box {
-  background-color: var(--bg-surface);
-  padding: 2rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-.result-section {
-  animation: fadeIn 0.3s ease-out;
-  margin-bottom: 3rem;
-}
-
-.result-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: center;
-}
-
-.result-card {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.result-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-main);
-  word-break: break-all;
-  text-align: center;
-}
-
-.history-section {
-  margin-top: 4rem;
-}
-
-.history-header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.history-pane {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.separator {
-  margin: 1.5rem 0;
-  border: none;
-  border-top: 1px solid var(--border-color);
 }
 </style>
