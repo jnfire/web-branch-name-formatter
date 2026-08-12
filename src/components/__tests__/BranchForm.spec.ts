@@ -4,6 +4,8 @@ import BranchForm from '../BranchForm.vue'
 import { FormatManager } from '@/core/FormatManager'
 import i18n from '@/i18n'
 
+import { nextTick } from 'vue'
+
 // Mocking FormatManager for the tests
 FormatManager.getVisibleFormats = () => [
   {
@@ -12,20 +14,21 @@ FormatManager.getVisibleFormats = () => [
     templateString: '{testId}',
     isReadonly: false,
     isVisible: true,
-    language: 'es',
     fields: [
-      { id: 'testId', label: 'Test ID', capitalization: 'AS_IS' }
+      { id: 'testId', label: 'Test ID', type: 'text', operations: [] }
     ]
   }
 ]
+FormatManager.getDefaultFormatId = () => 'test'
 
 describe('BranchForm', () => {
-  it('renders the dynamic form correctly', () => {
+  it('renders the dynamic form correctly', async () => {
     const wrapper = mount(BranchForm, {
       global: {
         plugins: [i18n]
       }
     })
+    await nextTick()
     // Expect input with name testId to exist
     expect(wrapper.find('input[name="testId"]').exists()).toBe(true)
   })
@@ -36,6 +39,7 @@ describe('BranchForm', () => {
         plugins: [i18n]
       }
     })
+    await nextTick()
 
     const input = wrapper.find('input[name="testId"]')
     await input.setValue('my-test-value')
