@@ -106,7 +106,7 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
     <div class="form-group">
       <label class="form-label">{{ $t('configurator.editor.language') }}</label>
       <CustomSelect :model-value="localFormat.language" :options="languageOptions" @update:modelValue="handleLanguageChange" />
-      <span class="help-text">{{ $t('configurator.editor.languageHelp') }}</span>
+      <span class="help-text">{{ $t('configurator.editor.languageHelp_' + localFormat.language) }}</span>
     </div>
 
     <div class="fields-section">
