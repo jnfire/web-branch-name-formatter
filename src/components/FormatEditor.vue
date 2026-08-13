@@ -75,9 +75,19 @@ const handleSave = () => {
   emit('save', localFormat.value)
 }
 
+const rawOptionsMap = ref(new Map<FieldDefinition, string>())
+
+const getOptionsText = (field: FieldDefinition) => {
+  if (rawOptionsMap.value.has(field)) {
+    return rawOptionsMap.value.get(field)!
+  }
+  return (field.options || []).join(', ')
+}
+
 const updateOptions = (field: FieldDefinition, event: Event) => {
-  const val = (event.target as HTMLInputElement).value;
-  field.options = val.split(',').map(s => s.trim()).filter(Boolean);
+  const val = (event.target as HTMLInputElement).value
+  rawOptionsMap.value.set(field, val)
+  field.options = val.split(',').map(s => s.trim()).filter(Boolean)
 }
 </script>
 
@@ -163,7 +173,7 @@ const updateOptions = (field: FieldDefinition, event: Event) => {
           <label class="field-label-small">{{ $t('configurator.editor.options') }}</label>
           <input
             type="text"
-            :value="(field.options || []).join(', ')"
+            :value="getOptionsText(field)"
             @input="updateOptions(field, $event)"
             :placeholder="$t('configurator.editor.optionsPlaceholder')"
             class="input-element small"
