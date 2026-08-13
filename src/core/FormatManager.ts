@@ -1,4 +1,5 @@
 import type { BranchFormatTemplate, LanguageProfile } from '@/core/FormatTypes'
+import { getUiLanguage, setUiLanguage, type SupportedLocale } from '@/i18n'
 
 export class FormatManager {
   private static readonly STORAGE_KEY_CUSTOM = 'branch-formats-custom'
@@ -161,27 +162,83 @@ export class FormatManager {
     return clonedFormat
   }
 
+  static exportConfiguration(): string {
+    const config = {
+      version: 1,
+      uiLanguage: getUiLanguage(),
+      defaultFormatId: this.getDefaultFormatId(),
+      formats: this.getFormats()
+    }
+    return JSON.stringify(config, null, 2)
+  }
+
   static exportCustomFormats(): string {
-    return JSON.stringify(this.getCustomFormats(), null, 2)
+    return this.exportConfiguration()
   }
 
   static importCustomFormats(jsonString: string): void {
     try {
-      const parsed = JSON.parse(jsonString) as BranchFormatTemplate[]
-      if (!Array.isArray(parsed)) throw new Error('Invalid format')
+      const parsed = JSON.parse(jsonString)
 
-      const currentCustom = this.getCustomFormats()
-      // Create new IDs for imported to avoid collisions, or just append them if they look valid
-      const newFormats = parsed.map(f => ({
-        ...f,
-        id: `imported-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        isReadonly: false
-      }))
+      if (Array.isArray(parsed)) {
+        this.importFormatsArray(parsed as BranchFormatTemplate[])
+        return
+      }
 
-      this.saveCustomFormats([...currentCustom, ...newFormats])
+      if (typeof parsed === 'object' && parsed !== null) {
+        if (parsed.uiLanguage && typeof parsed.uiLanguage === 'string') {
+          setUiLanguage(parsed.uiLanguage as SupportedLocale)
+        }
+
+        if (parsed.defaultFormatId && typeof parsed.defaultFormatId === 'string') {
+          this.setDefaultFormatId(parsed.defaultFormatId)
+        }
+
+        if (parsed.predefinedLanguageOverrides && typeof parsed.predefinedLanguageOverrides === 'object') {
+          const currentOverrides = this.getPredefinedLanguageOverrides()
+          const newOverrides = { ...currentOverrides, ...parsed.predefinedLanguageOverrides }
+          this.savePredefinedLanguageOverrides(newOverrides)
+        }
+
+        const formatsArray = Array.isArray(parsed.formats)
+          ? parsed.formats
+          : (Array.isArray(parsed.customFormats) ? parsed.customFormats : [])
+
+        if (formatsArray.length > 0) {
+          this.importFormatsArray(formatsArray, true)
+        }
+      } else {
+        throw new Error('Invalid format structure')
+      }
     } catch (e) {
       console.error('Error importing formats:', e)
       throw e
     }
+  }
+
+  private static importFormatsArray(formatsArray: BranchFormatTemplate[], processPredefined = true): void {
+    const customToSave: BranchFormatTemplate[] = [...this.getCustomFormats()]
+    const predefinedIds = this.DEFAULT_FORMATS.map(f => f.id)
+
+    for (const item of formatsArray) {
+      if (predefinedIds.includes(item.id)) {
+        if (processPredefined && item.language) {
+          this.setLanguage(item.id, item.language)
+        }
+      } else {
+        const existingIndex = customToSave.findIndex(c => c.id === item.id)
+        const formatItem: BranchFormatTemplate = {
+          ...item,
+          isReadonly: false
+        }
+        if (existingIndex !== -1) {
+          customToSave[existingIndex] = formatItem
+        } else {
+          customToSave.push(formatItem)
+        }
+      }
+    }
+
+    this.saveCustomFormats(customToSave)
   }
 }

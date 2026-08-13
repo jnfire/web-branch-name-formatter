@@ -79,4 +79,54 @@ describe('FormatManager', () => {
     FormatManager.deleteFormat('test-custom-2')
     expect(FormatManager.getCustomFormats().length).toBe(0)
   })
+
+  it('exports full configuration clean object containing default format, uiLanguage and formats array', () => {
+    FormatManager.setDefaultFormatId('gitflow')
+    FormatManager.setLanguage('gitflow', 'en')
+    
+    const exportedStr = FormatManager.exportConfiguration()
+    const exportedObj = JSON.parse(exportedStr)
+
+    expect(exportedObj.defaultFormatId).toBe('gitflow')
+    expect(exportedObj.uiLanguage).toBeDefined()
+    expect(exportedObj.formats).toBeDefined()
+    expect(Array.isArray(exportedObj.formats)).toBe(true)
+    const gitflow = exportedObj.formats.find((f: any) => f.id === 'gitflow')
+    expect(gitflow.language).toBe('en')
+  })
+
+  it('imports full configuration correctly including uiLanguage', () => {
+    const configToImport = {
+      version: 1,
+      uiLanguage: 'de',
+      defaultFormatId: 'conventional-commits',
+      formats: [
+        {
+          id: 'gitflow',
+          name: 'formats.gitflow.name',
+          templateString: '{type}/{ticketId}-{description}',
+          isReadonly: true,
+          language: 'fr',
+          fields: []
+        },
+        {
+          id: 'imported-custom-1',
+          name: 'Imported Custom',
+          templateString: '{test}',
+          isReadonly: false,
+          language: 'es',
+          fields: []
+        }
+      ]
+    }
+
+    FormatManager.importCustomFormats(JSON.stringify(configToImport))
+
+    expect(FormatManager.getDefaultFormatId()).toBe('conventional-commits')
+    const formats = FormatManager.getFormats()
+    const gitflow = formats.find(f => f.id === 'gitflow')
+    expect(gitflow?.language).toBe('fr')
+    expect(FormatManager.getCustomFormats().length).toBe(1)
+    expect(FormatManager.getCustomFormats()[0].name).toBe('Imported Custom')
+  })
 })

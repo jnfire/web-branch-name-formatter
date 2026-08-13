@@ -8,11 +8,25 @@ import pt from './pt.json'
 
 type MessageSchema = typeof en
 
-const supportedLocales = ['en', 'es', 'fr', 'de', 'it', 'pt'] as const
-type SupportedLocale = (typeof supportedLocales)[number]
+export const supportedLocales = ['en', 'es', 'fr', 'de', 'it', 'pt'] as const
+export type SupportedLocale = (typeof supportedLocales)[number]
 
-const browserLocale = navigator.language.split('-')[0] as SupportedLocale
-const initialLocale = supportedLocales.includes(browserLocale) ? browserLocale : 'en'
+const STORAGE_KEY_UI_LANG = 'app-ui-language'
+
+const getStoredLocale = (): SupportedLocale | null => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_UI_LANG)
+    if (saved && supportedLocales.includes(saved as SupportedLocale)) {
+      return saved as SupportedLocale
+    }
+  } catch {
+    // fallback if localStorage is not accessible
+  }
+  return null
+}
+
+const browserLocale = (typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'en') as SupportedLocale
+const initialLocale = getStoredLocale() || (supportedLocales.includes(browserLocale) ? browserLocale : 'en')
 
 const i18n = createI18n<[MessageSchema], SupportedLocale>({
   legacy: false,
@@ -27,5 +41,25 @@ const i18n = createI18n<[MessageSchema], SupportedLocale>({
     pt
   }
 })
+
+export const getUiLanguage = (): SupportedLocale => {
+  const loc = (i18n.global.locale as any).value ?? (i18n.global.locale as any)
+  return (loc as SupportedLocale) || initialLocale
+}
+
+export const setUiLanguage = (locale: SupportedLocale): void => {
+  if (supportedLocales.includes(locale)) {
+    if (typeof (i18n.global.locale as any).value !== 'undefined') {
+      ;(i18n.global.locale as any).value = locale
+    } else {
+      ;(i18n.global.locale as any) = locale
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY_UI_LANG, locale)
+    } catch {
+      // ignore
+    }
+  }
+}
 
 export default i18n

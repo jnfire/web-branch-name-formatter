@@ -141,11 +141,7 @@ const updatePreview = (format: BranchFormatTemplate) => {
 
 // Import/Export
 const handleExport = () => {
-  const dataStr = FormatManager.exportCustomFormats()
-  if (dataStr === '[]') {
-    alert(t('configurator.exportEmpty'))
-    return
-  }
+  const dataStr = FormatManager.exportConfiguration()
   const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr)
   const exportFileDefaultName = 'branch-formats.json'
   const linkElement = document.createElement('a')

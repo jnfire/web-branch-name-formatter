@@ -30,13 +30,8 @@ const handleDeleteBranch = (branchId: number) => {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-@media (min-width: vars.$bp-tablet) {
-  .branch_list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 0.75rem;
-  }
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 </style>
