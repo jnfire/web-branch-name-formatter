@@ -8,7 +8,6 @@ describe('BranchFormatter', () => {
     name: 'Test',
     templateString: '{projectId}-{ticketId}--{featureName}',
     isReadonly: true,
-    isVisible: true,
     language: 'es',
     fields: [
       { id: 'projectId', label: 'ID', capitalization: 'UPPERCASE' },
@@ -99,5 +98,58 @@ describe('BranchFormatter', () => {
       featureName: 'straße/api'
     })
     expect(result).toBe('PROJ-1--strasse-oder-api')
+  })
+
+  it('should sanitize accents properly in Spanish (es)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'es' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'áéíóúñÁÉÍÓÚÑ'
+    })
+    expect(result).toBe('PROJ-1--aeiounyaeiouny')
+  })
+
+  it('should sanitize accents properly in French (fr)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'fr' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'éèàùçâêîôûëïü'
+    })
+    // Note: ç normalizes to c, â -> a, ê -> e, î -> i, ô -> o, û -> u, ë -> e, ï -> i, ü -> u
+    // 'éèàùçâêîôûëïü' -> 'eeaucaeioueiu' after standard unicode normalization & sanitization
+    expect(result).toBe('PROJ-1--eeaucaeioueiu')
+  })
+
+  it('should sanitize accents and umlauts properly in German (de)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'de' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'äöüßÄÖÜ'
+    })
+    expect(result).toBe('PROJ-1--aoussaou')
+  })
+
+  it('should sanitize accents properly in Italian (it)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'it' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'àèéìòù'
+    })
+    expect(result).toBe('PROJ-1--aeeiou')
+  })
+
+  it('should sanitize accents and cedilla properly in Portuguese (pt)', () => {
+    const template: BranchFormatTemplate = { ...dummyTemplate, language: 'pt' }
+    const result = BranchFormatter.format(template, {
+      projectId: 'proj',
+      ticketId: '1',
+      featureName: 'áàâãéêíóôõúç'
+    })
+    // á, à, â, ã -> a, a, a, a (4 'a's)
+    expect(result).toBe('PROJ-1--aaaaeeiooouc')
   })
 })

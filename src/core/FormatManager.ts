@@ -2,7 +2,6 @@ import type { BranchFormatTemplate, LanguageProfile } from '@/core/FormatTypes'
 
 export class FormatManager {
   private static readonly STORAGE_KEY_CUSTOM = 'branch-formats-custom'
-  private static readonly STORAGE_KEY_HIDDEN_PREDEFINED = 'branch-formats-hidden'
   private static readonly STORAGE_KEY_DEFAULT_FORMAT = 'branch-format-default-id'
   private static readonly STORAGE_KEY_PREDEFINED_LANGUAGE = 'branch-formats-predefined-language'
 
@@ -12,7 +11,6 @@ export class FormatManager {
       name: 'formats.defaultApp.name',
       templateString: '{projectId}-{ticketId}--{featureName}',
       isReadonly: true,
-      isVisible: true,
       language: 'es',
       fields: [
         { id: 'projectId', label: 'formats.defaultApp.projectId', type: 'text', capitalization: 'UPPERCASE' },
@@ -25,7 +23,6 @@ export class FormatManager {
       name: 'formats.gitflow.name',
       templateString: '{type}/{ticketId}-{description}',
       isReadonly: true,
-      isVisible: true,
       language: 'es',
       fields: [
         { id: 'type', label: 'formats.gitflow.type', type: 'select', options: ['feature', 'bugfix', 'hotfix', 'release', 'chore'], capitalization: 'LOWERCASE' },
@@ -38,7 +35,6 @@ export class FormatManager {
       name: 'formats.conventionalCommits.name',
       templateString: '{type}/{scope}/{description}',
       isReadonly: true,
-      isVisible: true,
       language: 'es',
       fields: [
         { id: 'type', label: 'formats.conventionalCommits.type', type: 'select', options: ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert'], capitalization: 'LOWERCASE' },
@@ -50,12 +46,10 @@ export class FormatManager {
 
   static getFormats(): BranchFormatTemplate[] {
     const customFormats = this.getCustomFormats()
-    const hiddenPredefined = this.getHiddenPredefinedIds()
     const languageOverrides = this.getPredefinedLanguageOverrides()
 
     const predefined = this.DEFAULT_FORMATS.map(format => ({
       ...format,
-      isVisible: !hiddenPredefined.includes(format.id),
       language: languageOverrides[format.id] ?? format.language
     }))
 
@@ -63,7 +57,7 @@ export class FormatManager {
   }
 
   static getVisibleFormats(): BranchFormatTemplate[] {
-    return this.getFormats().filter(f => f.isVisible)
+    return this.getFormats()
   }
 
   static getDefaultFormatId(): string | null {
@@ -86,20 +80,6 @@ export class FormatManager {
 
   private static saveCustomFormats(formats: BranchFormatTemplate[]): void {
     localStorage.setItem(this.STORAGE_KEY_CUSTOM, JSON.stringify(formats))
-  }
-
-  private static getHiddenPredefinedIds(): string[] {
-    const data = localStorage.getItem(this.STORAGE_KEY_HIDDEN_PREDEFINED)
-    if (!data) return []
-    try {
-      return JSON.parse(data) as string[]
-    } catch {
-      return []
-    }
-  }
-
-  private static saveHiddenPredefinedIds(ids: string[]): void {
-    localStorage.setItem(this.STORAGE_KEY_HIDDEN_PREDEFINED, JSON.stringify(ids))
   }
 
   private static getPredefinedLanguageOverrides(): Partial<Record<string, LanguageProfile>> {
@@ -139,35 +119,6 @@ export class FormatManager {
     this.saveCustomFormats(filtered)
   }
 
-  static toggleVisibility(id: string): void {
-    const current = this.getFormats().find(f => f.id === id)
-    if (!current) return
-    this.setVisibility(id, !current.isVisible)
-  }
-
-  static setVisibility(id: string, visible: boolean): void {
-    const custom = this.getCustomFormats()
-    const customIndex = custom.findIndex(f => f.id === id)
-
-    if (customIndex !== -1) {
-      custom[customIndex].isVisible = visible
-      this.saveCustomFormats(custom)
-    } else {
-      // It might be a predefined format
-      const isPredefined = this.DEFAULT_FORMATS.some(f => f.id === id)
-      if (isPredefined) {
-        const hiddenIds = this.getHiddenPredefinedIds()
-        const isCurrentlyHidden = hiddenIds.includes(id)
-        if (visible && isCurrentlyHidden) {
-          this.saveHiddenPredefinedIds(hiddenIds.filter(hiddenId => hiddenId !== id))
-        } else if (!visible && !isCurrentlyHidden) {
-          hiddenIds.push(id)
-          this.saveHiddenPredefinedIds(hiddenIds)
-        }
-      }
-    }
-  }
-
   // Único ajuste editable en un formato predefinido (además de visible/predeterminado):
   // el idioma usado para el saneado de caracteres.
   static setLanguage(id: string, language: LanguageProfile): void {
@@ -201,7 +152,6 @@ export class FormatManager {
       id: newId,
       name: `${resolveLabel(formatToClone.name)} ${cloneSuffix}`,
       isReadonly: false,
-      isVisible: true,
       fields: formatToClone.fields.map(field => ({
         ...field,
         label: resolveLabel(field.label)

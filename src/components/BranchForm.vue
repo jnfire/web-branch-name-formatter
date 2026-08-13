@@ -10,25 +10,25 @@ const emit = defineEmits(['submitForm'])
 
 const { t } = useI18n()
 
-const availableFormats = ref<BranchFormatTemplate[]>([])
+const formats = ref<BranchFormatTemplate[]>([])
 const selectedFormatId = ref<string>('')
 const formData = ref<Record<string, string>>({})
 
-onMounted(() => {
-  availableFormats.value = FormatManager.getVisibleFormats()
-  if (availableFormats.value.length > 0) {
+const loadSelectedFormat = () => {
+  formats.value = FormatManager.getFormats()
+  if (formats.value.length > 0) {
     const defaultId = FormatManager.getDefaultFormatId()
-    const defaultStillAvailable = availableFormats.value.some(f => f.id === defaultId)
-    selectedFormatId.value = defaultStillAvailable ? defaultId! : availableFormats.value[0].id
+    const defaultStillAvailable = formats.value.some(f => f.id === defaultId)
+    selectedFormatId.value = defaultStillAvailable ? defaultId! : formats.value[0].id
   }
+}
+
+onMounted(() => {
+  loadSelectedFormat()
 })
 
 const selectedFormat = computed(() => {
-  return availableFormats.value.find(f => f.id === selectedFormatId.value) || null
-})
-
-const formatOptions = computed(() => {
-  return availableFormats.value.map(f => ({ value: f.id, label: f.name.includes('.') ? t(f.name) : f.name }))
+  return formats.value.find(f => f.id === selectedFormatId.value) || null
 })
 
 watch(selectedFormatId, () => {
@@ -77,14 +77,6 @@ function cleanInput() {
 
 <template>
   <form class="form" :aria-label="$t('form.generate')" @submit="handleSubmit">
-    
-    <div class="form-group" v-if="availableFormats.length > 1">
-      <label class="form-label">{{ $t('form.formatLabel') }}</label>
-      <CustomSelect 
-        v-model="selectedFormatId" 
-        :options="formatOptions" 
-      />
-    </div>
 
     <template v-if="selectedFormat">
       <div class="form-group" v-for="field in selectedFormat.fields" :key="field.id">

@@ -43,7 +43,6 @@ describe('FormatManager', () => {
       name: 'My Custom Format',
       templateString: '{customField}',
       isReadonly: false,
-      isVisible: true,
       language: 'es',
       fields: [
         { id: 'customField', label: 'Custom Field', type: 'select', options: ['A', 'B'], capitalization: 'AS_IS' }
@@ -70,7 +69,6 @@ describe('FormatManager', () => {
       name: 'Format to delete',
       templateString: '',
       isReadonly: false,
-      isVisible: true,
       language: 'es',
       fields: []
     }
