@@ -133,11 +133,11 @@
     }
   },
   "settings": {
-    "general": "General Settings",
-    "language": "Language",
-    "theme": "Theme",
-    "themeLight": "Light",
-    "themeDark": "Dark",
+    "general": "Allgemein",
+    "language": "Sprache",
+    "theme": "Thema",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
     "themeSystem": "System"
   }
 }

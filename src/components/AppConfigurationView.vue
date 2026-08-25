@@ -214,28 +214,7 @@ const handleImport = (event: Event) => {
     </div>
 
     <div v-else class="formats-list-section">
-      <div class="general-settings-section">
-        <h3 class="section-title">{{ $t('settings.general') }}</h3>
-        <div class="settings-column">
-          <div class="setting-item">
-            <label class="setting-label">{{ $t('settings.language') }}</label>
-            <LangSelector
-              :modelValue="$i18n.locale"
-              @update:modelValue="handleLanguageChange"
-              :options="languages"
-            />
-          </div>
-          <div class="setting-item">
-            <label class="setting-label">{{ $t('settings.theme') }}</label>
-            <CustomSelect
-              :modelValue="currentTheme"
-              :options="themeOptions"
-              @update:modelValue="handleThemeChange"
-            />
-          </div>
-        </div>
-      </div>
-
+      
       <div class="list-header">
         <h3 class="section-title">{{ $t('configurator.availableFormats') }}</h3>
         <button class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
@@ -275,6 +254,28 @@ const handleImport = (event: Event) => {
         </label>
       </div>
     </div>
+
+    <div class="general-settings-section">
+        <h3 class="section-title">{{ $t('settings.general') }}</h3>
+        <div class="settings-column">
+          <div class="setting-item">
+            <label class="setting-label">{{ $t('settings.language') }}</label>
+            <LangSelector
+              :modelValue="$i18n.locale"
+              @update:modelValue="handleLanguageChange"
+              :options="languages"
+            />
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">{{ $t('settings.theme') }}</label>
+            <CustomSelect
+              :modelValue="currentTheme"
+              :options="themeOptions"
+              @update:modelValue="handleThemeChange"
+            />
+          </div>
+        </div>
+      </div>
 
     <CustomModal
       v-model="showDeleteModal"
@@ -325,19 +326,7 @@ const handleImport = (event: Event) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
-  :deep(.lang-selector-container),
-  :deep(.lang-selector-trigger) {
-    width: 100%;
-  }
-  
-  :deep(.lang-selector-trigger) {
-    justify-content: space-between;
-  }
-  
-  :deep(.lang-selector-dropdown) {
-    width: 100%;
-  }
+  max-width: 300px;
 }
 
 .setting-label {
