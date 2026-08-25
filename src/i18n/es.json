@@ -9,7 +9,15 @@
     }
   },
   "header": {
-    "config": "Configuración"
+    "config": "Ajustes"
+  },
+  "settings": {
+    "general": "Ajustes Generales",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema"
   },
   "form": {
     "formatLabel": "Formato",

@@ -35,7 +35,7 @@ const goHome = () => {
 </script>
 
 <template>
-  <AppHeader :showConfig="showConfig" :languages="languages" @toggleConfig="toggleConfig" @home="goHome" />
+  <AppHeader :showConfig="showConfig" @toggleConfig="toggleConfig" @home="goHome" />
 
   <div class="app-layout">
     <header class="app-hero container" v-if="!showConfig">
@@ -48,7 +48,7 @@ const goHome = () => {
     </header>
 
     <!-- Simulación de router con v-if -->
-    <AppConfigurationView v-if="showConfig" @close="toggleConfig" />
+    <AppConfigurationView v-if="showConfig" :languages="languages" @close="toggleConfig" />
     <AppMainView v-else />
 
     <Footer />

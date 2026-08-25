@@ -11,6 +11,14 @@
   "header": {
     "config": "Settings"
   },
+  "settings": {
+    "general": "General Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
+  },
   "form": {
     "formatLabel": "Format",
     "generate": "Generate Branch Name"

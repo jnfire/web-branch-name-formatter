@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import LangSelector from '@/components/LangSelector.vue'
 import SettingsIcon from '@/components/SettingsIcon.vue'
-import { setUiLanguage, type SupportedLocale } from '@/i18n'
 
 const props = defineProps<{
   showConfig: boolean;
-  languages: { code: string; label: string }[];
 }>();
 
 const emit = defineEmits<{
   (e: 'toggleConfig'): void;
   (e: 'home'): void;
 }>();
-
-const handleLanguageChange = (langCode: string) => {
-  setUiLanguage(langCode as SupportedLocale)
-}
 </script>
 
 <template>
@@ -26,12 +19,6 @@ const handleLanguageChange = (langCode: string) => {
       </button>
 
       <div class="navbar-actions">
-        <LangSelector
-          :modelValue="$i18n.locale"
-          @update:modelValue="handleLanguageChange"
-          :options="languages"
-        />
-
         <button
           class="btn-secondary config-toggle"
           :class="{ 'config-toggle--active': showConfig }"

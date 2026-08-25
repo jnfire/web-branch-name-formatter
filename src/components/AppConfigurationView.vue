@@ -7,10 +7,30 @@ import FormatPreview from '@/components/FormatPreview.vue'
 import FormatEditor from '@/components/FormatEditor.vue'
 import CustomModal from '@/components/CustomModal.vue'
 import ArrowLeftIcon from '@/components/ArrowLeftIcon.vue'
+import LangSelector from '@/components/LangSelector.vue'
+import { getTheme, setTheme, type Theme } from '@/utils/theme'
+import { setUiLanguage, type SupportedLocale } from '@/i18n'
+
+const props = defineProps<{
+  languages: { code: string; label: string }[];
+}>()
 
 const emit = defineEmits(['close'])
 
 const { t, locale } = useI18n()
+
+const currentTheme = ref<Theme>(getTheme())
+
+const handleThemeChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  const theme = target.value as Theme
+  currentTheme.value = theme
+  setTheme(theme)
+}
+
+const handleLanguageChange = (langCode: string) => {
+  setUiLanguage(langCode as SupportedLocale)
+}
 
 const formats = ref<BranchFormatTemplate[]>([])
 const editingFormat = ref<BranchFormatTemplate | null>(null)
@@ -187,8 +207,30 @@ const handleImport = (event: Event) => {
     </div>
 
     <div v-else class="formats-list-section">
+      <div class="general-settings-section">
+        <h3 class="section-title">{{ $t('settings.general') }}</h3>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label class="setting-label">{{ $t('settings.language') }}</label>
+            <LangSelector
+              :modelValue="$i18n.locale"
+              @update:modelValue="handleLanguageChange"
+              :options="languages"
+            />
+          </div>
+          <div class="setting-item">
+            <label class="setting-label" for="theme-select">{{ $t('settings.theme') }}</label>
+            <select id="theme-select" class="input-element theme-select" :value="currentTheme" @change="handleThemeChange">
+              <option value="light">{{ $t('settings.themeLight') }}</option>
+              <option value="dark">{{ $t('settings.themeDark') }}</option>
+              <option value="system">{{ $t('settings.themeSystem') }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div class="list-header">
-        <h3>{{ $t('configurator.availableFormats') }}</h3>
+        <h3 class="section-title">{{ $t('configurator.availableFormats') }}</h3>
         <button class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
       </div>
 
@@ -254,17 +296,59 @@ const handleImport = (event: Event) => {
   }
 }
 
+.section-title {
+  margin: 0;
+  color: var(--text-main);
+}
+
+.general-settings-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  :deep(.lang-selector-container),
+  :deep(.lang-selector-trigger) {
+    width: 100%;
+  }
+  
+  :deep(.lang-selector-trigger) {
+    justify-content: space-between;
+  }
+  
+  :deep(.lang-selector-dropdown) {
+    width: 100%;
+  }
+}
+
+.setting-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.theme-select {
+  width: 100%;
+}
+
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-
-  h3 {
-    margin: 0;
-    color: var(--text-main);
-  }
 
   @media (max-width: vars.$bp-mobile) {
     flex-direction: column;
