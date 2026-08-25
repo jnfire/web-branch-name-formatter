@@ -8,8 +8,10 @@ import FormatEditor from '@/components/FormatEditor.vue'
 import CustomModal from '@/components/CustomModal.vue'
 import ArrowLeftIcon from '@/components/ArrowLeftIcon.vue'
 import LangSelector from '@/components/LangSelector.vue'
+import CustomSelect from '@/components/CustomSelect.vue'
 import { getTheme, setTheme, type Theme } from '@/utils/theme'
 import { setUiLanguage, type SupportedLocale } from '@/i18n'
+import { computed } from 'vue'
 
 const props = defineProps<{
   languages: { code: string; label: string }[];
@@ -21,11 +23,16 @@ const { t, locale } = useI18n()
 
 const currentTheme = ref<Theme>(getTheme())
 
-const handleThemeChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  const theme = target.value as Theme
-  currentTheme.value = theme
-  setTheme(theme)
+const themeOptions = computed(() => [
+  { value: 'light', label: t('settings.themeLight') },
+  { value: 'dark', label: t('settings.themeDark') },
+  { value: 'system', label: t('settings.themeSystem') }
+])
+
+const handleThemeChange = (theme: string) => {
+  const newTheme = theme as Theme
+  currentTheme.value = newTheme
+  setTheme(newTheme)
 }
 
 const handleLanguageChange = (langCode: string) => {
@@ -209,7 +216,7 @@ const handleImport = (event: Event) => {
     <div v-else class="formats-list-section">
       <div class="general-settings-section">
         <h3 class="section-title">{{ $t('settings.general') }}</h3>
-        <div class="settings-grid">
+        <div class="settings-column">
           <div class="setting-item">
             <label class="setting-label">{{ $t('settings.language') }}</label>
             <LangSelector
@@ -219,12 +226,12 @@ const handleImport = (event: Event) => {
             />
           </div>
           <div class="setting-item">
-            <label class="setting-label" for="theme-select">{{ $t('settings.theme') }}</label>
-            <select id="theme-select" class="input-element theme-select" :value="currentTheme" @change="handleThemeChange">
-              <option value="light">{{ $t('settings.themeLight') }}</option>
-              <option value="dark">{{ $t('settings.themeDark') }}</option>
-              <option value="system">{{ $t('settings.themeSystem') }}</option>
-            </select>
+            <label class="setting-label">{{ $t('settings.theme') }}</label>
+            <CustomSelect
+              :modelValue="currentTheme"
+              :options="themeOptions"
+              @update:modelValue="handleThemeChange"
+            />
           </div>
         </div>
       </div>
@@ -307,9 +314,9 @@ const handleImport = (event: Event) => {
   border-bottom: 1px solid var(--border-color);
 }
 
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+.settings-column {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   margin-top: 1rem;
 }
