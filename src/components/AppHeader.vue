@@ -26,7 +26,6 @@ const emit = defineEmits<{
           @click="emit('toggleConfig')"
         >
           <SettingsIcon class="icon" />
-          <span class="text">{{ $t('header.config') }}</span>
         </button>
       </div>
     </div>
@@ -108,9 +107,6 @@ const emit = defineEmits<{
   }
   .title {
     font-size: 1.05rem;
-  }
-  .config-toggle .text {
-    display: none; // hide text on mobile, just show icon
   }
 }
 </style>
