@@ -14,15 +14,15 @@ const handleDeleteBranch = (branchId: number) => {
 </script>
 
 <template>
-  <section class="branch_list">
-    <BranchItem
-      v-for="branch in props.branches"
-      :key="branch.id"
-      :branch-name="branch.branchName"
-      :branch-id="branch.id"
-      @deleteBranch="handleDeleteBranch"
-    />
-  </section>
+  <ul class="branch_list" :aria-label="$t('history.title')">
+    <li v-for="branch in props.branches" :key="branch.id" class="branch-item-wrapper">
+      <BranchItem
+        :branch-name="branch.branchName"
+        :branch-id="branch.id"
+        @deleteBranch="handleDeleteBranch"
+      />
+    </li>
+  </ul>
 </template>
 
 <style scoped lang="scss">
@@ -33,5 +33,12 @@ const handleDeleteBranch = (branchId: number) => {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+  list-style: none;
+  padding: 0;
+}
+
+.branch-item-wrapper {
+  margin: 0;
+  padding: 0;
 }
 </style>

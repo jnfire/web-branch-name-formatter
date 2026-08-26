@@ -220,15 +220,21 @@ const handleImport = (event: Event) => {
         <button class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
       </div>
 
-      <div class="format-items">
+      <div class="format-items" role="radiogroup" :aria-label="$t('configurator.availableFormats')">
         <div
           v-for="format in formats"
           :key="format.id"
+          role="radio"
+          :aria-checked="format.id === defaultFormatId"
+          :aria-label="`${format.name.includes('.') ? $t(format.name) : format.name} - ${format.templateString}`"
+          tabindex="0"
           class="format-card"
           :class="{
             'format-card--selected': format.id === defaultFormatId
           }"
           @click="selectFormat(format)"
+          @keydown.enter="selectFormat(format)"
+          @keydown.space.prevent="selectFormat(format)"
         >
           <div class="format-info">
             <span class="format-name">
@@ -239,18 +245,41 @@ const handleImport = (event: Event) => {
             <code class="format-template">{{ format.templateString }}</code>
           </div>
           <div class="format-actions" @click.stop>
-            <button class="btn-secondary small-btn" @click="handleEdit(format)">{{ $t('configurator.edit') }}</button>
-            <button v-if="format.isReadonly" class="btn-secondary small-btn" @click="handleClone(format.id)">{{ $t('configurator.clone') }}</button>
-            <button v-else class="btn-secondary small-btn delete-btn" @click="promptDelete(format.id)">{{ $t('configurator.delete') }}</button>
+            <button 
+              type="button" 
+              class="btn-secondary small-btn" 
+              :aria-label="`${$t('configurator.edit')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+              @click="handleEdit(format)"
+            >
+              {{ $t('configurator.edit') }}
+            </button>
+            <button 
+              type="button" 
+              v-if="format.isReadonly" 
+              class="btn-secondary small-btn" 
+              :aria-label="`${$t('configurator.clone')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+              @click="handleClone(format.id)"
+            >
+              {{ $t('configurator.clone') }}
+            </button>
+            <button 
+              type="button" 
+              v-else 
+              class="btn-secondary small-btn delete-btn" 
+              :aria-label="`${$t('configurator.delete')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+              @click="promptDelete(format.id)"
+            >
+              {{ $t('configurator.delete') }}
+            </button>
           </div>
         </div>
       </div>
 
       <div class="import-export-section">
-        <button class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
-        <label class="btn-secondary file-upload-btn import-export-btn">
+        <button type="button" class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
+        <label class="btn-secondary file-upload-btn import-export-btn" tabindex="0" @keydown.enter="($event.target as HTMLElement).querySelector('input')?.click()" @keydown.space.prevent="($event.target as HTMLElement).querySelector('input')?.click()">
           {{ $t('configurator.importJson') }}
-          <input type="file" accept=".json" @change="handleImport" hidden />
+          <input type="file" accept=".json" @change="handleImport" class="sr-only" />
         </label>
       </div>
     </div>
@@ -471,4 +500,9 @@ const handleImport = (event: Event) => {
   margin: 0;
 }
 
+.format-card:focus-visible,
+.file-upload-btn:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
 </style>

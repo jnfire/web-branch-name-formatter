@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
+import { ref, toRef } from 'vue';
+import { useFocusTrap } from '@/composables/useFocusTrap';
+
+let modalIdCounter = 0;
 
 const props = defineProps<{
   modelValue: boolean;
@@ -16,6 +19,12 @@ const emit = defineEmits<{
   (e: 'cancel'): void;
 }>();
 
+const modalContainerRef = ref<HTMLElement | null>(null);
+const isOpenRef = toRef(props, 'modelValue');
+
+const titleId = `modal-title-${++modalIdCounter}`;
+const messageId = `modal-desc-${modalIdCounter}`;
+
 const handleClose = () => {
   emit('update:modelValue', false);
   emit('cancel');
@@ -26,27 +35,23 @@ const handleConfirm = () => {
   emit('confirm');
 };
 
-const handleKeydown = (e: KeyboardEvent) => {
-  if (props.modelValue && e.key === 'Escape') {
-    handleClose();
-  }
-};
-
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown);
-});
+useFocusTrap(modalContainerRef, isOpenRef, handleClose);
 </script>
 
 <template>
   <transition name="modal-fade">
     <div v-if="modelValue" class="modal-overlay" @click.self="handleClose">
-      <div class="modal-content" role="dialog" aria-modal="true" :aria-labelledby="'modal-title'">
-        <h3 id="modal-title" class="modal-title">{{ title }}</h3>
-        <p class="modal-message">{{ message }}</p>
+      <div 
+        ref="modalContainerRef"
+        class="modal-content" 
+        :role="danger ? 'alertdialog' : 'dialog'" 
+        aria-modal="true" 
+        :aria-labelledby="titleId"
+        :aria-describedby="messageId"
+        tabindex="-1"
+      >
+        <h3 :id="titleId" class="modal-title">{{ title }}</h3>
+        <p :id="messageId" class="modal-message">{{ message }}</p>
         
         <div class="modal-actions">
           <button type="button" class="btn-secondary" @click="handleClose">
@@ -123,6 +128,11 @@ onUnmounted(() => {
 
 .btn-danger:hover {
   background-color: #c0392b;
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 /* Animations */

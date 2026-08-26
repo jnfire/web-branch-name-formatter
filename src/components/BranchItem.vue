@@ -4,8 +4,22 @@
       <p class="branch__name__text">{{ props.branchName }}</p>
     </div>
     <div class="branch__buttons">
-      <button class="branch__button branch__button__copy" @click="copyToClipboard">{{ $t('history.copy') }}</button>
-      <button class="branch__button branch__button__delete" @click="deleteBranch">{{ $t('history.delete') }}</button>
+      <button 
+        type="button" 
+        class="branch__button branch__button__copy" 
+        :aria-label="`${$t('history.copy')}: ${props.branchName}`"
+        @click="copyToClipboard"
+      >
+        {{ $t('history.copy') }}
+      </button>
+      <button 
+        type="button" 
+        class="branch__button branch__button__delete" 
+        :aria-label="`${$t('history.delete')}: ${props.branchName}`"
+        @click="deleteBranch"
+      >
+        {{ $t('history.delete') }}
+      </button>
     </div>
   </div>
 </template>
@@ -86,6 +100,11 @@ const deleteBranch = () => {
     border-radius: 6px;
     cursor: pointer;
     transition: opacity 0.2s;
+
+    &:focus-visible {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
+    }
 
     &__copy {
       background-color: var(--text-main);

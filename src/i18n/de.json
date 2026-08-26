@@ -21,7 +21,8 @@
   },
   "form": {
     "formatLabel": "Format",
-    "generate": "Branch-Namen Generieren"
+    "generate": "Branch-Namen Generieren",
+    "errorRequired": "Bitte füllen Sie alle erforderlichen Felder aus."
   },
   "result": {
     "title": "Generierter Branch-Name",

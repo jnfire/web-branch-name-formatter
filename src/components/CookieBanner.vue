@@ -35,14 +35,20 @@ const handleDecline = () => {
 
 <template>
   <transition name="slide-up">
-    <div v-if="visible" class="cookie-banner">
+    <div 
+      v-if="visible" 
+      class="cookie-banner"
+      role="region"
+      :aria-label="t('cookies.text')"
+      aria-describedby="cookie-banner-text"
+    >
       <div class="cookie-banner__content">
-        <p class="cookie-banner__text">{{ t('cookies.text') }}</p>
+        <p id="cookie-banner-text" class="cookie-banner__text">{{ t('cookies.text') }}</p>
         <div class="cookie-banner__actions">
-          <button class="btn-decline" @click="handleDecline">
+          <button type="button" class="btn-decline" @click="handleDecline">
             {{ t('cookies.decline') }}
           </button>
-          <button class="btn-accept" @click="handleAccept">
+          <button type="button" class="btn-accept" @click="handleAccept">
             {{ t('cookies.accept') }}
           </button>
         </div>
@@ -104,6 +110,11 @@ button {
   cursor: pointer;
   transition: all 0.2s;
   border: 1px solid transparent;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
 }
 
 .btn-decline {
@@ -130,6 +141,13 @@ button {
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-up-enter-active,
+  .slide-up-leave-active {
+    transition: none;
+  }
 }
 
 .slide-up-enter-from {

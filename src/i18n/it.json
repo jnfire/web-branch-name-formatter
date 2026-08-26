@@ -21,7 +21,8 @@
   },
   "form": {
     "formatLabel": "Formato",
-    "generate": "Genera Nome Branch"
+    "generate": "Genera Nome Branch",
+    "errorRequired": "Si prega di compilare tutti i campi obbligatori."
   },
   "result": {
     "title": "Nome Branch Generato",

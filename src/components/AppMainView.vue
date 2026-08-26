@@ -52,24 +52,41 @@ const handleDeleteBranch = (branchId: number) => {
       <BranchForm @submitForm="handleFormSubmit" />
     </div>
 
-    <div v-if="latestBranch" class="result-section">
+    <div v-if="latestBranch" class="result-section" role="region" :aria-label="$t('result.title')">
+      <div class="sr-only" role="status" aria-live="polite">
+        {{ $t('result.title') }}: {{ latestBranch.branchName }}
+      </div>
       <h2 class="result-title">{{ $t('result.title') }}</h2>
       <div class="result-card">
         <code class="result-code">{{ latestBranch.branchName }}</code>
-        <button class="btn-primary" @click="copyToClipboard(latestBranch.branchName)">
+        <button 
+          type="button" 
+          class="btn-primary" 
+          :aria-label="`${$t('result.copy')}: ${latestBranch.branchName}`"
+          @click="copyToClipboard(latestBranch.branchName)"
+        >
           {{ copied ? $t('result.copied') : $t('result.copy') }}
         </button>
+        <div class="sr-only" role="status" aria-live="polite" v-if="copied">
+          {{ $t('result.copied') }}
+        </div>
       </div>
     </div>
 
     <div class="history-section">
       <div class="history-header">
-        <button class="btn-secondary toggle-btn" @click="showHistory = !showHistory">
+        <button 
+          type="button" 
+          class="btn-secondary toggle-btn" 
+          :aria-expanded="showHistory"
+          aria-controls="history-list-pane"
+          @click="showHistory = !showHistory"
+        >
           {{ showHistory ? $t('history.hide') : $t('history.show') }}
         </button>
       </div>
 
-      <div v-if="showHistory" class="history-pane">
+      <div v-if="showHistory" id="history-list-pane" class="history-pane">
         <BranchList :branches="branches" @deleteBranch="handleDeleteBranch" />
       </div>
     </div>

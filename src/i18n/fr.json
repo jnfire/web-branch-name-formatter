@@ -21,7 +21,8 @@
   },
   "form": {
     "formatLabel": "Format",
-    "generate": "Générer le Nom de Branche"
+    "generate": "Générer le Nom de Branche",
+    "errorRequired": "Veuillez remplir tous les champs obligatoires."
   },
   "result": {
     "title": "Nom de Branche Généré",

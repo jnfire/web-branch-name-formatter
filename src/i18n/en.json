@@ -21,7 +21,8 @@
   },
   "form": {
     "formatLabel": "Format",
-    "generate": "Generate Branch Name"
+    "generate": "Generate Branch Name",
+    "errorRequired": "Please fill in all required fields."
   },
   "result": {
     "title": "Generated Branch Name",
