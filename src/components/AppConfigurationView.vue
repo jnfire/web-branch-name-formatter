@@ -7,11 +7,7 @@ import FormatPreview from '@/components/FormatPreview.vue'
 import FormatEditor from '@/components/FormatEditor.vue'
 import CustomModal from '@/components/CustomModal.vue'
 import ArrowLeftIcon from '@/components/ArrowLeftIcon.vue'
-import LangSelector from '@/components/LangSelector.vue'
-import CustomSelect from '@/components/CustomSelect.vue'
-import { getTheme, setTheme, type Theme } from '@/utils/theme'
-import { setUiLanguage, type SupportedLocale } from '@/i18n'
-import { computed } from 'vue'
+import PersonalizationCard from '@/components/PersonalizationCard.vue'
 
 const props = defineProps<{
   languages: { code: string; label: string }[];
@@ -20,24 +16,6 @@ const props = defineProps<{
 const emit = defineEmits(['close'])
 
 const { t, locale } = useI18n()
-
-const currentTheme = ref<Theme>(getTheme())
-
-const themeOptions = computed(() => [
-  { value: 'light', label: t('settings.themeLight') },
-  { value: 'dark', label: t('settings.themeDark') },
-  { value: 'system', label: t('settings.themeSystem') }
-])
-
-const handleThemeChange = (theme: string) => {
-  const newTheme = theme as Theme
-  currentTheme.value = newTheme
-  setTheme(newTheme)
-}
-
-const handleLanguageChange = (langCode: string) => {
-  setUiLanguage(langCode as SupportedLocale)
-}
 
 const formats = ref<BranchFormatTemplate[]>([])
 const editingFormat = ref<BranchFormatTemplate | null>(null)
@@ -201,110 +179,93 @@ const handleImport = (event: Event) => {
 
 <template>
   <div class="configuration-view container-wide">
-    <FormatPreview :format="previewFormat" />
+    <!-- Format Configuration Card -->
+    <div class="config-card">
+      <FormatPreview :format="previewFormat" />
 
-    <div v-if="editingFormat">
-      <FormatEditor
-        :format="editingFormat"
-        @update:format="updatePreview"
-        @save="handleSave"
-        @cancel="handleCancel"
-        @update-language="handleUpdateLanguageInEditor"
-      />
-    </div>
-
-    <div v-else class="formats-list-section">
-      
-      <div class="list-header">
-        <h3 class="section-title">{{ $t('configurator.availableFormats') }}</h3>
-        <button class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
+      <div v-if="editingFormat">
+        <FormatEditor
+          :format="editingFormat"
+          @update:format="updatePreview"
+          @save="handleSave"
+          @cancel="handleCancel"
+          @update-language="handleUpdateLanguageInEditor"
+        />
       </div>
 
-      <div class="format-items" role="radiogroup" :aria-label="$t('configurator.availableFormats')">
-        <div
-          v-for="format in formats"
-          :key="format.id"
-          role="radio"
-          :aria-checked="format.id === defaultFormatId"
-          :aria-label="`${format.name.includes('.') ? $t(format.name) : format.name} - ${format.templateString}`"
-          tabindex="0"
-          class="format-card"
-          :class="{
-            'format-card--selected': format.id === defaultFormatId
-          }"
-          @click="selectFormat(format)"
-          @keydown.enter="selectFormat(format)"
-          @keydown.space.prevent="selectFormat(format)"
-        >
-          <div class="format-info">
-            <span class="format-name">
-              {{ format.name.includes('.') ? $t(format.name) : format.name }}
-              <span v-if="format.isReadonly" class="badge">{{ $t('configurator.badgeBuiltin') }}</span>
-              <span v-if="format.id === defaultFormatId" class="badge badge--selected">{{ $t('configurator.badgeSelected') }}</span>
-            </span>
-            <code class="format-template">{{ format.templateString }}</code>
-          </div>
-          <div class="format-actions" @click.stop>
-            <button 
-              type="button" 
-              class="btn-secondary small-btn" 
-              :aria-label="`${$t('configurator.edit')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
-              @click="handleEdit(format)"
-            >
-              {{ $t('configurator.edit') }}
-            </button>
-            <button 
-              type="button" 
-              v-if="format.isReadonly" 
-              class="btn-secondary small-btn" 
-              :aria-label="`${$t('configurator.clone')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
-              @click="handleClone(format.id)"
-            >
-              {{ $t('configurator.clone') }}
-            </button>
-            <button 
-              type="button" 
-              v-else 
-              class="btn-secondary small-btn delete-btn" 
-              :aria-label="`${$t('configurator.delete')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
-              @click="promptDelete(format.id)"
-            >
-              {{ $t('configurator.delete') }}
-            </button>
+      <div v-else class="formats-list-section">
+        <div class="list-header">
+          <h3 class="section-title">{{ $t('configurator.availableFormats') }}</h3>
+          <button type="button" class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
+        </div>
+
+        <div class="format-items" role="radiogroup" :aria-label="$t('configurator.availableFormats')">
+          <div
+            v-for="format in formats"
+            :key="format.id"
+            role="radio"
+            :aria-checked="format.id === defaultFormatId"
+            :aria-label="`${format.name.includes('.') ? $t(format.name) : format.name} - ${format.templateString}`"
+            tabindex="0"
+            class="format-card"
+            :class="{
+              'format-card--selected': format.id === defaultFormatId
+            }"
+            @click="selectFormat(format)"
+            @keydown.enter="selectFormat(format)"
+            @keydown.space.prevent="selectFormat(format)"
+          >
+            <div class="format-info">
+              <span class="format-name">
+                {{ format.name.includes('.') ? $t(format.name) : format.name }}
+                <span v-if="format.isReadonly" class="badge">{{ $t('configurator.badgeBuiltin') }}</span>
+                <span v-if="format.id === defaultFormatId" class="badge badge--selected">{{ $t('configurator.badgeSelected') }}</span>
+              </span>
+              <code class="format-template">{{ format.templateString }}</code>
+            </div>
+            <div class="format-actions" @click.stop>
+              <button 
+                type="button" 
+                class="btn-secondary small-btn" 
+                :aria-label="`${$t('configurator.edit')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+                @click="handleEdit(format)"
+              >
+                {{ $t('configurator.edit') }}
+              </button>
+              <button 
+                type="button" 
+                v-if="format.isReadonly" 
+                class="btn-secondary small-btn" 
+                :aria-label="`${$t('configurator.clone')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+                @click="handleClone(format.id)"
+              >
+                {{ $t('configurator.clone') }}
+              </button>
+              <button 
+                type="button" 
+                v-else 
+                class="btn-secondary small-btn delete-btn" 
+                :aria-label="`${$t('configurator.delete')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+                @click="promptDelete(format.id)"
+              >
+                {{ $t('configurator.delete') }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="import-export-section">
-        <button type="button" class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
-        <label class="btn-secondary file-upload-btn import-export-btn" tabindex="0" @keydown.enter="($event.target as HTMLElement).querySelector('input')?.click()" @keydown.space.prevent="($event.target as HTMLElement).querySelector('input')?.click()">
-          {{ $t('configurator.importJson') }}
-          <input type="file" accept=".json" @change="handleImport" class="sr-only" />
-        </label>
+        <div class="import-export-section">
+          <button type="button" class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
+          <label class="btn-secondary file-upload-btn import-export-btn" tabindex="0" @keydown.enter="($event.target as HTMLElement).querySelector('input')?.click()" @keydown.space.prevent="($event.target as HTMLElement).querySelector('input')?.click()">
+            {{ $t('configurator.importJson') }}
+            <input type="file" accept=".json" @change="handleImport" class="sr-only" />
+          </label>
+        </div>
       </div>
     </div>
 
-    <div class="general-settings-section">
-        <h3 class="section-title">{{ $t('settings.general') }}</h3>
-        <div class="settings-column">
-          <div class="setting-item">
-            <label class="setting-label">{{ $t('settings.language') }}</label>
-            <LangSelector
-              :modelValue="$i18n.locale"
-              @update:modelValue="handleLanguageChange"
-              :options="languages"
-            />
-          </div>
-          <div class="setting-item">
-            <label class="setting-label">{{ $t('settings.theme') }}</label>
-            <CustomSelect
-              :modelValue="currentTheme"
-              :options="themeOptions"
-              @update:modelValue="handleThemeChange"
-            />
-          </div>
-        </div>
-      </div>
+    <!-- Personalization / System Settings Card -->
+    <PersonalizationCard :languages="languages" />
 
     <CustomModal
       v-model="showDeleteModal"
@@ -321,11 +282,17 @@ const handleImport = (event: Event) => {
 
 <style scoped lang="scss">
 .configuration-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.config-card {
   background-color: var(--bg-surface);
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  margin-bottom: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 
   @media (max-width: vars.$bp-mobile) {
@@ -336,37 +303,11 @@ const handleImport = (event: Event) => {
 .section-title {
   margin: 0;
   color: var(--text-main);
-}
-
-.general-settings-section {
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.settings-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.setting-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-width: 300px;
-}
-
-.setting-label {
+  font-size: 1.15rem;
   font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--text-main);
 }
 
-.theme-select {
-  width: 100%;
-}
+
 
 .list-header {
   display: flex;
