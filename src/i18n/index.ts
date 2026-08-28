@@ -43,16 +43,18 @@ const i18n = createI18n<[MessageSchema], SupportedLocale>({
 })
 
 export const getUiLanguage = (): SupportedLocale => {
-  const loc = (i18n.global.locale as any).value ?? (i18n.global.locale as any)
+  const globalI18n = i18n.global as any
+  const loc = globalI18n.locale.value ?? globalI18n.locale
   return (loc as SupportedLocale) || initialLocale
 }
 
 export const setUiLanguage = (locale: SupportedLocale): void => {
   if (supportedLocales.includes(locale)) {
-    if (typeof (i18n.global.locale as any).value !== 'undefined') {
-      ;(i18n.global.locale as any).value = locale
+    const globalI18n = i18n.global as any
+    if (typeof globalI18n.locale.value !== 'undefined') {
+      globalI18n.locale.value = locale
     } else {
-      ;(i18n.global.locale as any) = locale
+      globalI18n.locale = locale
     }
     try {
       localStorage.setItem(STORAGE_KEY_UI_LANG, locale)

@@ -1,45 +1,33 @@
 <script setup lang="ts">
-import LangSelector from '@/components/LangSelector.vue'
 import SettingsIcon from '@/components/SettingsIcon.vue'
-import { setUiLanguage, type SupportedLocale } from '@/i18n'
 
 const props = defineProps<{
   showConfig: boolean;
-  languages: { code: string; label: string }[];
 }>();
 
 const emit = defineEmits<{
-  (e: 'toggleConfig'): void;
-  (e: 'home'): void;
+  (emitEvent: 'toggleConfig'): void;
+  (emitEvent: 'home'): void;
 }>();
-
-const handleLanguageChange = (langCode: string) => {
-  setUiLanguage(langCode as SupportedLocale)
-}
 </script>
 
 <template>
   <header class="navbar">
     <div class="navbar-container">
-      <button class="navbar-brand" @click="emit('home')" :aria-label="$t('hero.title')">
+      <button type="button" class="navbar-brand" @click="emit('home')" :aria-label="$t('hero.title')">
         <h1 class="title">{{ $t('hero.title') }}</h1>
       </button>
 
       <div class="navbar-actions">
-        <LangSelector
-          :modelValue="$i18n.locale"
-          @update:modelValue="handleLanguageChange"
-          :options="languages"
-        />
-
         <button
+          type="button"
           class="btn-secondary config-toggle"
           :class="{ 'config-toggle--active': showConfig }"
           :aria-pressed="showConfig"
+          :aria-label="$t('configurator.title') || 'Settings'"
           @click="emit('toggleConfig')"
         >
           <SettingsIcon class="icon" />
-          <span class="text">{{ $t('header.config') }}</span>
         </button>
       </div>
     </div>
@@ -121,9 +109,6 @@ const handleLanguageChange = (langCode: string) => {
   }
   .title {
     font-size: 1.05rem;
-  }
-  .config-toggle .text {
-    display: none; // hide text on mobile, just show icon
   }
 }
 </style>

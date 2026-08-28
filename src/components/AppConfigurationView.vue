@@ -7,6 +7,11 @@ import FormatPreview from '@/components/FormatPreview.vue'
 import FormatEditor from '@/components/FormatEditor.vue'
 import CustomModal from '@/components/CustomModal.vue'
 import ArrowLeftIcon from '@/components/ArrowLeftIcon.vue'
+import PersonalizationCard from '@/components/PersonalizationCard.vue'
+
+const props = defineProps<{
+  languages: { code: string; label: string }[];
+}>()
 
 const emit = defineEmits(['close'])
 
@@ -162,7 +167,7 @@ const handleImport = (event: Event) => {
       FormatManager.importCustomFormats(jsonStr)
       loadFormats()
       alert(t('configurator.importSuccess'))
-    } catch (err) {
+    } catch (importError) {
       alert(t('configurator.importError'))
     }
   }
@@ -170,62 +175,109 @@ const handleImport = (event: Event) => {
   target.value = '' // reset input
 }
 
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const triggerFileInput = (keyboardEvent: KeyboardEvent) => {
+  keyboardEvent.preventDefault();
+  fileInputRef.value?.click();
+};
 </script>
 
 <template>
   <div class="configuration-view container-wide">
-    <FormatPreview :format="previewFormat" />
+    <!-- Format Configuration Card -->
+    <div class="config-card">
+      <FormatPreview :format="previewFormat" />
 
-    <div v-if="editingFormat">
-      <FormatEditor
-        :format="editingFormat"
-        @update:format="updatePreview"
-        @save="handleSave"
-        @cancel="handleCancel"
-        @update-language="handleUpdateLanguageInEditor"
-      />
-    </div>
-
-    <div v-else class="formats-list-section">
-      <div class="list-header">
-        <h3>{{ $t('configurator.availableFormats') }}</h3>
-        <button class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
+      <div v-if="editingFormat">
+        <FormatEditor
+          :format="editingFormat"
+          @update:format="updatePreview"
+          @save="handleSave"
+          @cancel="handleCancel"
+          @update-language="handleUpdateLanguageInEditor"
+        />
       </div>
 
-      <div class="format-items">
-        <div
-          v-for="format in formats"
-          :key="format.id"
-          class="format-card"
-          :class="{
-            'format-card--selected': format.id === defaultFormatId
-          }"
-          @click="selectFormat(format)"
-        >
-          <div class="format-info">
-            <span class="format-name">
-              {{ format.name.includes('.') ? $t(format.name) : format.name }}
-              <span v-if="format.isReadonly" class="badge">{{ $t('configurator.badgeBuiltin') }}</span>
-              <span v-if="format.id === defaultFormatId" class="badge badge--selected">{{ $t('configurator.badgeSelected') }}</span>
-            </span>
-            <code class="format-template">{{ format.templateString }}</code>
-          </div>
-          <div class="format-actions" @click.stop>
-            <button class="btn-secondary small-btn" @click="handleEdit(format)">{{ $t('configurator.edit') }}</button>
-            <button v-if="format.isReadonly" class="btn-secondary small-btn" @click="handleClone(format.id)">{{ $t('configurator.clone') }}</button>
-            <button v-else class="btn-secondary small-btn delete-btn" @click="promptDelete(format.id)">{{ $t('configurator.delete') }}</button>
+      <div v-else class="formats-list-section">
+        <div class="list-header">
+          <h3 class="section-title">{{ $t('configurator.availableFormats') }}</h3>
+          <button type="button" class="btn-primary" @click="startNewFormat">{{ $t('configurator.createFormat') }}</button>
+        </div>
+
+        <div class="format-items" role="radiogroup" :aria-label="$t('configurator.availableFormats')">
+          <div
+            v-for="format in formats"
+            :key="format.id"
+            role="radio"
+            :aria-checked="format.id === defaultFormatId"
+            :aria-label="`${format.name.includes('.') ? $t(format.name) : format.name} - ${format.templateString}`"
+            tabindex="0"
+            class="format-card"
+            :class="{
+              'format-card--selected': format.id === defaultFormatId
+            }"
+            @click="selectFormat(format)"
+            @keydown.enter="selectFormat(format)"
+            @keydown.space.prevent="selectFormat(format)"
+          >
+            <div class="format-info">
+              <span class="format-name">
+                {{ format.name.includes('.') ? $t(format.name) : format.name }}
+                <span v-if="format.isReadonly" class="badge">{{ $t('configurator.badgeBuiltin') }}</span>
+                <span v-if="format.id === defaultFormatId" class="badge badge--selected">{{ $t('configurator.badgeSelected') }}</span>
+              </span>
+              <code class="format-template">{{ format.templateString }}</code>
+            </div>
+            <div class="format-actions" @click.stop>
+              <button 
+                type="button" 
+                class="btn-secondary small-btn" 
+                :aria-label="`${$t('configurator.edit')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+                @click="handleEdit(format)"
+              >
+                {{ $t('configurator.edit') }}
+              </button>
+              <button 
+                type="button" 
+                v-if="format.isReadonly" 
+                class="btn-secondary small-btn" 
+                :aria-label="`${$t('configurator.clone')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+                @click="handleClone(format.id)"
+              >
+                {{ $t('configurator.clone') }}
+              </button>
+              <button 
+                type="button" 
+                v-else 
+                class="btn-secondary small-btn delete-btn" 
+                :aria-label="`${$t('configurator.delete')}: ${format.name.includes('.') ? $t(format.name) : format.name}`"
+                @click="promptDelete(format.id)"
+              >
+                {{ $t('configurator.delete') }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="import-export-section">
-        <button class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
-        <label class="btn-secondary file-upload-btn import-export-btn">
-          {{ $t('configurator.importJson') }}
-          <input type="file" accept=".json" @change="handleImport" hidden />
-        </label>
+        <div class="import-export-section">
+          <button type="button" class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
+          <label
+            class="btn-secondary file-upload-btn import-export-btn"
+            tabindex="0"
+            role="button"
+            @keydown.enter="triggerFileInput"
+            @keydown.space.prevent="triggerFileInput"
+          >
+            {{ $t('configurator.importJson') }}
+            <input ref="fileInputRef" type="file" accept=".json" @change="handleImport" class="sr-only" />
+          </label>
+        </div>
       </div>
     </div>
+
+    <!-- Personalization / System Settings Card -->
+    <PersonalizationCard :languages="languages" />
 
     <CustomModal
       v-model="showDeleteModal"
@@ -242,11 +294,17 @@ const handleImport = (event: Event) => {
 
 <style scoped lang="scss">
 .configuration-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.config-card {
   background-color: var(--bg-surface);
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  margin-bottom: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 
   @media (max-width: vars.$bp-mobile) {
@@ -254,17 +312,21 @@ const handleImport = (event: Event) => {
   }
 }
 
+.section-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+
+
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-
-  h3 {
-    margin: 0;
-    color: var(--text-main);
-  }
 
   @media (max-width: vars.$bp-mobile) {
     flex-direction: column;
@@ -391,4 +453,9 @@ const handleImport = (event: Event) => {
   margin: 0;
 }
 
+.format-card:focus-visible,
+.file-upload-btn:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
 </style>

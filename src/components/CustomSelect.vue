@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
+  (emitEvent: 'update:modelValue', value: string): void;
 }>();
 
 const isOpen = ref(false);
@@ -24,18 +24,18 @@ const triggerRef = ref<HTMLButtonElement | null>(null);
 const optionRefs = ref<HTMLButtonElement[]>([]);
 
 const currentLabel = computed(() => {
-  const found = props.options.find(opt => opt.value === props.modelValue);
-  return found ? found.label : (props.placeholder || 'Selecciona una opción');
+  const matchingOption = props.options.find((optionItem) => optionItem.value === props.modelValue);
+  return matchingOption ? matchingOption.label : (props.placeholder || 'Select an option');
 });
 
-const setOptionRef = (el: any, index: number) => {
-  if (el) optionRefs.value[index] = el as HTMLButtonElement;
+const setOptionRef = (element: unknown, index: number) => {
+  if (element) optionRefs.value[index] = element as HTMLButtonElement;
 };
 
 const openDropdown = async () => {
   isOpen.value = true;
   await nextTick();
-  const selectedIndex = props.options.findIndex(opt => opt.value === props.modelValue);
+  const selectedIndex = props.options.findIndex((optionItem) => optionItem.value === props.modelValue);
   optionRefs.value[selectedIndex >= 0 ? selectedIndex : 0]?.focus();
 };
 
@@ -103,7 +103,7 @@ const handleTriggerKeydown = (event: KeyboardEvent) => {
 
 const handleClickOutside = (event: MouseEvent) => {
   if (containerRef.value && !containerRef.value.contains(event.target as Node)) {
-    isOpen.value = false;
+    closeDropdown(false);
   }
 };
 
@@ -117,11 +117,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="custom-select-container" ref="containerRef" :id="id">
+  <div class="custom-select-container" ref="containerRef" :id="id ? `${id}-container` : undefined">
     <!-- input oculto para compatibilidad con forms -->
     <input type="hidden" :name="name" :value="modelValue" />
 
     <button
+      :id="id"
       ref="triggerRef"
       type="button"
       class="custom-select-trigger"
@@ -139,22 +140,22 @@ onUnmounted(() => {
     <transition name="fade-slide">
       <ul v-if="isOpen" class="custom-select-dropdown" role="listbox">
         <li
-          v-for="(opt, index) in options"
-          :key="opt.value"
+          v-for="(optionItem, index) in options"
+          :key="optionItem.value"
           role="presentation"
         >
           <button
             type="button"
-            :ref="(el) => setOptionRef(el, index)"
+            :ref="(element) => setOptionRef(element, index)"
             class="select-option"
-            :class="{ 'option-selected': opt.value === modelValue }"
+            :class="{ 'option-selected': optionItem.value === modelValue }"
             role="option"
-            :aria-selected="opt.value === modelValue"
-            :tabindex="opt.value === modelValue ? 0 : -1"
-            @click="selectOption(opt.value)"
+            :aria-selected="optionItem.value === modelValue"
+            :tabindex="optionItem.value === modelValue ? 0 : -1"
+            @click="selectOption(optionItem.value)"
             @keydown="handleOptionKeydown($event, index)"
           >
-            <span>{{ opt.label }}</span>
+            <span>{{ optionItem.label }}</span>
           </button>
         </li>
       </ul>
@@ -179,6 +180,7 @@ onUnmounted(() => {
   cursor: pointer;
   font-size: vars.$control-font-size;
   font-family: inherit;
+  font-weight: 600;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -220,6 +222,7 @@ onUnmounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
 }
 
 .dropdown-arrow {
@@ -256,7 +259,7 @@ onUnmounted(() => {
   width: 100%;
   padding: 0.6rem 1rem;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
   color: var(--text-main);
   background: transparent;
@@ -275,6 +278,7 @@ onUnmounted(() => {
 .option-selected {
   background-color: var(--accent-color);
   color: var(--bg-body);
+  font-weight: 600;
 }
 
 .option-selected:hover,

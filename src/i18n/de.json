@@ -9,11 +9,20 @@
     }
   },
   "header": {
+    "settings": {
+      "general": "General Settings",
+      "language": "Language",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System"
+    },
     "config": "Einstellungen"
   },
   "form": {
     "formatLabel": "Format",
-    "generate": "Branch-Namen Generieren"
+    "generate": "Branch-Namen Generieren",
+    "errorRequired": "Bitte füllen Sie alle erforderlichen Felder aus."
   },
   "result": {
     "title": "Generierter Branch-Name",
@@ -109,7 +118,7 @@
       "name": "Standardformat (App)",
       "projectId": "Projekt-ID",
       "ticketId": "Ticket-ID",
-      "featureName": "Funktionsname"
+      "featureName": "Funktion"
     },
     "gitflow": {
       "name": "GitFlow (type/ticket-desc)",
@@ -123,5 +132,13 @@
       "scope": "Geltungsbereich",
       "description": "Beschreibung"
     }
+  },
+  "settings": {
+    "general": "Personalisierung",
+    "language": "Sprache",
+    "theme": "Thema",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "themeSystem": "System"
   }
 }

@@ -9,11 +9,20 @@
     }
   },
   "header": {
+    "settings": {
+      "general": "General Settings",
+      "language": "Language",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System"
+    },
     "config": "Definições"
   },
   "form": {
     "formatLabel": "Formato",
-    "generate": "Gerar Nome de Branch"
+    "generate": "Gerar Nome de Branch",
+    "errorRequired": "Por favor, preencha todos os campos obrigatórios."
   },
   "result": {
     "title": "Nome de Branch Gerado",
@@ -109,7 +118,7 @@
       "name": "Formato por defeito (App)",
       "projectId": "ID do Projeto",
       "ticketId": "ID do Ticket",
-      "featureName": "Nome da Funcionalidade"
+      "featureName": "Funcionalidade"
     },
     "gitflow": {
       "name": "GitFlow (type/ticket-desc)",
@@ -123,5 +132,13 @@
       "scope": "Âmbito",
       "description": "Descrição"
     }
+  },
+  "settings": {
+    "general": "Personalização",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeSystem": "Sistema"
   }
 }

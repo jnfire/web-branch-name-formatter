@@ -13,6 +13,7 @@ const { t } = useI18n()
 const formats = ref<BranchFormatTemplate[]>([])
 const selectedFormatId = ref<string>('')
 const formData = ref<Record<string, string>>({})
+const formError = ref<string>('')
 
 const loadSelectedFormat = () => {
   formats.value = FormatManager.getFormats()
@@ -33,6 +34,7 @@ const selectedFormat = computed(() => {
 
 watch(selectedFormatId, () => {
   formData.value = {}
+  formError.value = ''
   // Initialize default values for select fields
   if (selectedFormat.value) {
     selectedFormat.value.fields.forEach(field => {
@@ -46,8 +48,12 @@ watch(selectedFormatId, () => {
 const handleSubmit = (event: Event) => {
   event.preventDefault()
 
-  if (!validateInput()) return
+  if (!validateInput()) {
+    formError.value = t('form.errorRequired')
+    return
+  }
 
+  formError.value = ''
   if (selectedFormat.value) {
     emit('submitForm', selectedFormat.value, { ...formData.value } as BranchFormType)
     cleanInput()
@@ -57,18 +63,19 @@ const handleSubmit = (event: Event) => {
 function validateInput() {
   if (!selectedFormat.value) return false
   for (const field of selectedFormat.value.fields) {
-    if (!formData.value[field.id]) return false
+    if (!formData.value[field.id] || !formData.value[field.id].trim()) return false
   }
   return true
 }
 
 function cleanInput() {
   formData.value = {}
+  formError.value = ''
   // Re-initialize default values for select fields
   if (selectedFormat.value) {
-    selectedFormat.value.fields.forEach(field => {
-      if (field.type === 'select' && field.options && field.options.length > 0) {
-        formData.value[field.id] = field.options[0]
+    selectedFormat.value.fields.forEach((fieldItem) => {
+      if (fieldItem.type === 'select' && fieldItem.options && fieldItem.options.length > 0) {
+        formData.value[fieldItem.id] = fieldItem.options[0]
       }
     })
   }
@@ -76,29 +83,44 @@ function cleanInput() {
 </script>
 
 <template>
-  <form class="form" :aria-label="$t('form.generate')" @submit="handleSubmit">
+  <form class="form" :aria-label="$t('form.generate')" @submit="handleSubmit" autocomplete="off" novalidate>
 
     <template v-if="selectedFormat">
       <div class="form-group" v-for="field in selectedFormat.fields" :key="field.id">
-        <label class="form-label">
+        <label :for="field.id" class="form-label">
            {{ field.label.includes('.') ? $t(field.label) : field.label }}
         </label>
         
         <CustomSelect
           v-if="field.type === 'select' && field.options"
+          :id="field.id"
           v-model="formData[field.id]"
-          :options="field.options.map(opt => ({ value: opt, label: opt }))"
+          :options="field.options.map((optionItem) => ({ value: optionItem, label: optionItem }))"
           :name="field.id"
+          @update:model-value="formError = ''"
         />
         <input
           v-else
+          :id="field.id"
           class="input-element"
           type="text"
           :name="field.id"
           v-model="formData[field.id]"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-1p-ignore="true"
+          :aria-invalid="!!formError && (!formData[field.id] || !formData[field.id].trim())"
+          :aria-describedby="formError ? 'branch-form-error' : undefined"
+          @input="formError = ''"
         />
       </div>
     </template>
+
+    <p v-if="formError" id="branch-form-error" class="error-msg" role="alert" aria-live="assertive">
+      {{ formError }}
+    </p>
 
     <button class="btn-primary generate-btn" type="submit">
       {{ $t('form.generate') }}

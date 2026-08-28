@@ -11,9 +11,18 @@
   "header": {
     "config": "Settings"
   },
+  "settings": {
+    "general": "Personalization",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
+  },
   "form": {
     "formatLabel": "Format",
-    "generate": "Generate Branch Name"
+    "generate": "Generate Branch Name",
+    "errorRequired": "Please fill in all required fields."
   },
   "result": {
     "title": "Generated Branch Name",
@@ -109,7 +118,7 @@
       "name": "Default Format (App)",
       "projectId": "Project ID",
       "ticketId": "Ticket ID",
-      "featureName": "Feature Name"
+      "featureName": "Feature"
     },
     "gitflow": {
       "name": "GitFlow (type/ticket-desc)",
