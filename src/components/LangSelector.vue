@@ -168,7 +168,7 @@ onUnmounted(() => {
   cursor: pointer;
   font-size: 0.95rem;
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -222,7 +222,7 @@ onUnmounted(() => {
   width: 100%;
   padding: 0.6rem 1rem;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
   color: var(--text-main);
   background: transparent;
@@ -240,6 +240,7 @@ onUnmounted(() => {
 .option-selected {
   background-color: var(--accent-color);
   color: var(--bg-body);
+  font-weight: 600;
 }
 
 .option-selected:hover,
