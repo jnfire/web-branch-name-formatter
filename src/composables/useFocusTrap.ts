@@ -26,35 +26,39 @@ export function useFocusTrap(
 
     if (event.key !== 'Tab') return;
 
-    const focusable = getFocusable();
-    if (focusable.length === 0) return;
+    const focusableElements = getFocusable();
+    if (focusableElements.length === 0) return;
 
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
 
-    if (event.shiftKey && document.activeElement === first) {
+    if (event.shiftKey && document.activeElement === firstFocusable) {
       event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
+      lastFocusable.focus();
+    } else if (!event.shiftKey && document.activeElement === lastFocusable) {
       event.preventDefault();
-      first.focus();
+      firstFocusable.focus();
     }
   };
 
-  watch(isOpen, (open) => {
-    if (open) {
-      previouslyFocused = document.activeElement as HTMLElement | null;
-      requestAnimationFrame(() => {
-        const focusable = getFocusable();
-        (focusable[0] ?? containerRef.value)?.focus();
-      });
-      document.addEventListener('keydown', handleKeydown, true);
-    } else {
-      document.removeEventListener('keydown', handleKeydown, true);
-      previouslyFocused?.focus();
-      previouslyFocused = null;
-    }
-  });
+  watch(
+    isOpen,
+    (openState: boolean) => {
+      if (openState) {
+        previouslyFocused = document.activeElement as HTMLElement | null;
+        requestAnimationFrame(() => {
+          const focusableElements = getFocusable();
+          (focusableElements[0] ?? containerRef.value)?.focus();
+        });
+        document.addEventListener('keydown', handleKeydown, true);
+      } else {
+        document.removeEventListener('keydown', handleKeydown, true);
+        previouslyFocused?.focus();
+        previouslyFocused = null;
+      }
+    },
+    { immediate: true }
+  );
 
   onBeforeUnmount(() => {
     document.removeEventListener('keydown', handleKeydown, true);

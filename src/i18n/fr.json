@@ -118,7 +118,7 @@
       "name": "Format par défaut (App)",
       "projectId": "ID du Projet",
       "ticketId": "ID du Ticket",
-      "featureName": "Nom de la Fonctionnalité"
+      "featureName": "Fonctionnalité"
     },
     "gitflow": {
       "name": "GitFlow (type/ticket-desc)",

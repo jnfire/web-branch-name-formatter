@@ -49,7 +49,7 @@ const handleSubmit = (event: Event) => {
   event.preventDefault()
 
   if (!validateInput()) {
-    formError.value = t('form.errorRequired') || 'Por favor, completa todos los campos requeridos.'
+    formError.value = t('form.errorRequired')
     return
   }
 
@@ -73,9 +73,9 @@ function cleanInput() {
   formError.value = ''
   // Re-initialize default values for select fields
   if (selectedFormat.value) {
-    selectedFormat.value.fields.forEach(field => {
-      if (field.type === 'select' && field.options && field.options.length > 0) {
-        formData.value[field.id] = field.options[0]
+    selectedFormat.value.fields.forEach((fieldItem) => {
+      if (fieldItem.type === 'select' && fieldItem.options && fieldItem.options.length > 0) {
+        formData.value[fieldItem.id] = fieldItem.options[0]
       }
     })
   }
@@ -83,7 +83,7 @@ function cleanInput() {
 </script>
 
 <template>
-  <form class="form" :aria-label="$t('form.generate')" @submit="handleSubmit" novalidate>
+  <form class="form" :aria-label="$t('form.generate')" @submit="handleSubmit" autocomplete="off" novalidate>
 
     <template v-if="selectedFormat">
       <div class="form-group" v-for="field in selectedFormat.fields" :key="field.id">
@@ -95,8 +95,9 @@ function cleanInput() {
           v-if="field.type === 'select' && field.options"
           :id="field.id"
           v-model="formData[field.id]"
-          :options="field.options.map(opt => ({ value: opt, label: opt }))"
+          :options="field.options.map((optionItem) => ({ value: optionItem, label: optionItem }))"
           :name="field.id"
+          @update:model-value="formError = ''"
         />
         <input
           v-else
@@ -105,6 +106,11 @@ function cleanInput() {
           type="text"
           :name="field.id"
           v-model="formData[field.id]"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-1p-ignore="true"
           :aria-invalid="!!formError && (!formData[field.id] || !formData[field.id].trim())"
           :aria-describedby="formError ? 'branch-form-error' : undefined"
           @input="formError = ''"

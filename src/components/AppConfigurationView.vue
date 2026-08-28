@@ -167,7 +167,7 @@ const handleImport = (event: Event) => {
       FormatManager.importCustomFormats(jsonStr)
       loadFormats()
       alert(t('configurator.importSuccess'))
-    } catch (err) {
+    } catch (importError) {
       alert(t('configurator.importError'))
     }
   }
@@ -175,6 +175,12 @@ const handleImport = (event: Event) => {
   target.value = '' // reset input
 }
 
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const triggerFileInput = (keyboardEvent: KeyboardEvent) => {
+  keyboardEvent.preventDefault();
+  fileInputRef.value?.click();
+};
 </script>
 
 <template>
@@ -256,9 +262,15 @@ const handleImport = (event: Event) => {
 
         <div class="import-export-section">
           <button type="button" class="btn-secondary import-export-btn" @click="handleExport">{{ $t('configurator.exportCustom') }}</button>
-          <label class="btn-secondary file-upload-btn import-export-btn" tabindex="0" @keydown.enter="($event.target as HTMLElement).querySelector('input')?.click()" @keydown.space.prevent="($event.target as HTMLElement).querySelector('input')?.click()">
+          <label
+            class="btn-secondary file-upload-btn import-export-btn"
+            tabindex="0"
+            role="button"
+            @keydown.enter="triggerFileInput"
+            @keydown.space.prevent="triggerFileInput"
+          >
             {{ $t('configurator.importJson') }}
-            <input type="file" accept=".json" @change="handleImport" class="sr-only" />
+            <input ref="fileInputRef" type="file" accept=".json" @change="handleImport" class="sr-only" />
           </label>
         </div>
       </div>

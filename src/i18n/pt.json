@@ -118,7 +118,7 @@
       "name": "Formato por defeito (App)",
       "projectId": "ID do Projeto",
       "ticketId": "ID do Ticket",
-      "featureName": "Nome da Funcionalidade"
+      "featureName": "Funcionalidade"
     },
     "gitflow": {
       "name": "GitFlow (type/ticket-desc)",
